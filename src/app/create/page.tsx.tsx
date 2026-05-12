@@ -4,15 +4,16 @@ import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
-import { isValidContact, getShareUrls, generateLinkSlug } from '@/lib/utils'
+import { useUser } from '@/hooks/useUser'
+import { getShareUrls, generateLinkSlug } from '@/lib/utils'
 
 type Step = 1 | 2 | 3 | 4
 
 export default function CreatePage() {
-  const { authenticated, login, ready, user } = usePrivy()
+  const { authenticated, login, ready } = usePrivy()
+  const { walletAddress, email, phone, displayName, userId } = useUser()
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
-  const [ownerContact, setOwnerContact] = useState('')
   const [amountStr, setAmountStr] = useState('0')
   const [note, setNote] = useState('')
   const [receiveType, setReceiveType] = useState<'crypto'|'bank'>('crypto')
@@ -24,11 +25,16 @@ export default function CreatePage() {
     if (ready && !authenticated) login()
   }, [ready, authenticated])
 
+  // Skip step 1 if already authenticated
+  useEffect(() => {
+    if (authenticated && step === 1) setStep(2)
+  }, [authenticated])
+
   const amt = parseFloat(amountStr) || 0
 
   const numpad = (key: string) => {
     setAmountStr(prev => {
-      if (key === 'del') return prev.length > 1 ? prev.slice(0,-1) : '0'
+      if (key === 'del') return prev.length > 1 ? prev.slice(0, -1) : '0'
       if (key === '.') return prev.includes('.') ? prev : prev + '.'
       if (prev === '0') return key
       if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev
@@ -43,10 +49,10 @@ export default function CreatePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          owner_id: user?.id || 'demo',
-          owner_name: ownerContact.split('@')[0] || 'PayLink User',
-          owner_email: ownerContact,
-          owner_wallet: '0x0000000000000000000000000000000000000000',
+          owner_id: userId || 'demo',
+          owner_name: displayName,
+          owner_email: email,
+          owner_wallet: walletAddress || '0x0000000000000000000000000000000000000000',
           amount: amt,
           note,
           receive_type: receiveType,
@@ -66,7 +72,8 @@ export default function CreatePage() {
     setStep(4)
   }
 
-  const linkUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'}/pay/${generatedSlug}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+  const linkUrl = `${appUrl}/pay/${generatedSlug}`
   const shareUrls = generatedSlug ? getShareUrls(linkUrl, amt, note) : null
 
   const s = {
@@ -74,6 +81,10 @@ export default function CreatePage() {
     card: { background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.06)' } as React.CSSProperties,
     btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)' } as React.CSSProperties,
   }
+
+  const steps = authenticated ? ['Amount', 'Receive', 'Share'] : ['Account', 'Amount', 'Receive', 'Share']
+  const totalSteps = steps.length
+  const currentStepIndex = authenticated ? step - 1 : step - 1
 
   return (
     <div style={s.page}>
@@ -93,43 +104,60 @@ export default function CreatePage() {
           <div style={s.card}>
             {/* Step progress */}
             <div style={{ display: 'flex', alignItems: 'center', padding: '20px 28px', borderBottom: '1px solid var(--border)' }}>
-              {[1,2,3,4].map((n, i) => (
-                <div key={n} style={{ display: 'flex', alignItems: 'center', flex: n < 4 ? 1 : 0 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0, background: n < step ? 'var(--g1)' : n === step ? 'var(--g1)' : 'var(--page)', color: n <= step ? '#fff' : 'var(--ink3)', border: n > step ? '1.5px solid var(--border)' : 'none', boxShadow: n === step ? '0 0 0 4px rgba(30,107,50,.12)' : 'none' }}>{n < step ? '✓' : n}</div>
-                  <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)' }}>{['Your account','Amount','Receive','Share'][n-1]}</div>
-                  {n < 4 && <div style={{ flex: 1, height: 1.5, background: n < step ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
+              {steps.map((label, i) => (
+                <div key={label} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 0 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, fontWeight: 700, flexShrink: 0,
+                    background: i < currentStepIndex ? 'var(--g1)' : i === currentStepIndex ? 'var(--g1)' : 'var(--page)',
+                    color: i <= currentStepIndex ? '#fff' : 'var(--ink3)',
+                    border: i > currentStepIndex ? '1.5px solid var(--border)' : 'none',
+                    boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(30,107,50,.12)' : 'none',
+                  }}>{i < currentStepIndex ? '✓' : i + 1}</div>
+                  <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)' }}>{label}</div>
+                  {i < steps.length - 1 && <div style={{ flex: 1, height: 1.5, background: i < currentStepIndex ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
                 </div>
               ))}
             </div>
 
             <div style={{ padding: '28px 28px 32px' }}>
 
-              {/* STEP 1 */}
-              {step === 1 && (
+              {/* STEP 1 — Account (only if not authenticated) */}
+              {step === 1 && !authenticated && (
                 <div>
                   <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Your account</div>
-                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Enter your email or phone to get started.</div>
+                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Sign in to get started. We'll verify you with a one-time code.</div>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
                     <span>ℹ️</span>
-                    <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once saved, every PayLink you create pays out automatically.</div>
+                    <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every PayLink you create pays out to your account automatically.</div>
                   </div>
-                  <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 8, display: 'block' }}>Your email or phone</label>
-                  <input style={{ width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none' }} type="text" placeholder="you@email.com or +234 800 000 0000" value={ownerContact} onChange={e => setOwnerContact(e.target.value)} />
-                  <div style={{ fontSize: 12, color: 'var(--ink3)', marginTop: 7, lineHeight: 1.6 }}>Used to identify your account and send payment notifications.</div>
-                  <button style={{ ...s.btn, opacity: !isValidContact(ownerContact) ? .4 : 1 }} disabled={!isValidContact(ownerContact)} onClick={() => setStep(2)}>
-                    Continue →
+                  <button style={s.btn} onClick={() => login()}>
+                    ✉️ Sign in with email or phone
                   </button>
                 </div>
               )}
 
-              {/* STEP 2 */}
+              {/* STEP 2 — Amount */}
               {step === 2 && (
                 <div>
-                  <button onClick={() => setStep(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>
+                  {!authenticated && <button onClick={() => setStep(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>}
                   <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>How much are you requesting?</div>
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24 }}>Set the amount and add a note.</div>
 
-                  <div style={{ background: amt > 0 ? 'var(--g-soft)' : 'var(--page)', border: `1.5px solid ${amt > 0 ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16, textAlign: 'center' }}>
+                  {authenticated && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', borderRadius: 12, padding: '10px 14px', marginBottom: 20, border: '1px solid var(--border)' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
+                        {displayName.slice(0,2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{displayName}</div>
+                        <div style={{ fontSize: 11, color: 'var(--ink3)' }}>{email || phone}</div>
+                      </div>
+                      <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--g1)', fontWeight: 500, background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20 }}>✓ Verified</div>
+                    </div>
+                  )}
+
+                  <div style={{ background: amt > 0 ? 'var(--g-soft)' : 'var(--page)', border: `1.5px solid ${amt > 0 ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16, textAlign: 'center', transition: 'all .2s' }}>
                     <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>Amount to request</div>
                     <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                       <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
@@ -154,7 +182,7 @@ export default function CreatePage() {
                 </div>
               )}
 
-              {/* STEP 3 */}
+              {/* STEP 3 — Receive */}
               {step === 3 && (
                 <div>
                   <button onClick={() => setStep(2)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>
@@ -162,9 +190,12 @@ export default function CreatePage() {
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24 }}>Choose how the payment is delivered to you.</div>
 
                   <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-                    {[{ id: 'crypto' as const, label: 'Crypto wallet', desc: 'Receive USDC instantly. $0 fee.', icon: '💳' }, { id: 'bank' as const, label: 'Bank / mobile money', desc: 'Receive local currency.', icon: '🏦' }].map(opt => (
+                    {[
+                      { id: 'crypto' as const, label: 'Crypto wallet', desc: 'Receive USDC instantly. $0 fee.', icon: '💳' },
+                      { id: 'bank' as const, label: 'Bank / mobile money', desc: 'Receive local currency.', icon: '🏦' }
+                    ].map(opt => (
                       <div key={opt.id} onClick={() => setReceiveType(opt.id)}
-                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${receiveType === opt.id ? 'var(--g1)' : 'var(--border)'}`, background: receiveType === opt.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer', textAlign: 'center' }}>
+                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${receiveType === opt.id ? 'var(--g1)' : 'var(--border)'}`, background: receiveType === opt.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                         <div style={{ fontSize: 24, marginBottom: 8 }}>{opt.icon}</div>
                         <div style={{ fontSize: 14, fontWeight: 500, color: receiveType === opt.id ? 'var(--g1)' : 'var(--ink2)', marginBottom: 4 }}>{opt.label}</div>
                         <div style={{ fontSize: 12, color: 'var(--ink3)' }}>{opt.desc}</div>
@@ -175,16 +206,31 @@ export default function CreatePage() {
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: receiveType === 'crypto' ? 'var(--g-soft)' : '#FFF8E8', border: `0.5px solid ${receiveType === 'crypto' ? 'var(--border-g)' : 'rgba(204,136,0,.2)'}`, borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
                     <span>ℹ️</span>
                     <div style={{ fontSize: 13, color: receiveType === 'crypto' ? 'var(--g1)' : '#B8880A', lineHeight: 1.6 }}>
-                      {receiveType === 'crypto' ? <><strong>Your wallet is created automatically.</strong> USDC lands instantly when someone pays.</> : <><strong>One-time bank setup required.</strong> You'll enter your bank details once.</>}
+                      {receiveType === 'crypto'
+                        ? <><strong>Your wallet is created automatically.</strong> USDC lands instantly when someone pays your link.</>
+                        : <><strong>Bank setup required.</strong> Go to Bank settings to add your account. Powered by Yellow Card.</>}
                     </div>
                   </div>
+
+                  {receiveType === 'bank' && (
+                    <div style={{ marginBottom: 16 }}>
+                      <a href="/bank-setup" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--g-soft)', textDecoration: 'none' }}>
+                        <span style={{ fontSize: 18 }}>🏦</span>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--g1)' }}>Set up bank account</div>
+                          <div style={{ fontSize: 12, color: 'var(--ink3)' }}>Done once, used for all future payouts</div>
+                        </div>
+                        <span style={{ marginLeft: 'auto', color: 'var(--g1)' }}>›</span>
+                      </a>
+                    </div>
+                  )}
 
                   <div style={{ marginBottom: 20 }}>
                     <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 10, display: 'block' }}>Link expires in</label>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {['24 hours', '7 days', '30 days', 'Never'].map(opt => (
                         <div key={opt} onClick={() => setExpiry(opt)}
-                          style={{ padding: '8px 16px', borderRadius: 100, border: `1.5px solid ${expiry === opt ? 'var(--g1)' : 'var(--border)'}`, background: expiry === opt ? 'var(--g-soft)' : '#fff', fontSize: 13, fontWeight: 500, color: expiry === opt ? 'var(--g1)' : 'var(--ink3)', cursor: 'pointer' }}>
+                          style={{ padding: '8px 16px', borderRadius: 100, border: `1.5px solid ${expiry === opt ? 'var(--g1)' : 'var(--border)'}`, background: expiry === opt ? 'var(--g-soft)' : '#fff', fontSize: 13, fontWeight: 500, color: expiry === opt ? 'var(--g1)' : 'var(--ink3)', cursor: 'pointer', transition: 'all .2s' }}>
                           {opt}
                         </div>
                       ))}
@@ -197,11 +243,11 @@ export default function CreatePage() {
                 </div>
               )}
 
-              {/* STEP 4 - Share */}
+              {/* STEP 4 — Share */}
               {step === 4 && generatedSlug && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--g1)' }}>✓</div>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--g1)', animation: 'popIn .5s cubic-bezier(.34,1.56,.64,1)' }}>✓</div>
                     <div>
                       <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>Your link is live!</div>
                       <div style={{ fontSize: 13, color: 'var(--ink3)' }}>Share it anywhere — anyone can pay with just a click.</div>
@@ -223,19 +269,26 @@ export default function CreatePage() {
                       { label: 'Email', icon: '📧', href: shareUrls?.email },
                       { label: 'X / Twitter', icon: '𝕏', href: shareUrls?.x },
                       { label: 'QR code', icon: '⬛', action: () => alert('QR code generation coming soon') },
-                      { label: 'Copy link', icon: '📋', action: () => navigator.clipboard.writeText(linkUrl) },
+                      { label: 'Copy link', icon: '📋', action: () => { navigator.clipboard.writeText(linkUrl); alert('Link copied!') } },
                     ].map(item => (
-                      <div key={item.label} onClick={() => item.href ? window.open(item.href, '_blank') : item.action?.()}
-                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer' }}>
+                      <div key={item.label}
+                        onClick={() => item.href ? window.open(item.href, '_blank') : item.action?.()}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer', transition: 'all .2s' }}>
                         <span style={{ fontSize: 22 }}>{item.icon}</span>
                         <span style={{ fontSize: 11, color: 'var(--ink3)', fontWeight: 500 }}>{item.label}</span>
                       </div>
                     ))}
                   </div>
 
-                  <button style={{ ...s.btn, background: '#fff', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none', marginTop: 0 }} onClick={() => { setStep(1); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
-                    + Create another link
-                  </button>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button style={{ ...s.btn, marginTop: 0 }} onClick={() => router.push('/dashboard')}>
+                      ⊞ Go to dashboard
+                    </button>
+                    <button style={{ ...s.btn, marginTop: 0, background: '#fff', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
+                      onClick={() => { setStep(2); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
+                      + Create another
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -274,13 +327,20 @@ export default function CreatePage() {
               { icon: '♾️', title: 'Reuse forever', desc: 'Set expiry to "Never" and the link collects payments forever.' },
             ].map(tip => (
               <div key={tip.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, marginBottom: 12 }}>
-                <span style={{ fontSize: 15, color: 'var(--g1)', flexShrink: 0, marginTop: 1 }}>{tip.icon}</span>
-                <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.5 }}><strong style={{ color: 'var(--ink2)', fontWeight: 500 }}>{tip.title}</strong> — {tip.desc}</div>
+                <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{tip.icon}</span>
+                <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.5 }}>
+                  <strong style={{ color: 'var(--ink2)', fontWeight: 500 }}>{tip.title}</strong> — {tip.desc}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+        :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
+      `}</style>
     </div>
   )
 }
