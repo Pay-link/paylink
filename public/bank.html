@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PayLink — Bank Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;
+  --g-soft:#EBF5EC;--g-mid:#C8E6CA;
+  --ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;
+  --page:#F2F6F2;--white:#FFFFFF;
+  --border:#E2EAE2;--border-g:rgba(30,107,50,0.18);
+  --font:'Google Sans','sans-serif';
+  --radius:16px;--radius-lg:20px;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+html,body{min-height:100%;font-family:var(--font);background:var(--page);color:var(--ink)}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:37px;;z-index:100;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:21px;font-weight:700;color:var(--ink);letter-spacing:-.04em;text-decoration:none}
+.nav-logo span{color:var(--g1)}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-secure{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink3)}
+.secure-dot{width:6px;height:6px;border-radius:50%;background:var(--g3);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.nav-help{font-size:13px;color:var(--ink3);text-decoration:none;font-weight:500;transition:color .15s}
+.nav-help:hover{color:var(--g1)}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;align-items:center;gap:8px;padding:20px 40px 0;font-size:13px;color:var(--ink3)}
+.breadcrumb a{color:var(--ink3);text-decoration:none}
+.breadcrumb a:hover{color:var(--g1)}
+.breadcrumb-sep{opacity:.5}
+.breadcrumb-current{color:var(--ink2);font-weight:500}
+
+/* ── PAGE TITLE ── */
+.page-title-wrap{padding:16px 40px 24px}
+.page-title{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.04em;margin-bottom:6px}
+.page-subtitle{font-size:15px;color:var(--ink3);line-height:1.5}
+
+/* ── MAIN ── */
+.main{
+  display:grid;grid-template-columns:1fr 340px;gap:24px;
+  padding:0 40px 60px;max-width:1100px;margin:0 auto;align-items:start;
+}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow)}
+
+/* ── STEP PROGRESS ── */
+.step-progress{display:flex;align-items:center;padding:20px 28px;border-bottom:1px solid var(--border)}
+.sp-item{display:flex;align-items:center;gap:10px;flex:1}
+.sp-item:last-child{flex:none}
+.sp-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s}
+.sp-num.done{background:var(--g1);color:#fff}
+.sp-num.active{background:var(--g1);color:#fff;box-shadow:0 0 0 4px rgba(30,107,50,.12)}
+.sp-num.wait{background:var(--page);color:var(--ink3);border:1.5px solid var(--border)}
+.sp-label{font-size:13px;font-weight:500;transition:color .3s}
+.sp-label.active{color:var(--ink)}
+.sp-label.done{color:var(--g1)}
+.sp-label.wait{color:var(--ink3)}
+.sp-line{flex:1;height:1.5px;background:var(--border);margin:0 12px;transition:background .3s}
+.sp-line.done{background:var(--g3)}
+
+/* ── FORM ── */
+.form-body{padding:28px 28px 32px}
+.step-panel{display:none}
+.step-panel.active{display:block}
+.step-heading{font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.03em;margin-bottom:6px}
+.step-sub{font-size:14px;color:var(--ink3);margin-bottom:24px;line-height:1.6}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;margin-bottom:20px;transition:color .15s;background:none;border:none;font-family:var(--font);padding:0}
+.back-link:hover{color:var(--g1)}
+
+/* ── INPUTS ── */
+.input-wrap{margin-bottom:14px}
+.input-label{font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:8px;display:block}
+.input-field{
+  width:100%;background:var(--page);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:14px 18px;
+  font-family:var(--font);font-size:15px;color:var(--ink);
+  outline:none;transition:all .2s;appearance:none;
+}
+.input-field:focus{border-color:var(--g1);background:#fff;box-shadow:0 0 0 3px rgba(30,107,50,.07)}
+.input-field::placeholder{color:#A8B8A8}
+.input-select{
+  width:100%;background:var(--page);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:14px 18px;
+  font-family:var(--font);font-size:15px;color:var(--ink);
+  outline:none;transition:all .2s;cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%235C6E5E' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;
+}
+.input-select:focus{border-color:var(--g1);background-color:#fff;box-shadow:0 0 0 3px rgba(30,107,50,.07)}
+.input-hint{font-size:12px;color:var(--ink3);margin-top:7px;line-height:1.6}
+
+/* ── COUNTRY LIST ── */
+.country-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.country-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border-radius:var(--radius);
+  border:1.5px solid var(--border);background:var(--white);
+  cursor:pointer;transition:all .2s;
+}
+.country-item:hover{border-color:var(--border-g);background:var(--g-soft)}
+.country-item.selected{border-color:var(--g1);background:var(--g-soft)}
+.country-flag{font-size:24px;flex-shrink:0}
+.country-name{font-size:15px;font-weight:500;color:var(--ink);flex:1}
+.country-currency{font-size:13px;color:var(--ink3)}
+.country-check{font-size:17px;color:var(--g1);opacity:0;transition:opacity .2s}
+.country-item.selected .country-check{opacity:1}
+.more-countries{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;border-radius:var(--radius);
+  border:1.5px dashed var(--border);cursor:pointer;
+  font-size:13px;color:var(--ink3);transition:all .2s;
+}
+.more-countries:hover{border-color:var(--border-g);color:var(--g1)}
+
+/* ── BANK GRID ── */
+.bank-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.bank-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;border-radius:var(--radius);
+  border:1.5px solid var(--border);background:var(--white);
+  cursor:pointer;transition:all .2s;
+}
+.bank-btn:hover{border-color:var(--border-g);background:var(--g-soft)}
+.bank-btn.selected{border-color:var(--g1);background:var(--g-soft)}
+.bank-initial{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+.bank-name{font-size:13px;font-weight:500;color:var(--ink)}
+
+/* ── ID TYPE TOGGLE ── */
+.id-toggle{display:flex;gap:8px;margin-bottom:16px}
+.id-tog{
+  flex:1;padding:10px;border-radius:var(--radius);
+  border:1.5px solid var(--border);background:var(--white);
+  text-align:center;cursor:pointer;
+  font-size:13px;font-weight:500;color:var(--ink3);transition:all .2s;
+}
+.id-tog:hover{border-color:var(--border-g)}
+.id-tog.active{border-color:var(--g1);background:var(--g-soft);color:var(--g1)}
+
+/* ── SECURITY BADGES ── */
+.sec-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.sec-badge{
+  display:flex;align-items:center;gap:5px;
+  background:var(--page);border:1px solid var(--border);
+  border-radius:100px;padding:5px 12px;
+  font-size:12px;color:var(--ink3);
+}
+.sec-badge iconify-icon{font-size:13px;color:var(--g1)}
+
+/* ── ONE TIME NOTE ── */
+.one-time-note{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--g-soft);border:0.5px solid var(--border-g);
+  border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;
+}
+.otn-icon{font-size:17px;color:var(--g1);flex-shrink:0;margin-top:1px}
+.otn-text{font-size:13px;color:var(--g1);line-height:1.6}
+.otn-text strong{font-weight:700}
+
+/* ── REVIEW CARD ── */
+.review-table{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:20px}
+.review-row{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border)}
+.review-row:last-child{border-bottom:none}
+.rv-key{font-size:14px;color:var(--ink3)}
+.rv-val{font-size:14px;font-weight:500;color:var(--ink)}
+.rv-val.green{color:var(--g1)}
+
+/* ── CTA ── */
+.cta-btn{
+  width:100%;background:var(--g1);color:#fff;border:none;
+  border-radius:100px;padding:17px 28px;
+  font-family:var(--font);font-size:16px;font-weight:700;
+  cursor:pointer;transition:all .22s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  letter-spacing:-.01em;margin-top:20px;margin-bottom:14px;
+  box-shadow:0 6px 20px rgba(30,107,50,.2);
+}
+.cta-btn:hover{background:var(--g2);transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,107,50,.28)}
+.cta-btn:active{transform:translateY(0)}
+
+/* ── TRUST ── */
+.trust-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink3)}
+.trust-item iconify-icon{font-size:13px;color:var(--g1)}
+.trust-sep{width:3px;height:3px;border-radius:50%;background:var(--border)}
+
+/* ── RIGHT COLUMN ── */
+.right-col{display:flex;flex-direction:column;gap:16px;position:sticky;top:82px}
+.info-card{padding:20px 22px}
+.info-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:14px}
+.info-items{display:flex;flex-direction:column;gap:12px}
+.info-item{display:flex;align-items:flex-start;gap:10px}
+.info-num{width:22px;height:22px;border-radius:50%;background:var(--g-soft);border:1px solid var(--border-g);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--g1);flex-shrink:0;margin-top:1px}
+.info-text{font-size:13px;color:var(--ink3);line-height:1.5}
+.info-text strong{color:var(--ink2);font-weight:500}
+.kyc-card{padding:20px 22px}
+.kyc-title{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:12px}
+.kyc-items{display:flex;flex-direction:column;gap:8px}
+.kyc-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink3)}
+.kyc-item iconify-icon{font-size:15px;color:var(--g1);flex-shrink:0}
+
+@media(max-width:860px){
+  .main{grid-template-columns:1fr;padding:0 20px 48px}
+  .right-col{position:static}
+  .breadcrumb,.page-title-wrap{padding-left:20px;padding-right:20px}
+  nav{padding:0 20px}
+}
+@media(max-width:520px){
+  .page-title{font-size:24px}
+  .form-body{padding:20px 16px 24px}
+  .step-progress{padding:16px}
+  .sp-label{display:none}
+  .bank-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+  <!-- TESTNET BANNER -->
+<div id="testnet-banner" style="background:#1E6B32;color:#fff;padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:500;position:relative;z-index:1000;">
+  <span style="width:7px;height:7px;border-radius:50%;background:#8DC63F;display:inline-block;flex-shrink:0;"></span>
+  PayLink is live on Arc Testnet — all transactions use test funds.
+  <a href="https://testnet.arcscan.app" target="_blank" style="color:#8DC63F;text-decoration:underline;">View explorer</a>
+  <button onclick="document.getElementById('testnet-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:16px;position:absolute;right:16px;">×</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">pay<span>link</span></a>
+  <div class="nav-right">
+    <a href="#" class="nav-help">Help</a>
+    <div class="nav-secure">
+      <div class="secure-dot"></div>
+      Secured · Powered by Arc
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="home.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <a href="paylink-create-v2.html">Create link</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-current">Bank setup</span>
+</div>
+
+<!-- PAGE TITLE -->
+<div class="page-title-wrap">
+  <h1 class="page-title">Set up bank payouts</h1>
+  <p class="page-subtitle">Done once. Used for all future PayLink payouts automatically.</p>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <div class="card">
+
+      <!-- STEP PROGRESS -->
+      <div class="step-progress">
+        <div class="sp-item">
+          <div class="sp-num active" id="sn1">1</div>
+          <div class="sp-label active" id="sl1">Country</div>
+        </div>
+        <div class="sp-line" id="sline1"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn2">2</div>
+          <div class="sp-label wait" id="sl2">Bank details</div>
+        </div>
+        <div class="sp-line" id="sline2"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn3">3</div>
+          <div class="sp-label wait" id="sl3">Verify ID</div>
+        </div>
+        <div class="sp-line" id="sline3"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn4">4</div>
+          <div class="sp-label wait" id="sl4">Confirm</div>
+        </div>
+      </div>
+
+      <div class="form-body">
+
+        <!-- STEP 1: COUNTRY -->
+        <div class="step-panel active" id="step-1">
+          <div class="step-heading">Where are you based?</div>
+          <div class="step-sub">We'll set up the right payout method for your country and currency.</div>
+
+          <div class="one-time-note">
+            <iconify-icon icon="ph:info-bold" class="otn-icon"></iconify-icon>
+            <div class="otn-text"><strong>One-time setup.</strong> Once saved, every PayLink you create pays out to this account automatically. No re-entering details ever.</div>
+          </div>
+
+          <div class="country-list">
+            <div class="country-item selected" id="c-ng" onclick="selectCountry('ng','Nigeria','🇳🇬','NGN')">
+              <span class="country-flag">🇳🇬</span>
+              <span class="country-name">Nigeria</span>
+              <span class="country-currency">NGN</span>
+              <iconify-icon icon="ph:check-bold" class="country-check"></iconify-icon>
+            </div>
+            <div class="country-item" id="c-gh" onclick="selectCountry('gh','Ghana','🇬🇭','GHS')">
+              <span class="country-flag">🇬🇭</span>
+              <span class="country-name">Ghana</span>
+              <span class="country-currency">GHS</span>
+              <iconify-icon icon="ph:check-bold" class="country-check"></iconify-icon>
+            </div>
+            <div class="country-item" id="c-ke" onclick="selectCountry('ke','Kenya','🇰🇪','KES')">
+              <span class="country-flag">🇰🇪</span>
+              <span class="country-name">Kenya</span>
+              <span class="country-currency">KES</span>
+              <iconify-icon icon="ph:check-bold" class="country-check"></iconify-icon>
+            </div>
+            <div class="country-item" id="c-gb" onclick="selectCountry('gb','United Kingdom','🇬🇧','GBP')">
+              <span class="country-flag">🇬🇧</span>
+              <span class="country-name">United Kingdom</span>
+              <span class="country-currency">GBP</span>
+              <iconify-icon icon="ph:check-bold" class="country-check"></iconify-icon>
+            </div>
+            <div class="country-item" id="c-us" onclick="selectCountry('us','United States','🇺🇸','USD')">
+              <span class="country-flag">🇺🇸</span>
+              <span class="country-name">United States</span>
+              <span class="country-currency">USD</span>
+              <iconify-icon icon="ph:check-bold" class="country-check"></iconify-icon>
+            </div>
+            <div class="more-countries" onclick="alert('150+ countries available in full app')">
+              <iconify-icon icon="ph:globe-bold" style="font-size:18px"></iconify-icon>
+              150+ more countries available
+            </div>
+          </div>
+
+          <button class="cta-btn" onclick="nextStep()">
+            Continue
+            <iconify-icon icon="ph:arrow-right-bold" style="font-size:18px"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- STEP 2: BANK DETAILS -->
+        <div class="step-panel" id="step-2">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">Your bank details</div>
+          <div class="step-sub">Add your bank or mobile money account to receive payouts in your local currency.</div>
+
+          <div class="input-label" style="margin-bottom:10px">Select your bank</div>
+          <div class="bank-grid" id="bank-grid">
+            <div class="bank-btn selected" id="b-gt" onclick="selectBank('gt','GTBank')">
+              <div class="bank-initial" style="background:#00A651;color:#fff">GT</div>
+              <span class="bank-name">GTBank</span>
+            </div>
+            <div class="bank-btn" id="b-ac" onclick="selectBank('ac','Access Bank')">
+              <div class="bank-initial" style="background:#EB1C24;color:#fff">AC</div>
+              <span class="bank-name">Access Bank</span>
+            </div>
+            <div class="bank-btn" id="b-ze" onclick="selectBank('ze','Zenith Bank')">
+              <div class="bank-initial" style="background:#6D2B8E;color:#fff">ZB</div>
+              <span class="bank-name">Zenith Bank</span>
+            </div>
+            <div class="bank-btn" id="b-fi" onclick="selectBank('fi','First Bank')">
+              <div class="bank-initial" style="background:#1D3461;color:#fff">FB</div>
+              <span class="bank-name">First Bank</span>
+            </div>
+            <div class="bank-btn" id="b-op" onclick="selectBank('op','Opay')">
+              <div class="bank-initial" style="background:#FF6B00;color:#fff">OP</div>
+              <span class="bank-name">Opay</span>
+            </div>
+            <div class="bank-btn" id="b-ku" onclick="selectBank('ku','Kuda')">
+              <div class="bank-initial" style="background:#408A4B;color:#fff">KU</div>
+              <span class="bank-name">Kuda Bank</span>
+            </div>
+          </div>
+
+          <div class="input-wrap">
+            <label class="input-label">Account number</label>
+            <input class="input-field" id="acc-num" type="tel" placeholder="10-digit account number" maxlength="10" oninput="validateStep2()"/>
+          </div>
+          <div class="input-wrap">
+            <label class="input-label">Account name</label>
+            <input class="input-field" id="acc-name" type="text" placeholder="As it appears on your bank records" oninput="validateStep2()"/>
+            <div class="input-hint">This must match your bank records exactly for verification.</div>
+          </div>
+
+          <button class="cta-btn" id="s2-btn" onclick="nextStep()" disabled>
+            Continue
+            <iconify-icon icon="ph:arrow-right-bold" style="font-size:18px"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- STEP 3: ID VERIFICATION -->
+        <div class="step-panel" id="step-3">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">Verify your identity</div>
+          <div class="step-sub">Required by our payment partners to enable fiat payouts. Your data is encrypted and never shared without consent.</div>
+
+          <div class="id-toggle">
+            <div class="id-tog active" id="id-bvn" onclick="selectId('bvn','Bank Verification Number (BVN)','Enter your 11-digit BVN')">BVN</div>
+            <div class="id-tog" id="id-nin" onclick="selectId('nin','National Identification Number (NIN)','Enter your NIN')">NIN</div>
+            <div class="id-tog" id="id-int" onclick="selectId('int','International Passport Number','Enter passport number')">Passport</div>
+          </div>
+
+          <div class="input-wrap">
+            <label class="input-label" id="id-label">Bank Verification Number (BVN)</label>
+            <input class="input-field" id="id-number" type="tel" placeholder="Enter your 11-digit BVN" maxlength="11" oninput="validateStep3()"/>
+            <div class="input-hint">Your BVN/NIN is used only for identity verification and is never stored in plain text.</div>
+          </div>
+
+          <div class="input-wrap">
+            <label class="input-label">Date of birth</label>
+            <input class="input-field" id="dob" type="date" oninput="validateStep3()"/>
+          </div>
+
+          <div class="sec-badges">
+            <div class="sec-badge"><iconify-icon icon="ph:lock-bold"></iconify-icon>256-bit encrypted</div>
+            <div class="sec-badge"><iconify-icon icon="ph:shield-check-bold"></iconify-icon>KYC by Yellow Card</div>
+            <div class="sec-badge"><iconify-icon icon="ph:eye-slash-bold"></iconify-icon>Never stored raw</div>
+            <div class="sec-badge"><iconify-icon icon="ph:certificate-bold"></iconify-icon>CBN compliant</div>
+          </div>
+
+          <button class="cta-btn" id="s3-btn" onclick="nextStep()" disabled>
+            Continue
+            <iconify-icon icon="ph:arrow-right-bold" style="font-size:18px"></iconify-icon>
+          </button>
+          <div class="trust-row">
+            <div class="trust-item"><iconify-icon icon="ph:shield-check-bold"></iconify-icon>KYC by Yellow Card</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:lock-bold"></iconify-icon>Encrypted & secure</div>
+          </div>
+        </div>
+
+        <!-- STEP 4: REVIEW -->
+        <div class="step-panel" id="step-4">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">Review & confirm</div>
+          <div class="step-sub">Check your details carefully before saving. You can update these anytime from your account settings.</div>
+
+          <div class="review-table">
+            <div class="review-row">
+              <span class="rv-key">Country</span>
+              <span class="rv-val" id="rv-country">🇳🇬 Nigeria (NGN)</span>
+            </div>
+            <div class="review-row">
+              <span class="rv-key">Bank</span>
+              <span class="rv-val" id="rv-bank">GTBank</span>
+            </div>
+            <div class="review-row">
+              <span class="rv-key">Account number</span>
+              <span class="rv-val" id="rv-acc">——————</span>
+            </div>
+            <div class="review-row">
+              <span class="rv-key">Account name</span>
+              <span class="rv-val" id="rv-name">——————</span>
+            </div>
+            <div class="review-row">
+              <span class="rv-key">Identity</span>
+              <span class="rv-val" id="rv-id">BVN ••••••••</span>
+            </div>
+            <div class="review-row">
+              <span class="rv-key">Payout currency</span>
+              <span class="rv-val green" id="rv-currency">NGN</span>
+            </div>
+          </div>
+
+          <div class="one-time-note">
+            <iconify-icon icon="ph:check-circle-bold" class="otn-icon"></iconify-icon>
+            <div class="otn-text">By confirming, you authorise PayLink to use these details to process your payouts via Yellow Card. All payouts are subject to Yellow Card's terms of service.</div>
+          </div>
+
+          <button class="cta-btn" onclick="confirm()">
+            <iconify-icon icon="ph:check-bold" style="font-size:18px"></iconify-icon>
+            Save bank details
+          </button>
+          <div class="trust-row">
+            <div class="trust-item"><iconify-icon icon="ph:shield-check-bold"></iconify-icon>Secured</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:certificate-bold"></iconify-icon>Yellow Card licensed</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:circles-three-bold"></iconify-icon>Powered by Arc</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- WHY WE NEED THIS -->
+    <div class="card info-card">
+      <div class="info-title">Why do we need this?</div>
+      <div class="info-items">
+        <div class="info-item">
+          <div class="info-num">1</div>
+          <div class="info-text"><strong>Convert USDC to local currency.</strong> When someone pays your link, the USDC is converted and sent to your bank automatically.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-num">2</div>
+          <div class="info-text"><strong>One-time setup.</strong> Once saved, every future PayLink pays out automatically. You never enter these details again.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-num">3</div>
+          <div class="info-text"><strong>Regulatory compliance.</strong> Yellow Card, our payout partner, is licensed to transfer funds and requires identity verification by law.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLIANCE -->
+    <div class="card kyc-card">
+      <div class="kyc-title">Your data is protected</div>
+      <div class="kyc-items">
+        <div class="kyc-item">
+          <iconify-icon icon="ph:lock-bold"></iconify-icon>
+          256-bit encryption at rest and in transit
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:shield-check-bold"></iconify-icon>
+          KYC handled by Yellow Card — licensed & regulated
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:eye-slash-bold"></iconify-icon>
+          BVN/NIN never stored in plain text
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:certificate-bold"></iconify-icon>
+          CBN and global AML compliance standards
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:trash-bold"></iconify-icon>
+          Delete your data anytime from settings
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYOUT TIMELINE -->
+    <div class="card" style="padding:20px 22px">
+      <div class="kyc-title">Payout timeline</div>
+      <div class="kyc-items">
+        <div class="kyc-item">
+          <iconify-icon icon="ph:lightning-bold"></iconify-icon>
+          USDC settles on Arc in &lt;1 second
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:bank-bold"></iconify-icon>
+          Bank payout: 1–3 business days
+        </div>
+        <div class="kyc-item">
+          <iconify-icon icon="ph:device-mobile-bold"></iconify-icon>
+          Mobile money: within minutes
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+let selectedCountry = {code:'ng',name:'Nigeria',flag:'🇳🇬',currency:'NGN'};
+let selectedBank = {code:'gt',name:'GTBank'};
+let selectedIdType = 'bvn';
+
+/* ── STEPS ── */
+function updateProgress(){
+  for(let i=1;i<=4;i++){
+    const num=document.getElementById('sn'+i);
+    const lbl=document.getElementById('sl'+i);
+    const line=document.getElementById('sline'+i);
+    if(i<currentStep){
+      num.className='sp-num done';
+      num.innerHTML='<iconify-icon icon="ph:check-bold" style="font-size:12px"></iconify-icon>';
+      lbl.className='sp-label done';
+      if(line) line.className='sp-line done';
+    } else if(i===currentStep){
+      num.className='sp-num active';num.textContent=i;
+      lbl.className='sp-label active';
+      if(line) line.className='sp-line';
+    } else {
+      num.className='sp-num wait';num.textContent=i;
+      lbl.className='sp-label wait';
+      if(line) line.className='sp-line';
+    }
+  }
+}
+
+function showStep(n){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  currentStep=n;
+  updateProgress();
+  if(n===4) populateReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(){ if(currentStep<4) showStep(currentStep+1); }
+function prevStep(){ if(currentStep>1) showStep(currentStep-1); }
+
+/* ── COUNTRY ── */
+function selectCountry(code,name,flag,currency){
+  selectedCountry={code,name,flag,currency};
+  document.querySelectorAll('.country-item').forEach(el=>{
+    el.classList.remove('selected');
+    el.querySelector('.country-check').style.opacity='0';
+  });
+  const sel=document.getElementById('c-'+code);
+  sel.classList.add('selected');
+  sel.querySelector('.country-check').style.opacity='1';
+}
+
+/* ── BANK ── */
+function selectBank(code,name){
+  selectedBank={code,name};
+  document.querySelectorAll('.bank-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('b-'+code).classList.add('selected');
+}
+
+/* ── ID TYPE ── */
+function selectId(type,label,placeholder){
+  selectedIdType=type;
+  document.querySelectorAll('.id-tog').forEach(t=>t.classList.remove('active'));
+  document.getElementById('id-'+type).classList.add('active');
+  document.getElementById('id-label').textContent=label;
+  document.getElementById('id-number').placeholder=placeholder;
+  document.getElementById('id-number').value='';
+  validateStep3();
+}
+
+/* ── VALIDATIONS ── */
+function validateStep2(){
+  const acc=document.getElementById('acc-num').value.trim();
+  const name=document.getElementById('acc-name').value.trim();
+  document.getElementById('s2-btn').disabled=acc.length<10||name.length<3;
+}
+
+function validateStep3(){
+  const id=document.getElementById('id-number').value.trim();
+  const dob=document.getElementById('dob').value;
+  document.getElementById('s3-btn').disabled=id.length<8||!dob;
+}
+
+/* ── REVIEW ── */
+function populateReview(){
+  document.getElementById('rv-country').textContent=`${selectedCountry.flag} ${selectedCountry.name} (${selectedCountry.currency})`;
+  document.getElementById('rv-bank').textContent=selectedBank.name;
+  const acc=document.getElementById('acc-num').value||'——————';
+  const name=document.getElementById('acc-name').value||'——————';
+  const id=document.getElementById('id-number').value||'';
+  document.getElementById('rv-acc').textContent=acc;
+  document.getElementById('rv-name').textContent=name;
+  const masked=id.length>3?id.slice(0,-3).replace(/\d/g,'•')+id.slice(-3):'••••••••';
+  document.getElementById('rv-id').textContent=selectedIdType.toUpperCase()+' '+masked;
+  document.getElementById('rv-currency').textContent=selectedCountry.currency;
+}
+
+function confirm(){
+  window.location.href='paylink-create-v2.html';
+}
+
+updateProgress();
+</script>
+</body>
+</html>

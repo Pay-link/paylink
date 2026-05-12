@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PayLink — Send Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g4:#A8D94F;
+  --g-soft:#EBF5EC;--g-mid:#C8E6CA;--g-lime:#F2FAE8;
+  --ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;
+  --page:#F2F6F2;--white:#FFFFFF;
+  --border:#E2EAE2;--border-g:rgba(30,107,50,0.18);
+  --font:'Google Sans','sans-serif';
+  --radius:16px;--radius-lg:20px;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+html,body{min-height:100%;font-family:var(--font);background:var(--page);color:var(--ink)}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-size:21px;font-weight:700;color:var(--ink);letter-spacing:-.04em;text-decoration:none}
+.nav-logo span{color:var(--g1)}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-secure{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink3)}
+.secure-dot{width:6px;height:6px;border-radius:50%;background:var(--g3);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.nav-help{font-size:13px;color:var(--ink3);text-decoration:none;font-weight:500;transition:color .15s}
+.nav-help:hover{color:var(--g1)}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;align-items:center;gap:8px;padding:20px 40px 0;font-size:13px;color:var(--ink3)}
+.breadcrumb a{color:var(--ink3);text-decoration:none;transition:color .15s}
+.breadcrumb a:hover{color:var(--g1)}
+.breadcrumb-sep{opacity:.5}
+.breadcrumb-current{color:var(--ink2);font-weight:500}
+
+/* ── PAGE TITLE ── */
+.page-title-wrap{padding:16px 40px 24px}
+.page-title{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.04em;margin-bottom:6px}
+.page-subtitle{font-size:15px;color:var(--ink3);line-height:1.5}
+
+/* ── MAIN LAYOUT ── */
+.main{
+  display:grid;grid-template-columns:1fr 340px;gap:24px;
+  padding:0 40px 60px;max-width:1100px;margin:0 auto;align-items:start;
+}
+
+/* ── CARD BASE ── */
+.card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow)}
+
+/* ── STEP PROGRESS ── */
+.step-progress{
+  display:flex;align-items:center;gap:0;
+  padding:20px 28px;border-bottom:1px solid var(--border);
+}
+.sp-item{display:flex;align-items:center;gap:10px;flex:1}
+.sp-item:last-child{flex:none}
+.sp-num{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;
+  transition:all .3s;
+}
+.sp-num.done{background:var(--g1);color:#fff}
+.sp-num.active{background:var(--g1);color:#fff;box-shadow:0 0 0 4px rgba(30,107,50,.12)}
+.sp-num.wait{background:var(--page);color:var(--ink3);border:1.5px solid var(--border)}
+.sp-label{font-size:13px;font-weight:500;transition:color .3s}
+.sp-label.active{color:var(--ink)}
+.sp-label.done{color:var(--g1)}
+.sp-label.wait{color:var(--ink3)}
+.sp-line{flex:1;height:1.5px;background:var(--border);margin:0 12px;transition:background .3s}
+.sp-line.done{background:var(--g3)}
+
+/* ── FORM CARD ── */
+.form-card{overflow:hidden}
+.form-body{padding:28px 28px 32px}
+
+/* ── STEP PANELS ── */
+.step-panel{display:none}
+.step-panel.active{display:block}
+.step-heading{font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.03em;margin-bottom:6px}
+.step-sub{font-size:14px;color:var(--ink3);margin-bottom:24px;line-height:1.6}
+
+/* ── INPUTS ── */
+.input-wrap{margin-bottom:16px}
+.input-label{font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:8px;display:block}
+.input-field{
+  width:100%;background:var(--page);
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:14px 18px;font-family:var(--font);font-size:15px;color:var(--ink);
+  outline:none;transition:all .2s;
+}
+.input-field:focus{border-color:var(--g1);background:#fff;box-shadow:0 0 0 3px rgba(30,107,50,.07)}
+.input-field::placeholder{color:#A8B8A8}
+.input-hint{font-size:12px;color:var(--ink3);margin-top:7px;line-height:1.6}
+
+/* ── RECENT CONTACTS ── */
+.contacts-label{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.contacts-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.contact-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:var(--radius);
+  border:1.5px solid var(--border);background:var(--white);
+  cursor:pointer;transition:all .2s;
+}
+.contact-item:hover{border-color:var(--border-g);background:var(--g-soft)}
+.contact-item.selected{border-color:var(--g1);background:var(--g-soft)}
+.ci-avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+.ci-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.ci-contact{font-size:12px;color:var(--ink3)}
+.ci-check{margin-left:auto;font-size:16px;color:var(--g1);opacity:0;transition:opacity .2s}
+.contact-item.selected .ci-check{opacity:1}
+
+/* ── AMOUNT DISPLAY ── */
+.amount-display-card{
+  background:var(--page);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:16px;text-align:center;
+  border:1.5px solid var(--border);transition:border-color .2s;
+}
+.amount-display-card.has-value{border-color:var(--border-g);background:var(--g-soft)}
+.amount-label-sm{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.amount-figure{
+  font-size:clamp(48px,8vw,72px);font-weight:700;
+  color:var(--ink);letter-spacing:-.06em;line-height:1;
+  margin-bottom:8px;
+}
+.amount-figure .cur{font-size:.42em;font-weight:500;color:var(--ink3);vertical-align:super;letter-spacing:0}
+.amount-figure.has-value .cur{color:var(--g1)}
+.amount-figure.has-value{color:var(--ink)}
+.amount-usdc{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:500;color:var(--g1);
+  background:rgba(30,107,50,.08);padding:4px 12px;border-radius:20px;
+  border:0.5px solid var(--border-g);
+}
+
+/* ── NUMPAD ── */
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.nk{
+  background:var(--page);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:14px 8px;
+  font-family:var(--font);font-size:20px;font-weight:500;color:var(--ink);
+  cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;min-height:54px;
+}
+.nk:hover{background:var(--g-soft);border-color:var(--border-g);color:var(--g1)}
+.nk:active{transform:scale(.97)}
+.nk.del{font-size:17px;color:var(--ink3)}
+
+/* ── NOTE FIELD ── */
+.note-field{
+  display:flex;align-items:center;gap:10px;
+  background:var(--page);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:14px 18px;
+  margin-bottom:0;cursor:text;transition:border-color .2s;
+}
+.note-field:focus-within{border-color:var(--g1);background:#fff}
+.note-icon{font-size:18px;color:var(--ink3);flex-shrink:0}
+.note-input{border:none;background:transparent;font-family:var(--font);font-size:14px;color:var(--ink);outline:none;flex:1}
+.note-input::placeholder{color:#A8B8A8}
+
+/* ── METHOD OPTIONS ── */
+.method-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.method-opt{
+  display:flex;align-items:center;gap:16px;
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;cursor:pointer;transition:all .2s;background:var(--white);
+  position:relative;
+}
+.method-opt:hover{border-color:var(--border-g);background:var(--g-soft)}
+.method-opt.selected{border-color:var(--g1);background:var(--g-soft);box-shadow:0 0 0 3px rgba(30,107,50,.07)}
+.mo-radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.method-opt.selected .mo-radio{background:var(--g1);border-color:var(--g1)}
+.mo-dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transition:opacity .2s}
+.method-opt.selected .mo-dot{opacity:1}
+.mo-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mo-email{background:rgba(30,107,50,.1);color:var(--g1)}
+.mo-wallet{background:rgba(0,82,255,.08);color:#0052FF}
+.mo-card{background:rgba(204,136,0,.1);color:#B8880A}
+.mo-body{flex:1}
+.mo-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.mo-desc{font-size:13px;color:var(--ink3)}
+.mo-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.badge-fast{background:var(--g-soft);color:var(--g1);border:0.5px solid var(--border-g)}
+.badge-fee{background:rgba(204,136,0,.1);color:#B8880A}
+.badge-rec{position:absolute;top:-10px;left:18px;font-size:10px;font-weight:700;background:var(--g1);color:#fff;padding:3px 10px;border-radius:20px}
+
+/* ── RECIPIENT PREVIEW (step 3+) ── */
+.recipient-preview{
+  display:flex;align-items:center;gap:12px;
+  background:var(--page);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:20px;
+  border:1.5px solid var(--border-g);
+}
+.rp-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:var(--g-soft);color:var(--g1);flex-shrink:0}
+.rp-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.rp-contact{font-size:12px;color:var(--ink3)}
+.rp-check{margin-left:auto;width:24px;height:24px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0}
+
+/* ── CTA BUTTON ── */
+.cta-btn{
+  width:100%;background:var(--g1);color:#fff;border:none;
+  border-radius:100px;padding:17px 28px;
+  font-family:var(--font);font-size:16px;font-weight:700;
+  cursor:pointer;transition:all .22s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  letter-spacing:-.01em;margin-top:20px;margin-bottom:14px;
+  box-shadow:0 6px 20px rgba(30,107,50,.2);
+}
+.cta-btn:hover{background:var(--g2);transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,107,50,.28)}
+.cta-btn:active{transform:translateY(0)}
+.cta-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── TRUST ROW ── */
+.trust-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink3)}
+.trust-item iconify-icon{font-size:13px;color:var(--g1)}
+.trust-sep{width:3px;height:3px;border-radius:50%;background:var(--border)}
+
+/* ── BACK LINK ── */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;margin-bottom:20px;transition:color .15s;background:none;border:none;font-family:var(--font);padding:0}
+.back-link:hover{color:var(--g1)}
+
+/* ── RIGHT COLUMN ── */
+.right-col{display:flex;flex-direction:column;gap:16px;position:sticky;top:82px}
+
+/* Summary card */
+.summary-card{padding:22px 24px}
+.summary-title{font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:6px}
+.summary-sub{font-size:13px;color:var(--ink3);margin-bottom:18px}
+
+/* Amount preview */
+.amount-preview{
+  text-align:center;padding:20px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+.ap-label{font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.ap-amount{font-size:36px;font-weight:700;color:var(--ink);letter-spacing:-.04em}
+.ap-amount.has-value{color:var(--g1)}
+.ap-amount .cur{font-size:.55em;font-weight:500;vertical-align:super}
+.ap-usdc{font-size:12px;color:var(--ink3);margin-top:4px}
+
+/* Summary rows */
+.sum-rows{display:flex;flex-direction:column;gap:0;margin-bottom:16px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.sum-row:last-child{border-bottom:none}
+.sr-key{font-size:13px;color:var(--ink3)}
+.sr-val{font-size:13px;font-weight:500;color:var(--ink)}
+.sr-val.green{color:var(--g1)}
+.sr-val.muted{color:var(--ink3)}
+.sr-val.empty{color:var(--ink3);font-style:italic;font-weight:400}
+
+/* How it works */
+.how-card{padding:20px 22px}
+.how-title{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:14px}
+.how-steps{display:flex;flex-direction:column;gap:12px}
+.how-step{display:flex;align-items:flex-start;gap:10px}
+.how-num{
+  width:22px;height:22px;border-radius:50%;background:var(--g-soft);
+  border:1px solid var(--border-g);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--g1);flex-shrink:0;margin-top:1px;
+}
+.how-text{font-size:13px;color:var(--ink3);line-height:1.5}
+.how-text strong{color:var(--ink2);font-weight:500}
+
+/* Secure card */
+.secure-card{padding:16px 20px;display:flex;align-items:flex-start;gap:12px}
+.secure-icon{width:34px;height:34px;border-radius:10px;background:var(--g-soft);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--g1);flex-shrink:0;margin-top:1px}
+.secure-title{font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:3px}
+.secure-desc{font-size:12px;color:var(--ink3);line-height:1.6}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .main{grid-template-columns:1fr;padding:0 20px 48px}
+  .right-col{position:static}
+  .breadcrumb,.page-title-wrap{padding-left:20px;padding-right:20px}
+  nav{padding:0 20px}
+}
+@media(max-width:520px){
+  .page-title{font-size:24px}
+  .form-body{padding:20px 16px 24px}
+  .step-progress{padding:16px 16px}
+  .sp-label{display:none}
+}
+</style>
+</head>
+<body>
+
+  <!-- TESTNET BANNER -->
+<div id="testnet-banner" style="background:#1E6B32;color:#fff;padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:500;position:relative;z-index:1000;">
+  <span style="width:7px;height:7px;border-radius:50%;background:#8DC63F;display:inline-block;flex-shrink:0;"></span>
+  PayLink is live on Arc Testnet — all transactions use test funds.
+  <a href="https://testnet.arcscan.app" target="_blank" style="color:#8DC63F;text-decoration:underline;">View explorer</a>
+  <button onclick="document.getElementById('testnet-banner').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:16px;position:absolute;right:16px;">×</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="home.html" class="nav-logo">pay<span>link</span></a>
+  <div class="nav-right">
+    <a href="#" class="nav-help">Help</a>
+    <div class="nav-secure">
+      <div class="secure-dot"></div>
+      Secured · Powered by Arc
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="home.html">Home</a>
+  <span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-current">Send money</span>
+</div>
+
+<!-- PAGE TITLE -->
+<div class="page-title-wrap">
+  <h1 class="page-title">Send money</h1>
+  <p class="page-subtitle">Send USDC to anyone using their email or phone number. Settles in under a second.</p>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <div class="card form-card">
+
+      <!-- STEP PROGRESS -->
+      <div class="step-progress" id="step-progress">
+        <div class="sp-item">
+          <div class="sp-num active" id="sn1">1</div>
+          <div class="sp-label active" id="sl1">Your identity</div>
+        </div>
+        <div class="sp-line" id="sline1"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn2">2</div>
+          <div class="sp-label wait" id="sl2">Recipient</div>
+        </div>
+        <div class="sp-line" id="sline2"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn3">3</div>
+          <div class="sp-label wait" id="sl3">Amount</div>
+        </div>
+        <div class="sp-line" id="sline3"></div>
+        <div class="sp-item">
+          <div class="sp-num wait" id="sn4">4</div>
+          <div class="sp-label wait" id="sl4">Payment</div>
+        </div>
+      </div>
+
+      <div class="form-body">
+
+        <!-- STEP 1: IDENTITY -->
+        <div class="step-panel active" id="step-1">
+          <div class="step-heading">Who are you?</div>
+          <div class="step-sub">Enter your email or phone number. We'll verify you with a quick one-time code.</div>
+          <div class="input-wrap">
+            <label class="input-label">Your email or phone number</label>
+            <input class="input-field" id="sender-input" type="text" placeholder="you@email.com or +234 800 000 0000" oninput="validateStep1()" autocomplete="email"/>
+            <div class="input-hint">A verification code will be sent. No account is created — your wallet is set up automatically in the background.</div>
+          </div>
+          <button class="cta-btn" id="s1-btn" onclick="nextStep()" disabled>
+            <iconify-icon icon="ph:paper-plane-right-bold" style="font-size:18px"></iconify-icon>
+            Send verification code
+          </button>
+          <div class="trust-row">
+            <div class="trust-item"><iconify-icon icon="ph:shield-check-bold"></iconify-icon>Wallet by Privy</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:lock-bold"></iconify-icon>No seed phrase</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:user-circle-bold"></iconify-icon>No account needed</div>
+          </div>
+        </div>
+
+        <!-- STEP 2: RECIPIENT -->
+        <div class="step-panel" id="step-2">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">Send to who?</div>
+          <div class="step-sub">Enter the recipient's email or phone. They'll be notified and receive payment instantly.</div>
+          <div class="input-wrap">
+            <label class="input-label">Recipient's email or phone</label>
+            <input class="input-field" id="recipient-input" type="text" placeholder="them@email.com or +44 700 000 0000" oninput="validateStep2()"/>
+          </div>
+          <div class="contacts-label">Recent contacts</div>
+          <div class="contacts-list">
+            <div class="contact-item" id="ci-1" onclick="selectContact('James K.','james@email.com','JK','ci-1')">
+              <div class="ci-avatar" style="background:rgba(30,107,50,.1);color:var(--g1)">JK</div>
+              <div><div class="ci-name">James K.</div><div class="ci-contact">james@email.com</div></div>
+              <iconify-icon icon="ph:check-bold" class="ci-check"></iconify-icon>
+            </div>
+            <div class="contact-item" id="ci-2" onclick="selectContact('Amara M.','amara@email.com','AM','ci-2')">
+              <div class="ci-avatar" style="background:rgba(255,180,0,.1);color:#CC8800">AM</div>
+              <div><div class="ci-name">Amara M.</div><div class="ci-contact">amara@email.com</div></div>
+              <iconify-icon icon="ph:check-bold" class="ci-check"></iconify-icon>
+            </div>
+            <div class="contact-item" id="ci-3" onclick="selectContact('Tolu L.','+234 801 234 5678','TL','ci-3')">
+              <div class="ci-avatar" style="background:rgba(100,130,255,.1);color:#6080FF">TL</div>
+              <div><div class="ci-name">Tolu L.</div><div class="ci-contact">+234 801 234 5678</div></div>
+              <iconify-icon icon="ph:check-bold" class="ci-check"></iconify-icon>
+            </div>
+          </div>
+          <button class="cta-btn" id="s2-btn" onclick="nextStep()" disabled>
+            Continue
+            <iconify-icon icon="ph:arrow-right-bold" style="font-size:18px"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- STEP 3: AMOUNT -->
+        <div class="step-panel" id="step-3">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">How much?</div>
+          <div class="step-sub">Enter the amount you'd like to send.</div>
+
+          <div class="recipient-preview" id="rp-preview">
+            <div class="rp-avatar" id="rp-avatar">JK</div>
+            <div>
+              <div class="rp-name" id="rp-name">James K.</div>
+              <div class="rp-contact" id="rp-contact">james@email.com</div>
+            </div>
+            <div class="rp-check"><iconify-icon icon="ph:check-bold"></iconify-icon></div>
+          </div>
+
+          <div class="amount-display-card" id="amount-card">
+            <div class="amount-label-sm">Amount to send</div>
+            <div class="amount-figure" id="amount-figure">
+              <span class="cur">$</span><span id="amount-val">0</span>
+            </div>
+            <span class="amount-usdc" id="amount-usdc" style="opacity:0">
+              <iconify-icon icon="ph:circles-three-bold" style="font-size:10px"></iconify-icon>
+              <span id="usdc-val">0.00</span> USDC · Arc Network
+            </span>
+          </div>
+
+          <div class="numpad">
+            <button class="nk" onclick="numpad('1')">1</button>
+            <button class="nk" onclick="numpad('2')">2</button>
+            <button class="nk" onclick="numpad('3')">3</button>
+            <button class="nk" onclick="numpad('4')">4</button>
+            <button class="nk" onclick="numpad('5')">5</button>
+            <button class="nk" onclick="numpad('6')">6</button>
+            <button class="nk" onclick="numpad('7')">7</button>
+            <button class="nk" onclick="numpad('8')">8</button>
+            <button class="nk" onclick="numpad('9')">9</button>
+            <button class="nk" onclick="numpad('.')">.</button>
+            <button class="nk" onclick="numpad('0')">0</button>
+            <button class="nk del" onclick="numpad('del')"><iconify-icon icon="ph:backspace-bold"></iconify-icon></button>
+          </div>
+
+          <div class="note-field">
+            <iconify-icon icon="ph:pencil-bold" class="note-icon"></iconify-icon>
+            <input class="note-input" id="note-input" type="text" placeholder="Add a note — what's this for? (optional)"/>
+          </div>
+
+          <button class="cta-btn" id="s3-btn" onclick="nextStep()" disabled>
+            Continue
+            <iconify-icon icon="ph:arrow-right-bold" style="font-size:18px"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- STEP 4: PAYMENT METHOD -->
+        <div class="step-panel" id="step-4">
+          <button class="back-link" onclick="prevStep()"><iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back</button>
+          <div class="step-heading">How are you paying?</div>
+          <div class="step-sub">Choose how you'd like to fund this payment.</div>
+
+          <div class="recipient-preview">
+            <div class="rp-avatar" id="rp-avatar-4">JK</div>
+            <div>
+              <div class="rp-name" id="rp-name-4">James K.</div>
+              <div class="rp-contact">Sending <strong id="send-amount-4" style="color:var(--g1)">$0.00</strong> USDC</div>
+            </div>
+            <div class="rp-check"><iconify-icon icon="ph:check-bold"></iconify-icon></div>
+          </div>
+
+          <div class="method-list">
+            <div class="method-opt selected" id="mo-email" onclick="selectMethod('email',this)">
+              <div class="badge-rec">Recommended</div>
+              <div class="mo-radio"><div class="mo-dot"></div></div>
+              <div class="mo-icon mo-email"><iconify-icon icon="ph:envelope-bold"></iconify-icon></div>
+              <div class="mo-body">
+                <div class="mo-title">Email or phone OTP</div>
+                <div class="mo-desc">Wallet created automatically — no crypto needed</div>
+              </div>
+              <span class="mo-badge badge-fast">$0 fee</span>
+            </div>
+            <div class="method-opt" id="mo-wallet" onclick="selectMethod('wallet',this)">
+              <div class="mo-radio"><div class="mo-dot"></div></div>
+              <div class="mo-icon mo-wallet"><iconify-icon icon="ph:wallet-bold"></iconify-icon></div>
+              <div class="mo-body">
+                <div class="mo-title">Crypto wallet</div>
+                <div class="mo-desc">MetaMask, Coinbase Wallet, WalletConnect</div>
+              </div>
+            </div>
+            <div class="method-opt" id="mo-card" onclick="selectMethod('card',this)">
+              <div class="mo-radio"><div class="mo-dot"></div></div>
+              <div class="mo-icon mo-card"><iconify-icon icon="ph:credit-card-bold"></iconify-icon></div>
+              <div class="mo-body">
+                <div class="mo-title">Card or bank transfer</div>
+                <div class="mo-desc">Debit card, bank transfer, mobile money</div>
+              </div>
+              <span class="mo-badge badge-fee">~1.5%</span>
+            </div>
+          </div>
+
+          <button class="cta-btn" onclick="submitPayment()" style="margin-top:4px">
+            <iconify-icon icon="ph:lock-bold" style="font-size:18px"></iconify-icon>
+            <span id="send-btn-text">Send money</span>
+          </button>
+          <div class="trust-row">
+            <div class="trust-item"><iconify-icon icon="ph:shield-check-bold"></iconify-icon>256-bit encrypted</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:lock-bold"></iconify-icon>Non-custodial</div>
+            <div class="trust-sep"></div>
+            <div class="trust-item"><iconify-icon icon="ph:circles-three-bold"></iconify-icon>Powered by Arc</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- SEND SUMMARY -->
+    <div class="card summary-card">
+      <div class="summary-title">Payment summary</div>
+      <div class="summary-sub">Details update as you go</div>
+
+      <div class="amount-preview">
+        <div class="ap-label">You are sending</div>
+        <div class="ap-amount" id="sidebar-amount">
+          <span class="cur">$</span><span id="sidebar-amount-val">—</span>
+        </div>
+        <div class="ap-usdc" id="sidebar-usdc" style="opacity:0">
+          <span id="sidebar-usdc-val">0.00</span> USDC · Arc Network
+        </div>
+      </div>
+
+      <div class="sum-rows">
+        <div class="sum-row">
+          <span class="sr-key">To</span>
+          <span class="sr-val" id="sb-to"><span class="sr-val empty">Not set yet</span></span>
+        </div>
+        <div class="sum-row">
+          <span class="sr-key">For</span>
+          <span class="sr-val" id="sb-for"><span class="sr-val empty">No note</span></span>
+        </div>
+        <div class="sum-row">
+          <span class="sr-key">Gas fee</span>
+          <span class="sr-val green">$0.00</span>
+        </div>
+        <div class="sum-row">
+          <span class="sr-key">Network</span>
+          <span class="sr-val">Arc · USDC</span>
+        </div>
+        <div class="sum-row">
+          <span class="sr-key">Settlement</span>
+          <span class="sr-val green">&lt;1 second</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="card how-card">
+      <div class="how-title">How it works</div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-text"><strong>Verify yourself</strong> with a one-time code sent to your email or phone.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-text"><strong>Enter recipient details</strong> — just their email or phone. No wallet address needed.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-text"><strong>Payment settles</strong> in under a second on Arc. Recipient is notified instantly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURE -->
+    <div class="card secure-card">
+      <div class="secure-icon"><iconify-icon icon="ph:shield-check-bold"></iconify-icon></div>
+      <div>
+        <div class="secure-title">Secure & non-custodial</div>
+        <div class="secure-desc">PayLink never holds your funds. Every payment settles directly on Arc — transparent, verifiable, and instant.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+let amountStr = '0';
+let selectedRecipient = {name:'',contact:'',initials:''};
+let selectedMethod = 'email';
+
+/* ── STEP MANAGEMENT ── */
+function updateProgress(){
+  for(let i=1;i<=4;i++){
+    const num = document.getElementById('sn'+i);
+    const lbl = document.getElementById('sl'+i);
+    const line = document.getElementById('sline'+i);
+    if(i < currentStep){
+      num.className='sp-num done';
+      num.innerHTML='<iconify-icon icon="ph:check-bold" style="font-size:12px"></iconify-icon>';
+      lbl.className='sp-label done';
+      if(line) line.className='sp-line done';
+    } else if(i === currentStep){
+      num.className='sp-num active';
+      num.textContent=i;
+      lbl.className='sp-label active';
+      if(line) line.className='sp-line';
+    } else {
+      num.className='sp-num wait';
+      num.textContent=i;
+      lbl.className='sp-label wait';
+      if(line) line.className='sp-line';
+    }
+  }
+}
+
+function showStep(n){
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  currentStep=n;
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(){ if(currentStep<4) showStep(currentStep+1); else submitPayment(); }
+function prevStep(){ if(currentStep>1) showStep(currentStep-1); }
+
+/* ── STEP 1 VALIDATION ── */
+function validateStep1(){
+  const v=document.getElementById('sender-input').value.trim();
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)||/^\+?[\d\s\-()]{7,}$/.test(v);
+  document.getElementById('s1-btn').disabled=!ok;
+}
+
+/* ── STEP 2 ── */
+function validateStep2(){
+  const v=document.getElementById('recipient-input').value.trim();
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)||/^\+?[\d\s\-()]{7,}$/.test(v);
+  if(ok){
+    const initials=v.slice(0,2).toUpperCase();
+    selectedRecipient={name:v,contact:v,initials};
+    updateSidebar();
+  }
+  document.getElementById('s2-btn').disabled=!ok;
+  document.querySelectorAll('.contact-item').forEach(c=>c.classList.remove('selected'));
+}
+
+function selectContact(name,contact,initials,id){
+  selectedRecipient={name,contact,initials};
+  document.getElementById('recipient-input').value=contact;
+  document.querySelectorAll('.contact-item').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(id).classList.add('selected');
+  document.getElementById('s2-btn').disabled=false;
+  updateSidebar();
+}
+
+/* ── STEP 3 NUMPAD ── */
+function numpad(key){
+  if(key==='del'){
+    amountStr=amountStr.length>1?amountStr.slice(0,-1):'0';
+  } else if(key==='.'){
+    if(!amountStr.includes('.')) amountStr+='.';
+  } else {
+    if(amountStr==='0') amountStr=key;
+    else if(amountStr.includes('.')&&amountStr.split('.')[1].length>=2) return;
+    else amountStr+=key;
+  }
+  const amt=parseFloat(amountStr)||0;
+  document.getElementById('amount-val').textContent=amountStr;
+  document.getElementById('usdc-val').textContent=amt.toFixed(2);
+
+  const fig=document.getElementById('amount-figure');
+  const card=document.getElementById('amount-card');
+  const usdc=document.getElementById('amount-usdc');
+  if(amt>0){
+    fig.classList.add('has-value');
+    card.classList.add('has-value');
+    usdc.style.opacity='1';
+  } else {
+    fig.classList.remove('has-value');
+    card.classList.remove('has-value');
+    usdc.style.opacity='0';
+  }
+  document.getElementById('s3-btn').disabled=amt<=0;
+  updateSidebar();
+}
+
+/* ── STEP 4 ── */
+function selectMethod(type,el){
+  selectedMethod=type;
+  document.querySelectorAll('.method-opt').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+/* ── SIDEBAR UPDATE ── */
+function updateSidebar(){
+  const amt=parseFloat(amountStr)||0;
+  const amtEl=document.getElementById('sidebar-amount-val');
+  const usdcEl=document.getElementById('sidebar-usdc');
+  const usdcVal=document.getElementById('sidebar-usdc-val');
+
+  if(amt>0){
+    amtEl.textContent=amt.toFixed(2);
+    document.getElementById('sidebar-amount').classList.add('has-value');
+    usdcEl.style.opacity='1';
+    usdcVal.textContent=amt.toFixed(2);
+  } else {
+    amtEl.textContent='—';
+    document.getElementById('sidebar-amount').classList.remove('has-value');
+    usdcEl.style.opacity='0';
+  }
+
+  const toEl=document.getElementById('sb-to');
+  if(selectedRecipient.name){
+    toEl.innerHTML=`<span style="font-weight:500;color:var(--ink)">${selectedRecipient.name}</span>`;
+  } else {
+    toEl.innerHTML='<span class="sr-val empty">Not set yet</span>';
+  }
+
+  const noteVal=document.getElementById('note-input')?.value?.trim();
+  const forEl=document.getElementById('sb-for');
+  if(noteVal){
+    forEl.innerHTML=`<span style="font-weight:500;color:var(--ink)">${noteVal}</span>`;
+  } else {
+    forEl.innerHTML='<span class="sr-val empty">No note</span>';
+  }
+
+  // Update step 4 recipient preview
+  if(selectedRecipient.name){
+    const av4=document.getElementById('rp-avatar-4');
+    const nm4=document.getElementById('rp-name-4');
+    if(av4) av4.textContent=selectedRecipient.initials;
+    if(nm4) nm4.textContent=selectedRecipient.name;
+  }
+  const sa4=document.getElementById('send-amount-4');
+  if(sa4) sa4.textContent='$'+(amt>0?amt.toFixed(2):'0.00');
+
+  // Update step 3 recipient preview
+  const rpAv=document.getElementById('rp-avatar');
+  const rpNm=document.getElementById('rp-name');
+  const rpCt=document.getElementById('rp-contact');
+  if(rpAv&&selectedRecipient.initials) rpAv.textContent=selectedRecipient.initials;
+  if(rpNm&&selectedRecipient.name) rpNm.textContent=selectedRecipient.name;
+  if(rpCt&&selectedRecipient.contact) rpCt.textContent=selectedRecipient.contact;
+
+  // Send button text
+  const sbtn=document.getElementById('send-btn-text');
+  if(sbtn) sbtn.textContent=amt>0?`Send $${amt.toFixed(2)}`:'Send money';
+}
+
+// Note field live update
+document.addEventListener('DOMContentLoaded',()=>{
+  const note=document.getElementById('note-input');
+  if(note) note.addEventListener('input',updateSidebar);
+});
+
+function submitPayment(){
+  window.location.href='paylink-otp.html';
+}
+
+updateProgress();
+</script>
+</body>
+</html>
