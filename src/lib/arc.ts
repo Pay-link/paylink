@@ -25,7 +25,7 @@ export async function sendPayment({
   const start = Date.now()
 
   try {
-    const adapter = createViemAdapterFromProvider({ provider })
+    const adapter = await createViemAdapterFromProvider({ provider })
 
     const result = await kit.send({
       from: {
@@ -68,7 +68,7 @@ export async function estimatePayment({
   amount,
 }: SendPaymentParams) {
   try {
-    const adapter = createViemAdapterFromProvider({ provider })
+    const adapter = await createViemAdapterFromProvider({ provider })
 
     const estimate = await kit.estimateSend({
       from: {
