@@ -1,5 +1,5 @@
 import { AppKit } from '@circle-fin/app-kit'
-import { createViemAdapter } from '@circle-fin/adapter-viem-v2'
+import { createViemAdapterFromWalletClient } from '@circle-fin/adapter-viem-v2'
 import type { WalletClient } from 'viem'
 
 // Single AppKit instance
@@ -28,7 +28,7 @@ export async function sendPayment({
 
   try {
     // Create Viem adapter from Privy wallet client
-    const adapter = createViemAdapter({ walletClient })
+    const adapter = createViemAdapterFromWalletClient({ walletClient })
 
     // Send USDC on Arc Testnet
     const result = await kit.send({
@@ -72,7 +72,7 @@ export async function estimatePayment({
   amount,
 }: SendPaymentParams) {
   try {
-    const adapter = createViemAdapter({ walletClient })
+    const adapter = createViemAdapterFromWalletClient({ walletClient })
 
     const estimate = await kit.estimateSend({
       from: {
