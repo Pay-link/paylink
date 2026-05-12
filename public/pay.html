@@ -518,17 +518,17 @@ nav{
           <iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back to payment options
         </button>
         <div class="wallet-list">
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(255,140,0,.12);color:#FF8C00"><iconify-icon icon="ph:fox-logo-bold"></iconify-icon></div>
             <div><div class="w-name">MetaMask</div><div class="w-desc">Connect via browser extension</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
           </div>
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(0,82,255,.08);color:#0052FF"><iconify-icon icon="ph:wallet-bold"></iconify-icon></div>
             <div><div class="w-name">Coinbase Wallet</div><div class="w-desc">Connect your Coinbase Wallet</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
           </div>
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(0,120,200,.08);color:#0078C8"><iconify-icon icon="ph:qr-code-bold"></iconify-icon></div>
             <div><div class="w-name">WalletConnect</div><div class="w-desc">Scan QR with any compatible wallet</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
@@ -547,17 +547,17 @@ nav{
           <iconify-icon icon="ph:arrow-left-bold"></iconify-icon>Back to payment options
         </button>
         <div class="wallet-list" style="margin-bottom:20px">
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(204,136,0,.1);color:#B8880A"><iconify-icon icon="ph:credit-card-bold"></iconify-icon></div>
             <div><div class="w-name">Debit or credit card</div><div class="w-desc">Visa, Mastercard — global · ~1.5% fee</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
           </div>
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(30,107,50,.1);color:var(--g1)"><iconify-icon icon="ph:bank-bold"></iconify-icon></div>
             <div><div class="w-name">Bank transfer</div><div class="w-desc">GTBank, Access, Zenith, SEPA, ACH · ~0.5%</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
           </div>
-          <div class="wallet-opt" onclick="goToProcessing()">
+          <div class="wallet-opt" onclick="connectMetaMask()">
             <div class="w-icon" style="background:rgba(100,150,255,.08);color:#6496FF"><iconify-icon icon="ph:device-mobile-bold"></iconify-icon></div>
             <div><div class="w-name">Mobile money</div><div class="w-desc">MTN MoMo, Airtel, M-Pesa, Opay · ~0.5%</div></div>
             <iconify-icon icon="ph:arrow-right-bold" style="font-size:16px;color:var(--ink3)"></iconify-icon>
@@ -664,7 +664,53 @@ nav{
 </div><!-- /main -->
 
 <script>
-let connectedWallet = null;`nlet selectedMethod = 'email';
+let connectedWallet = null;
+async function connectMetaMask() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask is not installed. Please install MetaMask from metamask.io');
+    return;
+  }
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (accounts.length > 0) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x40E' }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x40E',
+              chainName: 'Arc Testnet',
+              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+              rpcUrls: ['https://rpc.testnet.arc.network'],
+              blockExplorerUrls: ['https://testnet.arcscan.app'],
+            }],
+          });
+        }
+      }
+      goToProcessing();
+    }
+  } catch (err) {
+    alert('Failed to connect: ' + err.message);
+  }
+}
+
+async function connectCoinbase() {
+  if (typeof window.ethereum !== 'undefined') {
+    await connectMetaMask();
+  } else {
+    alert('No wallet detected. Please install MetaMask or Coinbase Wallet.');
+  }
+}
+
+function connectWalletConnect() {
+  alert('WalletConnect coming soon. Please use MetaMask or Email OTP.');
+}
+let selectedMethod = 'email';
 let otpVal = '';
 let timerSecs = 42;
 let timerInterval;
@@ -768,6 +814,8 @@ function goToProcessing(){
 </script>
 </body>
 </html>
+
+
 
 
 

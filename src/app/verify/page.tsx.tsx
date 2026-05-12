@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Nav } from '@/components/layout/Nav'
 
 function VerifyContent() {
   const { authenticated, login, ready } = usePrivy()
@@ -13,6 +12,7 @@ function VerifyContent() {
   const [otp, setOtp] = useState('')
   const [timer, setTimer] = useState(42)
   const [canResend, setCanResend] = useState(false)
+  const [verifying, setVerifying] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -26,42 +26,68 @@ function VerifyContent() {
     return () => clearInterval(interval)
   }, [])
 
+  // Watch for auth changes after login
   useEffect(() => {
     if (ready && authenticated) {
       if (flow === 'create') router.push('/dashboard')
+      else if (flow === 'send') router.push('/success')
       else router.push('/success')
     }
-  }, [ready, authenticated])
+  }, [ready, authenticated, flow])
+
+  const handleVerify = async () => {
+    setVerifying(true)
+    try {
+      await login()
+    } catch (err) {
+      console.error(err)
+      setVerifying(false)
+    }
+  }
 
   const handleOtp = (val: string) => {
     const raw = val.replace(/\D/g, '').slice(0, 6)
     setOtp(raw)
-    if (raw.length === 6) setTimeout(() => login(), 300)
+    if (raw.length === 6) setTimeout(handleVerify, 300)
   }
 
   return (
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
-      <Nav variant="app" />
+      {/* Nav */}
+      <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
+        <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+          pay<span style={{ color: 'var(--g1)' }}>link</span>
+        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
+          Arc Testnet
+        </div>
+      </nav>
+
       <div style={{ minHeight: 'calc(100vh - 62px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
         <div style={{ width: '100%', maxWidth: 480 }}>
+          {/* Icon header */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16 }}>✉️</div>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16, boxShadow: '0 0 0 8px rgba(30,107,50,.05)' }}>✉️</div>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6, textAlign: 'center' }}>Check your inbox</h1>
             <p style={{ fontSize: 15, color: 'var(--ink3)', textAlign: 'center', lineHeight: 1.6 }}>We sent a 6-digit verification code to your email or phone</p>
           </div>
 
+          {/* Card */}
           <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.06)', padding: '32px 36px', marginBottom: 16 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 14, display: 'block' }}>Enter 6-digit code</label>
 
-            <div style={{ display: 'flex', gap: 10, marginBottom: 8 }} onClick={() => inputRef.current?.focus()}>
+            <div style={{ display: 'flex', gap: 10, marginBottom: 8, cursor: 'text' }} onClick={() => inputRef.current?.focus()}>
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} style={{
-                  flex: 1, height: 62, borderRadius: 14, cursor: 'text',
+                  flex: 1, height: 62, borderRadius: 14,
                   background: i < otp.length ? 'var(--g-soft)' : 'var(--page)',
                   border: `1.5px solid ${i === otp.length ? 'var(--g1)' : i < otp.length ? 'var(--g1)' : 'var(--border)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 28, fontWeight: 700, color: i < otp.length ? 'var(--g1)' : 'var(--ink)',
+                  fontSize: 28, fontWeight: 700,
+                  color: i < otp.length ? 'var(--g1)' : 'var(--ink)',
                   boxShadow: i === otp.length ? '0 0 0 3px rgba(30,107,50,.08)' : 'none',
+                  transition: 'all .2s',
                 }}>{otp[i] || ''}</div>
               ))}
             </div>
@@ -70,7 +96,7 @@ function VerifyContent() {
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0 }} />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 20px', fontSize: 13, color: 'var(--ink3)' }}>
-              <span>Resend in <strong style={{ color: 'var(--ink2)' }}>0:{timer.toString().padStart(2,'0')}</strong></span>
+              <span>Resend in <strong style={{ color: 'var(--ink2)' }}>0:{timer.toString().padStart(2, '0')}</strong></span>
               <button disabled={!canResend} onClick={() => { setOtp(''); setTimer(42); setCanResend(false) }}
                 style={{ color: canResend ? 'var(--g1)' : 'var(--ink3)', fontWeight: 500, cursor: canResend ? 'pointer' : 'default', background: 'none', border: 'none', fontFamily: 'var(--font)', fontSize: 13 }}>
                 Resend code
@@ -84,10 +110,25 @@ function VerifyContent() {
               </div>
             </div>
 
-            <button disabled={otp.length < 6} onClick={() => login()}
-              style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: otp.length < 6 ? 'not-allowed' : 'pointer', opacity: otp.length < 6 ? .4 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)' }}>
-              ✓ Verify & continue
+            <button
+              disabled={otp.length < 6 || verifying}
+              onClick={handleVerify}
+              style={{
+                width: '100%', background: 'var(--g1)', color: '#fff', border: 'none',
+                borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700,
+                cursor: otp.length < 6 || verifying ? 'not-allowed' : 'pointer',
+                opacity: otp.length < 6 || verifying ? .4 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)',
+              }}>
+              {verifying ? '⏳ Verifying...' : '✓ Verify & continue'}
             </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
+              {['256-bit encrypted', 'Wallet by Privy', 'Powered by Arc'].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--ink3)' }}>🛡 {item}</div>
+              ))}
+            </div>
           </div>
 
           <div style={{ textAlign: 'center', fontSize: 13, color: 'var(--ink3)' }}>
@@ -98,6 +139,10 @@ function VerifyContent() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
+      `}</style>
     </div>
   )
 }
