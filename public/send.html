@@ -22,7 +22,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
 
 /* ── NAV ── */
 nav{
-  position:sticky;top:0;z-index:100;height:62px;
+  position:relative;z-index:100;height:62px;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 40px;
   background:rgba(255,255,255,0.92);
@@ -783,10 +783,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 function submitPayment(){
-  window.location.href='paylink-otp.html';
+  window.location.href='otp.html';
 }
 
 updateProgress();
 </script>
 </body>
 </html>
+
+
+

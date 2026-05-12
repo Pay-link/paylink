@@ -24,7 +24,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
 
 /* ══ NAV ══ */
 nav{
-  position:sticky;top:0;z-index:100;
+  position:relative;z-index:100;
   height:62px;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 40px;
@@ -664,7 +664,7 @@ nav{
 </div><!-- /main -->
 
 <script>
-let selectedMethod = 'email';
+let connectedWallet = null;`nlet selectedMethod = 'email';
 let otpVal = '';
 let timerSecs = 42;
 let timerInterval;
@@ -763,8 +763,13 @@ function goToProcessing(){
       }
     },delay);
   });
-  setTimeout(()=>window.location.href='paylink-success.html',2900);
+  setTimeout(()=>window.location.href='success.html',2900);
 }
 </script>
 </body>
 </html>
+
+
+
+
+

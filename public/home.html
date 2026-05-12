@@ -500,7 +500,29 @@ footer{
   .float-tag{display:none}
 }
 </style>
-</head>
+<script>
+// Privy auth detection
+(function() {
+  function checkAuth() {
+    try {
+      const privyToken = localStorage.getItem('privy:token') || 
+                         sessionStorage.getItem('privy:token') ||
+                         document.cookie.includes('privy-token');
+      const navCtas = document.getElementById('nav-ctas');
+      const navDashboard = document.getElementById('nav-dashboard');
+      if (privyToken) {
+        if (navCtas) navCtas.style.display = 'none';
+        if (navDashboard) navDashboard.style.display = 'flex';
+      } else {
+        if (navCtas) navCtas.style.display = 'flex';
+        if (navDashboard) navDashboard.style.display = 'none';
+      }
+    } catch(e) {}
+  }
+  document.addEventListener('DOMContentLoaded', checkAuth);
+  window.addEventListener('storage', checkAuth);
+})();
+</script></head>
 <body>
 
   <!-- TESTNET BANNER -->
@@ -520,14 +542,14 @@ footer{
     <a href="#app">App</a>
   </div>
   <div class="nav-right">
-    <a href="/send.html" class="btn-pill btn-ghost" style="border-color:var(--border-g);color:var(--g1)">
+    <div id="nav-dashboard" style="display:none;align-items:center;gap:10px"><a href="/dashboard.html" class="btn-pill btn-dark">Dashboard</a></div><span id="nav-ctas" style="display:flex;align-items:center;gap:10px"><a href="/send.html" class="btn-pill btn-ghost" style="border-color:var(--border-g);color:var(--g1)">
       <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
       Send money
     </a>
     <a href="/create.html" class="btn-pill btn-dark">
       <iconify-icon icon="ph:link-bold"></iconify-icon>
       Create link
-    </a>
+    </a></span>
   </div>
 </nav>
 
@@ -1029,6 +1051,11 @@ window.addEventListener('scroll', () => {
 </script>
 </body>
 </html>
+
+
+
+
+
 
 
 

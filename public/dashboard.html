@@ -33,7 +33,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
   background:var(--white);
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
-  position:fixed;top:37px;left:0;bottom:0;z-index:50;
+  position:relative;left:0;bottom:0;z-index:50;
   overflow-y:auto;
 }
 .sidebar::-webkit-scrollbar{display:none}
@@ -92,7 +92,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
 
 /* ══ TOP BAR ══ */
 .topbar{
-  position:sticky;top:0;z-index:40;
+  position:relative;z-index:40;
   height:60px;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 32px;
@@ -446,15 +446,15 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
         <iconify-icon icon="ph:squares-four-bold"></iconify-icon>
         Dashboard
       </a>
-      <a href="paylink-send-v2.html" class="nav-item">
+      <a href="send.html" class="nav-item">
         <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
         Send money
       </a>
-      <a href="paylink-create-v2.html" class="nav-item">
+      <a href="create.html" class="nav-item">
         <iconify-icon icon="ph:link-bold"></iconify-icon>
         Create link
       </a>
-      <a href="paylink-pay-v4.html" class="nav-item">
+      <a href="pay.html" class="nav-item">
         <iconify-icon icon="ph:qr-code-bold"></iconify-icon>
         Pay a link
       </a>
@@ -469,7 +469,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
         <iconify-icon icon="ph:link-simple-bold"></iconify-icon>
         My links
       </a>
-      <a href="paylink-bank-v2.html" class="nav-item">
+      <a href="bank.html" class="nav-item">
         <iconify-icon icon="ph:bank-bold"></iconify-icon>
         Bank settings
       </a>
@@ -561,11 +561,11 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
 
       <!-- QUICK ACTIONS -->
       <div class="quick-actions">
-        <a href="paylink-send-v2.html" class="qa-btn">
+        <a href="send.html" class="qa-btn">
           <div class="qa-icon qa-send"><iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon></div>
           <span class="qa-label">Send</span>
         </a>
-        <a href="paylink-create-v2.html" class="qa-btn">
+        <a href="create.html" class="qa-btn">
           <div class="qa-icon qa-request"><iconify-icon icon="ph:link-bold"></iconify-icon></div>
           <span class="qa-label">Request</span>
         </a>
@@ -592,26 +592,26 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
           </div>
           <div class="card" style="margin-bottom:20px">
             <div class="fav-list">
-              <div class="fav-item" onclick="window.location.href='paylink-send-v2.html'">
+              <div class="fav-item" onclick="window.location.href='send.html'">
                 <div class="fav-avatar" style="background:rgba(30,107,50,.12);color:var(--g1)">
                   JK
                   <div class="fav-online"></div>
                 </div>
                 <div class="fav-name">James K.</div>
               </div>
-              <div class="fav-item" onclick="window.location.href='paylink-send-v2.html'">
+              <div class="fav-item" onclick="window.location.href='send.html'">
                 <div class="fav-avatar" style="background:rgba(255,180,0,.12);color:#CC8800">AM</div>
                 <div class="fav-name">Amara M.</div>
               </div>
-              <div class="fav-item" onclick="window.location.href='paylink-send-v2.html'">
+              <div class="fav-item" onclick="window.location.href='send.html'">
                 <div class="fav-avatar" style="background:rgba(100,130,255,.12);color:#6080FF">TL</div>
                 <div class="fav-name">Tolu L.</div>
               </div>
-              <div class="fav-item" onclick="window.location.href='paylink-send-v2.html'">
+              <div class="fav-item" onclick="window.location.href='send.html'">
                 <div class="fav-avatar" style="background:rgba(220,50,50,.1);color:#CC2020">RC</div>
                 <div class="fav-name">Rita C.</div>
               </div>
-              <div class="fav-item" onclick="window.location.href='paylink-send-v2.html'">
+              <div class="fav-item" onclick="window.location.href='send.html'">
                 <div class="fav-avatar" style="background:rgba(0,150,200,.1);color:#0096C8">SK</div>
                 <div class="fav-name">Sam K.</div>
               </div>
@@ -739,7 +739,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
           <!-- MY LINKS -->
           <div class="section-header" style="margin-top:20px">
             <div class="section-title">My active links</div>
-            <a href="paylink-create-v2.html" class="section-link">Create new</a>
+            <a href="create.html" class="section-link">Create new</a>
           </div>
           <div class="card">
             <div class="link-item">
@@ -905,11 +905,11 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
       <iconify-icon icon="ph:squares-four-bold" class="bt-icon"></iconify-icon>
       <span class="bt-label">Home</span>
     </a>
-    <a href="paylink-send-v2.html" class="bt-item">
+    <a href="send.html" class="bt-item">
       <iconify-icon icon="ph:paper-plane-right-bold" class="bt-icon"></iconify-icon>
       <span class="bt-label">Send</span>
     </a>
-    <a href="paylink-create-v2.html" class="bt-item">
+    <a href="create.html" class="bt-item">
       <iconify-icon icon="ph:link-bold" class="bt-icon"></iconify-icon>
       <span class="bt-label">Request</span>
     </a>
@@ -1021,3 +1021,5 @@ document.querySelectorAll('.link-action-btn').forEach(btn=>{
 </script>
 </body>
 </html>
+
+

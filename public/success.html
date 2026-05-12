@@ -22,7 +22,7 @@ html,body{min-height:100%;font-family:var(--font);background:var(--page);color:v
 
 /* ── NAV ── */
 nav{
-  position:sticky;top:0;z-index:100;height:62px;
+  position:relative;z-index:100;height:62px;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 40px;background:rgba(255,255,255,0.92);
   backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
@@ -227,7 +227,7 @@ nav{
 <nav>
   <a href="home.html" class="nav-logo">pay<span>link</span></a>
   <div class="nav-right">
-    <a href="paylink-send-v2.html" class="nav-btn">
+    <a href="send.html" class="nav-btn">
       <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
       Send again
     </a>
@@ -366,7 +366,7 @@ nav{
         </div>
 
         <!-- BOTTOM CTAS -->
-        <button class="cta-btn" onclick="window.location.href='paylink-send-v2.html'">
+        <button class="cta-btn" onclick="window.location.href='send.html'">
           <iconify-icon icon="ph:paper-plane-right-bold" style="font-size:18px"></iconify-icon>
           Send another payment
         </button>
@@ -418,12 +418,12 @@ nav{
     <div class="card next-card">
       <div class="next-title">What would you like to do?</div>
       <div class="next-items">
-        <a href="paylink-send-v2.html" class="next-item">
+        <a href="send.html" class="next-item">
           <div class="ni-icon"><iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon></div>
           <div><div class="ni-title">Send another payment</div><div class="ni-desc">Pay someone else instantly</div></div>
           <iconify-icon icon="ph:arrow-right-bold" class="ni-arrow"></iconify-icon>
         </a>
-        <a href="paylink-create-v2.html" class="next-item">
+        <a href="create.html" class="next-item">
           <div class="ni-icon"><iconify-icon icon="ph:link-bold"></iconify-icon></div>
           <div><div class="ni-title">Create a payment link</div><div class="ni-desc">Request money from anyone</div></div>
           <iconify-icon icon="ph:arrow-right-bold" class="ni-arrow"></iconify-icon>
@@ -492,3 +492,5 @@ function copyReceipt(){
 </script>
 </body>
 </html>
+
+
