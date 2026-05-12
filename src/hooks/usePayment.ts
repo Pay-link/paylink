@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { createWalletClient, custom } from 'viem'
 import { sendPayment, estimatePayment } from '@/lib/arc'
 import type { SendPaymentResult } from '@/lib/arc'
 
@@ -38,50 +37,38 @@ export function usePayment(): UsePaymentReturn {
       setStatus('connecting')
       setError(null)
 
-      // Login if not authenticated
       if (!authenticated) {
         await login()
         return
       }
 
-      // Get the embedded wallet
       const embeddedWallet = wallets.find(w => w.walletClientType === 'privy')
 
       if (!embeddedWallet) {
         throw new Error('No embedded wallet found. Please try again.')
       }
 
-      // Switch to Arc Testnet
       await embeddedWallet.switchChain(1038)
 
-      // Get the Ethereum provider from Privy
       const provider = await embeddedWallet.getEthereumProvider()
-
-      // Create Viem wallet client from Privy provider
-      const walletClient = createWalletClient({
-        transport: custom(provider),
-      })
 
       setStatus('estimating')
 
-      // Estimate first (optional but good UX)
       await estimatePayment({
-        walletClient,
+        provider,
         recipientAddress,
         amount,
       })
 
       setStatus('sending')
 
-      // Execute the payment via Arc App Kit
       const paymentResult = await sendPayment({
-        walletClient,
+        provider,
         recipientAddress,
         amount,
       })
 
       if (paymentResult.success) {
-        // Record transaction in Supabase
         await fetch('/api/transactions/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
