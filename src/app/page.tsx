@@ -86,6 +86,7 @@ let charIndex = 0;
 let started = false;
 
 function typeChar(){
+  if(!cursor) return;
   if(charIndex < fullText.length){
     const ch = fullText[charIndex];
     if(ch === '\n'){
