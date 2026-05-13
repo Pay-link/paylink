@@ -12,7 +12,7 @@ import { Icon } from '@iconify/react'
 type Step = 1 | 2 | 3 | 4
 
 export default function SendPage() {
-  const { authenticated, login, ready } = usePrivy()
+  const { authenticated, ready } = usePrivy()
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
   const [senderContact, setSenderContact] = useState('')
@@ -21,12 +21,14 @@ export default function SendPage() {
   const [note, setNote] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('email_otp')
 
+  // Skip Identity step for already-authenticated users
   useEffect(() => {
-    if (ready && !authenticated) login()
+    if (ready && authenticated) setStep(2)
   }, [ready, authenticated])
 
   const nextStep = () => setStep(s => Math.min(s + 1, 4) as Step)
-  const prevStep = () => setStep(s => Math.max(s - 1, 1) as Step)
+  // Authenticated users can't go back past step 2 (Identity already done)
+  const prevStep = () => setStep(s => Math.max(s - 1, authenticated ? 2 : 1) as Step)
 
   const numpad = (key: string) => {
     setAmountStr(prev => {
@@ -109,7 +111,9 @@ export default function SendPage() {
               {/* STEP 2 */}
               {step === 2 && (
                 <div>
-                  <button onClick={prevStep} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>
+                  {!authenticated && (
+                    <button onClick={prevStep} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>
+                  )}
                   <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Send to who?</div>
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Enter the recipient's email or phone number.</div>
                   <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 8, display: 'block' }}>Recipient's email or phone</label>
