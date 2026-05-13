@@ -196,7 +196,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div style={{ padding: '24px 20px 60px' }} className="dash-content">
+        <div style={{ padding: '24px 20px 80px' }} className="dash-content">
 
           {/* Balance card */}
           <div style={{ background: 'var(--g1)', borderRadius: 24, padding: '24px 24px', marginBottom: 20, position: 'relative', overflow: 'hidden' }}>

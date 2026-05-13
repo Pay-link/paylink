@@ -57,7 +57,7 @@ export default function SendPage() {
         .send-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 82px; }
         @media (max-width: 768px) {
           .send-page-header { padding: 16px 16px 20px; }
-          .send-two-col { grid-template-columns: 1fr; padding: 0 16px 60px; gap: 0; }
+          .send-two-col { grid-template-columns: 1fr; padding: 0 16px 90px; gap: 0; }
           .send-sidebar { display: none; }
         }
       `}</style>

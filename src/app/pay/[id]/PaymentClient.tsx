@@ -595,6 +595,14 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
           </div>
         </div>
       </div>}
+      <style>{`
+        @media(max-width:768px){
+          .two-col-layout{grid-template-columns:1fr!important;padding:0 16px 90px!important;gap:0!important}
+          .two-col-layout>div:last-child{display:none!important}
+          .page-header{padding:12px 16px 20px!important}
+          .card{padding:16px 18px!important}
+        }
+      `}</style>
       <MobileBottomNav />
     </div>
   )

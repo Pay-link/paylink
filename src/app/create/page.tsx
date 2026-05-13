@@ -383,6 +383,11 @@ export default function CreatePage() {
       <style>{`
         @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
         @keyframes toastUp { from{transform:translate(-50%,20px);opacity:0} to{transform:translate(-50%,0);opacity:1} }
+        @media(max-width:768px){
+          .two-col-layout{grid-template-columns:1fr!important;padding:0 16px 90px!important;gap:0!important}
+          .two-col-layout>div:last-child{display:none!important}
+          .page-header{padding:12px 16px 20px!important}
+        }
       `}</style>
 
       {toast && (

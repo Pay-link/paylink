@@ -54,14 +54,18 @@ export function Nav({ variant = 'app' }: NavProps) {
         /* Arc badge */
         .nav-arc-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink3); white-space: nowrap; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
-        /* Mobile */
-        @media(max-width: 640px) {
+        /* Tablet + mobile */
+        @media(max-width: 768px) {
           .nav-center-links { display: none !important; }
           .nav-arc-badge { display: none !important; }
           .nav-send-link { display: none !important; }
+          .nav-tab-dashboard { display: none !important; }
           .nav-tab { font-size: 13px; padding: 5px 8px; }
           .nav-tabs { padding-left: 8px; gap: 0; }
-          .nav-tab-dashboard { display: none !important; }
+        }
+        @media(max-width: 480px) {
+          .nav-logout { padding: 5px 10px; font-size: 11px; }
+          .nav-tab { font-size: 12px; padding: 4px 6px; }
         }
       `}</style>
       <nav style={{

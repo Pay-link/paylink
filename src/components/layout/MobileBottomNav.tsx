@@ -46,10 +46,10 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
           z-index: 100;
           background: var(--white);
           border-top: 1px solid var(--border);
-          height: 64px;
+          height: calc(64px + env(safe-area-inset-bottom));
           align-items: center;
           justify-content: space-around;
-          padding: 0 4px;
+          padding: 0 4px env(safe-area-inset-bottom);
         }
         @media(max-width: 768px) {
           .mobile-bottom-nav { display: flex; }

@@ -136,7 +136,7 @@ function VerifyContent() {
         </div>
       </nav>
 
-      <div style={{ minHeight: 'calc(100vh - 62px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <div className="verify-wrap" style={{ minHeight: 'calc(100vh - 62px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
         <div style={{ width: '100%', maxWidth: 480 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
             <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16, color: 'var(--g1)' }}>
@@ -146,7 +146,7 @@ function VerifyContent() {
             <p style={{ fontSize: 15, color: 'var(--ink3)', textAlign: 'center', lineHeight: 1.6 }}>We sent a 6-digit verification code to your email or phone</p>
           </div>
 
-          <div style={{ background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', padding: '32px 36px', marginBottom: 16 }}>
+          <div className="verify-card" style={{ background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', padding: '32px 36px', marginBottom: 16 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 14, display: 'block' }}>Enter 6-digit code</label>
 
             <div style={{ display: 'flex', gap: 10, marginBottom: 8, cursor: 'text' }} onClick={() => inputRef.current?.focus()}>
@@ -214,6 +214,12 @@ function VerifyContent() {
           </div>
         </div>
       </div>
+      <style>{`
+        @media(max-width:768px){
+          .verify-card{padding:20px 18px!important}
+          .verify-wrap{padding:24px 16px 90px!important}
+        }
+      `}</style>
       <MobileBottomNav />
     </div>
   )
