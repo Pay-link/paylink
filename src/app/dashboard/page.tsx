@@ -101,7 +101,7 @@ export default function DashboardPage() {
     type: tx.recipient_id === userId ? 'received' : 'sent',
     name: tx.sender_email || tx.recipient_wallet?.slice(0,8) || 'Unknown',
     initials: (tx.sender_email || 'UK').slice(0,2).toUpperCase(),
-    color: tx.recipient_id === userId ? 'rgba(30,107,50,.1)' : 'rgba(220,50,50,.1)',
+    color: tx.recipient_id === userId ? 'rgba(255,107,0,.12)' : 'rgba(220,50,50,.12)',
     tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
   }))
 
@@ -109,7 +109,7 @@ export default function DashboardPage() {
   const balance = displayBalance || (dataLoaded ? 0 : 0)
 
   const favourites = [
-    { name: 'James K.', initials: 'JK', color: 'rgba(30,107,50,.1)', tc: 'var(--g1)', online: true },
+    { name: 'James K.', initials: 'JK', color: 'rgba(255,107,0,.12)', tc: 'var(--g1)', online: true },
     { name: 'Amara M.', initials: 'AM', color: 'rgba(255,180,0,.1)', tc: '#CC8800', online: false },
     { name: 'Tolu L.', initials: 'TL', color: 'rgba(100,130,255,.1)', tc: '#6080FF', online: false },
     { name: 'Rita C.', initials: 'RC', color: 'rgba(220,50,50,.1)', tc: '#CC2020', online: true },
@@ -118,13 +118,13 @@ export default function DashboardPage() {
 
   if (!authenticated) return null
 
-  const cardStyle = { background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(0,0,0,.05)' }
+  const cardStyle = { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(0,0,0,.35)' }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--page)', fontFamily: 'var(--font)' }}>
 
       {/* Sidebar */}
-      <aside className="desktop-sidebar" style={{ width: 240, flexShrink: 0, background: '#fff', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto' }}>
+      <aside className="desktop-sidebar" style={{ width: 240, flexShrink: 0, background: 'var(--white)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto' }}>
         <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid var(--border)' }}>
           <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
             pay<span style={{ color: 'var(--g1)' }}>link</span>
@@ -177,11 +177,11 @@ export default function DashboardPage() {
       <div className="desktop-main" style={{ flex: 1, marginLeft: 240, minWidth: 0 }}>
 
         {/* Top bar */}
-        <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(250,251,250,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
+        <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>Good morning, {displayName} 👋</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
+            <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export default function DashboardPage() {
 
           {/* Balance card */}
           <div style={{ background: 'var(--g1)', borderRadius: 24, padding: '24px 24px', marginBottom: 20, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'rgba(141,198,63,.2)', filter: 'blur(60px)', top: -100, right: -60, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'rgba(255,107,0,.2)', filter: 'blur(60px)', top: -100, right: -60, pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }} />
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {[['● Arc Network · Live', true], ['USDC', false], ['$0 gas fee', false]].map(([label, live], i) => (
-                  <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 500, color: live ? 'var(--g3)' : 'rgba(255,255,255,.6)', background: live ? 'rgba(141,198,63,.12)' : 'rgba(255,255,255,.1)', padding: '4px 12px', borderRadius: 20, border: `0.5px solid ${live ? 'rgba(141,198,63,.25)' : 'rgba(255,255,255,.15)'}` }}>
+                  <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 500, color: live ? 'var(--g3)' : 'rgba(255,255,255,.6)', background: live ? 'rgba(255,107,0,.12)' : 'rgba(255,255,255,.1)', padding: '4px 12px', borderRadius: 20, border: `0.5px solid ${live ? 'rgba(255,107,0,.3)' : 'rgba(255,255,255,.15)'}` }}>
                     {label as string}
                   </div>
                 ))}
@@ -240,12 +240,12 @@ export default function DashboardPage() {
             {[
               { label: 'Send', icon: 'ph:paper-plane-right-bold', bg: 'var(--g1)', color: '#fff', href: '/send' },
               { label: 'Create link', icon: 'ph:link-bold', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
-              { label: 'Top up', icon: 'ph:arrow-down-bold', bg: '#EEF2FF', color: '#4F46E5', action: () => setTopUpOpen(true) },
-              { label: 'Withdraw', icon: 'ph:arrow-up-bold', bg: '#FFF8E8', color: '#B8880A', action: () => {} },
+              { label: 'Top up', icon: 'ph:arrow-down-bold', bg: 'rgba(99,102,241,.18)', color: '#818CF8', action: () => setTopUpOpen(true) },
+              { label: 'Withdraw', icon: 'ph:arrow-up-bold', bg: 'rgba(245,158,11,.15)', color: '#FDB64E', action: () => {} },
             ].map(item => (
               <div key={item.label}
                 onClick={item.href ? () => router.push(item.href!) : item.action}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: '#fff', borderRadius: 18, border: '1px solid var(--border)', padding: '16px 10px', cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.05)', transition: 'all .2s' }}>
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: 'var(--white)', borderRadius: 18, border: '1px solid var(--border)', padding: '16px 10px', cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.35)', transition: 'all .2s' }}>
                 <div style={{ width: 44, height: 44, borderRadius: 13, background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}><Icon icon={item.icon} /></div>
                 <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink2)' }}>{item.label}</span>
               </div>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 14, fontWeight: 700, color: tx.type === 'sent' ? 'var(--ink)' : 'var(--g1)', marginBottom: 2 }}>
                         {tx.type === 'sent' ? '−' : '+'}${tx.amount.toFixed(2)}
                       </div>
-                      <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: tx.status === 'confirmed' ? 'var(--g-soft)' : '#FFF8E8', color: tx.status === 'confirmed' ? 'var(--g1)' : '#B8880A' }}>
+                      <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: tx.status === 'confirmed' ? 'var(--g-soft)' : 'rgba(245,158,11,.15)', color: tx.status === 'confirmed' ? 'var(--g1)' : '#FDB64E' }}>
                         {tx.status === 'confirmed' ? 'Confirmed' : 'Pending'}
                       </span>
                     </div>
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>${link.amount?.toFixed(2)}</div>
-                      <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: link.status === 'active' ? 'var(--g-soft)' : link.status === 'expired' ? 'var(--page)' : '#EEF2FF', color: link.status === 'active' ? 'var(--g1)' : link.status === 'expired' ? 'var(--ink4)' : '#4F46E5' }}>
+                      <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: link.status === 'active' ? 'var(--g-soft)' : link.status === 'expired' ? 'var(--page)' : 'rgba(99,102,241,.18)', color: link.status === 'active' ? 'var(--g1)' : link.status === 'expired' ? 'var(--ink4)' : '#818CF8' }}>
                         {link.status === 'active' ? 'Active' : link.status === 'expired' ? 'Expired' : `Paid ×${link.paid_count}`}
                       </span>
                     </div>
@@ -365,7 +365,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
                 <button onClick={() => setTopUpOpen(true)}
-                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginTop: 14, boxShadow: '0 4px 14px rgba(30,107,50,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginTop: 14, boxShadow: '0 4px 14px rgba(255,107,0,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                   <Icon icon="ph:arrow-down-bold" /> Top up wallet
                 </button>
               </div>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
       {/* Top up modal */}
       {topUpOpen && (
         <div onClick={() => setTopUpOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 24, padding: 28, width: '100%', maxWidth: 400, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.15)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--white)', borderRadius: 24, padding: 28, width: '100%', maxWidth: 400, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.6)', border: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>Top up wallet</div>
               <button onClick={() => setTopUpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--ink3)' }}>×</button>
@@ -433,7 +433,7 @@ export default function DashboardPage() {
               <>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
                   {['$50', '$100', '$250', '$500'].map(amt => (
-                    <div key={amt} style={{ padding: '7px 14px', borderRadius: 100, border: '1.5px solid var(--border)', background: '#fff', fontSize: 13, fontWeight: 500, color: 'var(--ink3)', cursor: 'pointer' }}>{amt}</div>
+                    <div key={amt} style={{ padding: '7px 14px', borderRadius: 100, border: '1.5px solid var(--border)', background: 'var(--page)', fontSize: 13, fontWeight: 500, color: 'var(--ink3)', cursor: 'pointer' }}>{amt}</div>
                   ))}
                 </div>
                 <input type="text" defaultValue="100" style={{ width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none', marginBottom: 16 }} placeholder="Custom amount" />
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                 { id: 2, icon: 'ph:device-mobile-bold', label: 'Mobile money', desc: 'MTN MoMo, Opay · ~0.5%' },
                 { id: 3, icon: 'ph:currency-circle-dollar-bold', label: 'Crypto wallet', desc: 'USDC on Arc Testnet · $0 fee' },
               ].map((m) => (
-                <div key={m.id} onClick={() => setTopUpMethod(m.id)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, border: `1.5px solid ${topUpMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, background: topUpMethod === m.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer' }}>
+                <div key={m.id} onClick={() => setTopUpMethod(m.id)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, border: `1.5px solid ${topUpMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, background: topUpMethod === m.id ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer' }}>
                   <Icon icon={m.icon} style={{ fontSize: 20 }} />
                   <div><div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{m.label}</div><div style={{ fontSize: 11, color: 'var(--ink3)' }}>{m.desc}</div></div>
                 </div>
@@ -456,7 +456,7 @@ export default function DashboardPage() {
             {topUpMethod === 3 ? (
               <div style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 16, padding: '20px', textAlign: 'center' }}>
                 <div style={{ fontSize: 13, color: 'var(--ink3)', marginBottom: 12 }}>Send only Testnet USDC to this address on the Arc Network.</div>
-                <div style={{ background: '#fff', border: '1.5px dashed var(--border)', borderRadius: 12, padding: '16px', wordBreak: 'break-all', fontSize: 14, fontFamily: 'monospace', color: 'var(--ink)', marginBottom: 16 }}>
+                <div style={{ background: 'var(--page)', border: '1.5px dashed var(--border)', borderRadius: 12, padding: '16px', wordBreak: 'break-all', fontSize: 14, fontFamily: 'monospace', color: 'var(--ink)', marginBottom: 16 }}>
                   {walletAddress || 'Loading...'}
                 </div>
                 <button onClick={() => {
@@ -465,12 +465,12 @@ export default function DashboardPage() {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }
-                }} style={{ width: '100%', background: copied ? 'var(--g-soft)' : '#fff', color: copied ? 'var(--g1)' : 'var(--ink)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>
+                }} style={{ width: '100%', background: copied ? 'var(--g-soft)' : 'var(--page)', color: copied ? 'var(--g1)' : 'var(--ink)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>
                   {copied ? '✓ Copied' : '📄 Copy address'}
                 </button>
               </div>
             ) : (
-              <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(30,107,50,.2)' }}>
+              <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(255,107,0,.28)' }}>
                 <Icon icon="ph:arrow-down-bold" /> Top up $100
               </button>
             )}
@@ -480,7 +480,6 @@ export default function DashboardPage() {
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-        :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
         @media(max-width:768px){
           .desktop-sidebar{display:none!important}
           .desktop-main{margin-left:0!important}
@@ -499,7 +498,7 @@ export default function DashboardPage() {
       `}</style>
 
       {/* Mobile top bar */}
-      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'#fff', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
+      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
         <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>pay<span style={{color:'var(--g1)'}}>link</span></div>
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
           <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>+</button>
@@ -508,7 +507,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Mobile bottom nav */}
-      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'#fff', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 8px' }}>
+      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'var(--white)', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 8px' }}>
         {[
           { id:'home', icon:'⊞', label:'Home' },
           { id:'links', icon:'🔗', label:'Links' },

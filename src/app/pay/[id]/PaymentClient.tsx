@@ -309,7 +309,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                           cursor: 'pointer',
                           background: selectedMethod === method.id ? 'var(--g-soft)' : 'var(--white)',
                           position: 'relative',
-                          boxShadow: selectedMethod === method.id ? '0 0 0 3px rgba(30,107,50,.07)' : 'none',
+                          boxShadow: selectedMethod === method.id ? '0 0 0 3px rgba(255,107,0,.12)' : 'none',
                           transition: 'all .2s',
                         }}
                       >

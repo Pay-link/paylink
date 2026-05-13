@@ -11,7 +11,7 @@ import { Icon } from '@iconify/react'
 type Step = 1 | 2 | 3 | 4
 
 const contacts = [
-  { name: 'James K.', contact: 'james@email.com', initials: 'JK', color: 'rgba(30,107,50,.1)', textColor: 'var(--g1)' },
+  { name: 'James K.', contact: 'james@email.com', initials: 'JK', color: 'rgba(255,107,0,.12)', textColor: 'var(--g1)' },
   { name: 'Amara M.', contact: 'amara@email.com', initials: 'AM', color: 'rgba(255,180,0,.1)', textColor: '#CC8800' },
   { name: 'Tolu L.', contact: '+234 801 234 5678', initials: 'TL', color: 'rgba(100,130,255,.1)', textColor: '#6080FF' },
 ]
@@ -48,11 +48,11 @@ export default function SendPage() {
   const s = {
     page: { background: 'var(--page)', minHeight: '100vh' } as React.CSSProperties,
     main: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' } as React.CSSProperties,
-    card: { background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.06)' } as React.CSSProperties,
+    card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)' } as React.CSSProperties,
     title: { fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 } as React.CSSProperties,
     sub: { fontSize: 15, color: 'var(--ink3)' } as React.CSSProperties,
     input: { width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none' } as React.CSSProperties,
-    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)' } as React.CSSProperties,
+    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.28)' } as React.CSSProperties,
   }
 
   return (
@@ -78,10 +78,10 @@ export default function SendPage() {
                   <div style={{
                     width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 12, fontWeight: 700, flexShrink: 0,
-                    background: n < step ? 'var(--g1)' : n === step ? 'var(--g1)' : 'var(--page)',
+                    background: n < step ? 'var(--g1)' : n === step ? 'var(--g1)' : 'var(--white)',
                     color: n <= step ? '#fff' : 'var(--ink3)',
                     border: n > step ? '1.5px solid var(--border)' : 'none',
-                    boxShadow: n === step ? '0 0 0 4px rgba(30,107,50,.12)' : 'none',
+                    boxShadow: n === step ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
                   }}>{n < step ? '✓' : n}</div>
                   <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)' }}>
                     {['Your identity','Recipient','Amount','Payment'][n-1]}
@@ -119,7 +119,7 @@ export default function SendPage() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {contacts.map(c => (
                       <div key={c.name} onClick={() => setRecipient({ name: c.name, contact: c.contact, initials: c.initials })}
-                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 14, border: `1.5px solid ${recipient.name === c.name ? 'var(--g1)' : 'var(--border)'}`, background: recipient.name === c.name ? 'var(--g-soft)' : '#fff', cursor: 'pointer' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 14, border: `1.5px solid ${recipient.name === c.name ? 'var(--g1)' : 'var(--border)'}`, background: recipient.name === c.name ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer' }}>
                         <div style={{ width: 38, height: 38, borderRadius: '50%', background: c.color, color: c.textColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{c.initials}</div>
                         <div><div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{c.name}</div><div style={{ fontSize: 12, color: 'var(--ink3)' }}>{c.contact}</div></div>
                       </div>
@@ -151,7 +151,7 @@ export default function SendPage() {
                     <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                       <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
                     </div>
-                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(30,107,50,.08)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
+                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
                   </div>
 
                   {/* Numpad */}
@@ -194,7 +194,7 @@ export default function SendPage() {
                       { id: 'card', label: 'Card or bank transfer', desc: 'Debit card, bank transfer, mobile money', badge: '~1.5%', rec: false },
                     ].map(m => (
                       <div key={m.id} onClick={() => setSelectedMethod(m.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 16, border: `1.5px solid ${selectedMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, borderRadius: 16, padding: '16px 18px', cursor: 'pointer', background: selectedMethod === m.id ? 'var(--g-soft)' : '#fff', position: 'relative' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 16, border: `1.5px solid ${selectedMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, borderRadius: 16, padding: '16px 18px', cursor: 'pointer', background: selectedMethod === m.id ? 'var(--g-soft)' : 'var(--page)', position: 'relative' }}>
                         {m.rec && <div style={{ position: 'absolute', top: -10, left: 18, fontSize: 10, fontWeight: 700, background: 'var(--g1)', color: '#fff', padding: '3px 10px', borderRadius: 20 }}>Recommended</div>}
                         <div style={{ width: 20, height: 20, borderRadius: '50%', border: `1.5px solid ${selectedMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, background: selectedMethod === m.id ? 'var(--g1)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           {selectedMethod === m.id && <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#fff' }} />}

@@ -34,7 +34,7 @@ export function Nav({ variant = 'app' }: NavProps) {
       gridTemplateColumns: 'auto 1fr auto',
       alignItems: 'center',
       padding: '0 5%',
-      background: 'rgba(255,255,255,0.92)',
+      background: 'rgba(9,9,14,0.92)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderBottom: '1px solid var(--border)',

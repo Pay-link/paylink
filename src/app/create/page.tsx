@@ -89,8 +89,8 @@ export default function CreatePage() {
 
   const s = {
     page: { background: 'var(--page)', minHeight: '100vh' } as React.CSSProperties,
-    card: { background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.06)' } as React.CSSProperties,
-    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)' } as React.CSSProperties,
+    card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)' } as React.CSSProperties,
+    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.28)' } as React.CSSProperties,
   }
 
   const steps = authenticated ? ['Amount', 'Receive', 'Share'] : ['Account', 'Amount', 'Receive', 'Share']
@@ -120,10 +120,10 @@ export default function CreatePage() {
                   <div style={{
                     width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 12, fontWeight: 700, flexShrink: 0,
-                    background: i < currentStepIndex ? 'var(--g1)' : i === currentStepIndex ? 'var(--g1)' : 'var(--page)',
+                    background: i < currentStepIndex ? 'var(--g1)' : i === currentStepIndex ? 'var(--g1)' : 'var(--white)',
                     color: i <= currentStepIndex ? '#fff' : 'var(--ink3)',
                     border: i > currentStepIndex ? '1.5px solid var(--border)' : 'none',
-                    boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(30,107,50,.12)' : 'none',
+                    boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
                   }}>{i < currentStepIndex ? '✓' : i + 1}</div>
                   <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)' }}>{label}</div>
                   {i < steps.length - 1 && <div style={{ flex: 1, height: 1.5, background: i < currentStepIndex ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
@@ -173,7 +173,7 @@ export default function CreatePage() {
                     <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                       <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
                     </div>
-                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(30,107,50,.08)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
+                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
@@ -206,7 +206,7 @@ export default function CreatePage() {
                       { id: 'bank' as const, label: 'Bank / mobile money', desc: 'Receive local currency.', icon: 'ph:bank-bold' }
                     ].map(opt => (
                       <div key={opt.id} onClick={() => setReceiveType(opt.id)}
-                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${receiveType === opt.id ? 'var(--g1)' : 'var(--border)'}`, background: receiveType === opt.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
+                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${receiveType === opt.id ? 'var(--g1)' : 'var(--border)'}`, background: receiveType === opt.id ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                         <Icon icon={opt.icon} style={{ fontSize: 24, marginBottom: 8, color: receiveType === opt.id ? 'var(--g1)' : 'var(--ink3)' }} />
                         <div style={{ fontSize: 14, fontWeight: 500, color: receiveType === opt.id ? 'var(--g1)' : 'var(--ink2)', marginBottom: 4 }}>{opt.label}</div>
                         <div style={{ fontSize: 12, color: 'var(--ink3)' }}>{opt.desc}</div>
@@ -241,7 +241,7 @@ export default function CreatePage() {
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {['24 hours', '7 days', '30 days', 'Never'].map(opt => (
                         <div key={opt} onClick={() => setExpiry(opt)}
-                          style={{ padding: '8px 16px', borderRadius: 100, border: `1.5px solid ${expiry === opt ? 'var(--g1)' : 'var(--border)'}`, background: expiry === opt ? 'var(--g-soft)' : '#fff', fontSize: 13, fontWeight: 500, color: expiry === opt ? 'var(--g1)' : 'var(--ink3)', cursor: 'pointer', transition: 'all .2s' }}>
+                          style={{ padding: '8px 16px', borderRadius: 100, border: `1.5px solid ${expiry === opt ? 'var(--g1)' : 'var(--border)'}`, background: expiry === opt ? 'var(--g-soft)' : 'var(--page)', fontSize: 13, fontWeight: 500, color: expiry === opt ? 'var(--g1)' : 'var(--ink3)', cursor: 'pointer', transition: 'all .2s' }}>
                           {opt}
                         </div>
                       ))}
@@ -299,7 +299,7 @@ export default function CreatePage() {
                     <button style={{ ...s.btn, marginTop: 0 }} onClick={() => router.push('/dashboard')}>
                       <Icon icon="ph:squares-four-bold" /> Go to dashboard
                     </button>
-                    <button style={{ ...s.btn, marginTop: 0, background: '#fff', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
+                    <button style={{ ...s.btn, marginTop: 0, background: 'var(--page)', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
                       onClick={() => { setStep(2); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
                       + Create another
                     </button>
@@ -355,7 +355,6 @@ export default function CreatePage() {
       <style>{`
         @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
         @keyframes toastUp { from{transform:translate(-50%,20px);opacity:0} to{transform:translate(-50%,0);opacity:1} }
-        :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
       `}</style>
 
       {toast && (
