@@ -140,11 +140,19 @@ export default function DashboardPage() {
             { label: 'Dashboard', icon: 'ph:squares-four-bold', href: '/dashboard', active: true },
             { label: 'Send money', icon: 'ph:paper-plane-right-bold', href: '/send' },
             { label: 'Create link', icon: 'ph:link-bold', href: '/create' },
-            { label: 'Pay a link', icon: 'ph:credit-card-bold', href: '/' },
-          ].map(item => (
-            <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: item.active ? 700 : 500, color: item.active ? 'var(--g1)' : 'var(--ink3)', background: item.active ? 'var(--g-soft)' : 'transparent', textDecoration: 'none', marginBottom: 2 }}>
-              <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
-            </Link>
+            { label: 'Faucet', icon: 'ph:drop-bold', href: 'https://faucet.circle.com', external: true },
+          ].map(item => {
+            const style = { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: (item as any).active ? 700 : 500, color: (item as any).active ? 'var(--g1)' : 'var(--ink3)', background: (item as any).active ? 'var(--g-soft)' : 'transparent', textDecoration: 'none', marginBottom: 2 } as React.CSSProperties
+            return (item as any).external ? (
+              <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={style}>
+                <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
+              </a>
+            ) : (
+              <Link key={item.label} href={item.href} style={style}>
+                <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
+              </Link>
+            )
+          })
           ))}
 
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', margin: '16px 0 6px' }}>Account</div>
