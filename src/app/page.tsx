@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function HomePage() {
-  const { authenticated, login } = usePrivy()
+  const { authenticated, login, logout } = usePrivy()
   const router = useRouter()
   const [liveStats, setLiveStats] = useState({ links: 0, txs: 0 })
 
@@ -695,7 +695,10 @@ footer{
         </div>
         <div className="nav-right">
           {authenticated ? (
-            <button onClick={() => router.push('/dashboard')} className="btn-pill btn-orange" style={{ cursor: 'pointer' }}>Dashboard</button>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button onClick={() => router.push('/dashboard')} className="btn-pill btn-orange" style={{ cursor: 'pointer' }}>Dashboard</button>
+              <button onClick={logout} className="btn-pill btn-ghost" style={{ cursor: 'pointer' }}>Log out</button>
+            </span>
           ) : (
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button onClick={login} className="btn-pill btn-ghost" style={{ cursor: 'pointer' }}>Sign in</button>

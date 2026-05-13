@@ -169,7 +169,7 @@ export default function DashboardPage() {
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 1 }}>{displayName}</div>
               <div style={{ fontSize: 11, color: 'var(--ink4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{email || phone || 'paylink user'}</div>
             </div>
-            <button onClick={logout} title="Log out" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--ink4)', padding: 4 }}>↗</button>
+            <button onClick={logout} style={{ padding: '6px 12px', borderRadius: 100, border: '1px solid var(--border)', color: 'var(--ink3)', fontSize: 12, fontWeight: 500, cursor: 'pointer', background: 'transparent', fontFamily: 'var(--font)', whiteSpace: 'nowrap', flexShrink: 0 }}>Log out</button>
           </div>
         </div>
       </aside>
@@ -183,6 +183,7 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
+            <button onClick={logout} style={{ padding: '7px 16px', borderRadius: 100, border: '1px solid var(--border)', color: 'var(--ink3)', fontSize: 13, fontWeight: 500, cursor: 'pointer', background: 'transparent', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}>Log out</button>
           </div>
         </div>
 
@@ -515,6 +516,7 @@ export default function DashboardPage() {
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
           <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="ph:plus-bold" /></button>
           <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>
+          <button onClick={logout} style={{ padding:'6px 14px', borderRadius:100, border:'1px solid var(--border)', color:'var(--ink3)', fontSize:12, fontWeight:500, cursor:'pointer', background:'transparent', fontFamily:'var(--font)', whiteSpace:'nowrap' }}>Log out</button>
         </div>
       </div>
 
