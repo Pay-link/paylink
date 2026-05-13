@@ -113,3 +113,38 @@ html, body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+  /* Reduce page horizontal padding */
+  .page-breadcrumb {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .page-header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 12px !important;
+  }
+  .page-header h1 {
+    font-size: 26px !important;
+  }
+
+  /* Collapse 2-column layouts to single column */
+  .two-col-layout {
+    grid-template-columns: 1fr !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Hide right sidebar on mobile — key info is already in the main card */
+  .two-col-layout > *:last-child {
+    display: none !important;
+  }
+
+  /* Nav padding */
+  nav {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}

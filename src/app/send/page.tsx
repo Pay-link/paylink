@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
 import { useState } from 'react'
 import { isValidContact } from '@/lib/utils'
+import { Icon } from '@iconify/react'
 
 type Step = 1 | 2 | 3 | 4
 
@@ -57,17 +58,17 @@ export default function SendPage() {
   return (
     <div style={s.page}>
       <Nav variant="app" />
-      <div style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
+      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
         <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
         <span>›</span>
         <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Send money</span>
       </div>
-      <div style={{ padding: '16px 40px 24px' }}>
+      <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={s.title}>Send money</h1>
         <p style={s.sub}>Send USDC to anyone using their email or phone. Settles in under a second.</p>
       </div>
 
-      <div style={s.main}>
+      <div className="two-col-layout" style={s.main}>
         <div>
           <div style={s.card}>
             {/* Step progress */}
@@ -101,7 +102,7 @@ export default function SendPage() {
                   <input style={s.input} type="text" placeholder="you@email.com or +234 800 000 0000" value={senderContact} onChange={e => setSenderContact(e.target.value)} />
                   <div style={{ fontSize: 12, color: 'var(--ink3)', marginTop: 7, lineHeight: 1.6 }}>A verification code will be sent. No account created — your wallet is set up automatically.</div>
                   <button style={{ ...s.btn, opacity: !isValidContact(senderContact) ? .4 : 1 }} disabled={!isValidContact(senderContact)} onClick={nextStep}>
-                    ✉️ Verify to pay
+                    <Icon icon="ph:envelope-bold" /> Verify to pay
                   </button>
                 </div>
               )}
@@ -157,13 +158,13 @@ export default function SendPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
                     {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (
                       <button key={k} onClick={() => numpad(k)} style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', fontFamily: 'var(--font)', fontSize: k === 'del' ? 17 : 20, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 54 }}>
-                        {k === 'del' ? '⌫' : k}
+                        {k === 'del' ? <Icon icon="ph:backspace-bold" /> : k}
                       </button>
                     ))}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', marginBottom: 0 }}>
-                    <span style={{ fontSize: 18, color: 'var(--ink3)' }}>✏️</span>
+                    <Icon icon="ph:pencil-simple-bold" style={{ fontSize: 18, color: 'var(--ink3)' }} />
                     <input style={{ border: 'none', background: 'transparent', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--ink)', outline: 'none', flex: 1 }} placeholder="Add a note (optional)" value={note} onChange={e => setNote(e.target.value)} />
                   </div>
 
@@ -208,11 +209,11 @@ export default function SendPage() {
                   </div>
 
                   <button style={s.btn} onClick={() => router.push('/verify?flow=send')}>
-                    🔒 Send ${amt.toFixed(2)}
+                    <Icon icon="ph:lock-bold" /> Send ${amt.toFixed(2)}
                   </button>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
                     {['256-bit encrypted', 'Non-custodial', 'Powered by Arc'].map((item, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--ink3)' }}>🛡 {item}</div>
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--ink3)' }}><Icon icon="ph:shield-bold" /> {item}</div>
                     ))}
                   </div>
                 </div>

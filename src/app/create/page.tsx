@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
 import { useUser } from '@/hooks/useUser'
 import { getShareUrls, generateLinkSlug } from '@/lib/utils'
+import { Icon } from '@iconify/react'
 
 type Step = 1 | 2 | 3 | 4
 
@@ -99,17 +100,17 @@ export default function CreatePage() {
   return (
     <div style={s.page}>
       <Nav variant="app" />
-      <div style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
+      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
         <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
         <span>›</span>
         <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Create link</span>
       </div>
-      <div style={{ padding: '16px 40px 24px' }}>
+      <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>Create a payment link</h1>
         <p style={{ fontSize: 15, color: 'var(--ink3)' }}>Generate a link anyone can use to pay you — no wallet or account needed on their end.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' }}>
+      <div className="two-col-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' }}>
         <div>
           <div style={s.card}>
             {/* Step progress */}
@@ -138,11 +139,11 @@ export default function CreatePage() {
                   <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Your account</div>
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Sign in to get started. We'll verify you with a one-time code.</div>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-                    <span>ℹ️</span>
+                    <Icon icon="ph:info-bold" style={{ fontSize: 18, color: 'var(--g1)', flexShrink: 0 }} />
                     <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every PayLink you create pays out to your account automatically.</div>
                   </div>
                   <button style={s.btn} onClick={() => login()}>
-                    ✉️ Sign in with email or phone
+                    <Icon icon="ph:envelope-bold" /> Sign in with email or phone
                   </button>
                 </div>
               )}
@@ -178,13 +179,13 @@ export default function CreatePage() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
                     {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (
                       <button key={k} onClick={() => numpad(k)} style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', fontFamily: 'var(--font)', fontSize: k === 'del' ? 17 : 20, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 54 }}>
-                        {k === 'del' ? '⌫' : k}
+                        {k === 'del' ? <Icon icon="ph:backspace-bold" /> : k}
                       </button>
                     ))}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px' }}>
-                    <span>✏️</span>
+                    <Icon icon="ph:pencil-simple-bold" style={{ fontSize: 18, color: 'var(--ink3)' }} />
                     <input style={{ border: 'none', background: 'transparent', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--ink)', outline: 'none', flex: 1 }} placeholder="What's this for? e.g. Design work" value={note} onChange={e => setNote(e.target.value)} />
                   </div>
 
@@ -201,12 +202,12 @@ export default function CreatePage() {
 
                   <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
                     {[
-                      { id: 'crypto' as const, label: 'Crypto wallet', desc: 'Receive USDC instantly. $0 fee.', icon: '💳' },
-                      { id: 'bank' as const, label: 'Bank / mobile money', desc: 'Receive local currency.', icon: '🏦' }
+                      { id: 'crypto' as const, label: 'Crypto wallet', desc: 'Receive USDC instantly. $0 fee.', icon: 'ph:wallet-bold' },
+                      { id: 'bank' as const, label: 'Bank / mobile money', desc: 'Receive local currency.', icon: 'ph:bank-bold' }
                     ].map(opt => (
                       <div key={opt.id} onClick={() => setReceiveType(opt.id)}
                         style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${receiveType === opt.id ? 'var(--g1)' : 'var(--border)'}`, background: receiveType === opt.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
-                        <div style={{ fontSize: 24, marginBottom: 8 }}>{opt.icon}</div>
+                        <Icon icon={opt.icon} style={{ fontSize: 24, marginBottom: 8, color: receiveType === opt.id ? 'var(--g1)' : 'var(--ink3)' }} />
                         <div style={{ fontSize: 14, fontWeight: 500, color: receiveType === opt.id ? 'var(--g1)' : 'var(--ink2)', marginBottom: 4 }}>{opt.label}</div>
                         <div style={{ fontSize: 12, color: 'var(--ink3)' }}>{opt.desc}</div>
                       </div>
@@ -214,7 +215,7 @@ export default function CreatePage() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: receiveType === 'crypto' ? 'var(--g-soft)' : '#FFF8E8', border: `0.5px solid ${receiveType === 'crypto' ? 'var(--border-g)' : 'rgba(204,136,0,.2)'}`, borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-                    <span>ℹ️</span>
+                    <Icon icon="ph:info-bold" style={{ fontSize: 18, color: receiveType === 'crypto' ? 'var(--g1)' : '#B8880A', flexShrink: 0, marginTop: 1 }} />
                     <div style={{ fontSize: 13, color: receiveType === 'crypto' ? 'var(--g1)' : '#B8880A', lineHeight: 1.6 }}>
                       {receiveType === 'crypto'
                         ? <><strong>Your wallet is created automatically.</strong> USDC lands instantly when someone pays your link.</>
@@ -225,7 +226,7 @@ export default function CreatePage() {
                   {receiveType === 'bank' && (
                     <div style={{ marginBottom: 16 }}>
                       <a href="#" onClick={(e) => { e.preventDefault(); alert('Bank integration via Yellow Card coming soon!'); }} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--g-soft)', textDecoration: 'none' }}>
-                        <span style={{ fontSize: 18 }}>🏦</span>
+                        <Icon icon="ph:bank-bold" style={{ fontSize: 18, color: 'var(--g1)' }} />
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--g1)' }}>Set up bank account</div>
                           <div style={{ fontSize: 12, color: 'var(--ink3)' }}>Done once, used for all future payouts</div>
@@ -248,11 +249,11 @@ export default function CreatePage() {
                   </div>
 
                   <button 
-                    style={{ ...s.btn, opacity: creating || (receiveType === 'bank' && !hasBankSetup) ? .6 : 1 }} 
-                    disabled={creating || (receiveType === 'bank' && !hasBankSetup)} 
+                    style={{ ...s.btn, opacity: creating || (receiveType === 'bank' && !hasBankSetup) ? .6 : 1 }}
+                    disabled={creating || (receiveType === 'bank' && !hasBankSetup)}
                     onClick={generateLink}
                   >
-                    🔗 {creating ? 'Generating...' : (receiveType === 'bank' && !hasBankSetup) ? 'Bank setup required' : 'Generate my link'}
+                    <Icon icon="ph:link-bold" /> {creating ? 'Generating...' : (receiveType === 'bank' && !hasBankSetup) ? 'Bank setup required' : 'Generate my link'}
                   </button>
                 </div>
               )}
@@ -272,23 +273,23 @@ export default function CreatePage() {
                     <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.07em', textTransform: 'uppercase', marginBottom: 8 }}>Your PayLink</div>
                     <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--g1)', wordBreak: 'break-all', marginBottom: 10, fontFamily: 'monospace' }}>{linkUrl}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
-                      🕐 ${amt.toFixed(2)} · Expires in {expiry}
+                      <Icon icon="ph:clock-bold" /> ${amt.toFixed(2)} · Expires in {expiry}
                     </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
                     {[
-                      { label: 'WhatsApp', icon: '💬', href: shareUrls?.whatsapp },
-                      { label: 'Telegram', icon: '✈️', href: shareUrls?.telegram },
-                      { label: 'Email', icon: '📧', href: shareUrls?.email },
-                      { label: 'X / Twitter', icon: '𝕏', href: shareUrls?.x },
-                      { label: 'QR code', icon: '⬛', action: () => alert('QR code generation coming soon') },
-                      { label: 'Copy link', icon: '📋', action: () => { navigator.clipboard.writeText(linkUrl); setToast('Link copied!'); setTimeout(() => setToast(null), 3000) } },
+                      { label: 'WhatsApp', icon: 'simple-icons:whatsapp', href: shareUrls?.whatsapp },
+                      { label: 'Telegram', icon: 'simple-icons:telegram', href: shareUrls?.telegram },
+                      { label: 'Email', icon: 'ph:envelope-bold', href: shareUrls?.email },
+                      { label: 'X / Twitter', icon: 'simple-icons:x', href: shareUrls?.x },
+                      { label: 'QR code', icon: 'ph:qr-code-bold', action: () => alert('QR code generation coming soon') },
+                      { label: 'Copy link', icon: 'ph:copy-bold', action: () => { navigator.clipboard.writeText(linkUrl); setToast('Link copied!'); setTimeout(() => setToast(null), 3000) } },
                     ].map(item => (
                       <div key={item.label}
                         onClick={() => item.href ? window.open(item.href, '_blank') : item.action?.()}
                         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer', transition: 'all .2s' }}>
-                        <span style={{ fontSize: 22 }}>{item.icon}</span>
+                        <Icon icon={item.icon} style={{ fontSize: 22, color: 'var(--ink2)' }} />
                         <span style={{ fontSize: 11, color: 'var(--ink3)', fontWeight: 500 }}>{item.label}</span>
                       </div>
                     ))}
@@ -296,7 +297,7 @@ export default function CreatePage() {
 
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button style={{ ...s.btn, marginTop: 0 }} onClick={() => router.push('/dashboard')}>
-                      ⊞ Go to dashboard
+                      <Icon icon="ph:squares-four-bold" /> Go to dashboard
                     </button>
                     <button style={{ ...s.btn, marginTop: 0, background: '#fff', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
                       onClick={() => { setStep(2); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
@@ -336,12 +337,12 @@ export default function CreatePage() {
           <div style={{ ...s.card, padding: '20px 22px' }}>
             <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 14 }}>Tips for sharing</div>
             {[
-              { icon: '📸', title: 'Instagram bio', desc: 'Put your PayLink in your bio so followers can pay you directly.' },
-              { icon: '💬', title: 'WhatsApp', desc: 'Send the link in a chat. They pay with one click, no app needed.' },
-              { icon: '♾️', title: 'Reuse forever', desc: 'Set expiry to "Never" and the link collects payments forever.' },
+              { icon: 'ph:camera-bold', title: 'Instagram bio', desc: 'Put your PayLink in your bio so followers can pay you directly.' },
+              { icon: 'simple-icons:whatsapp', title: 'WhatsApp', desc: 'Send the link in a chat. They pay with one click, no app needed.' },
+              { icon: 'ph:infinity-bold', title: 'Reuse forever', desc: 'Set expiry to "Never" and the link collects payments forever.' },
             ].map(tip => (
               <div key={tip.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, marginBottom: 12 }}>
-                <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{tip.icon}</span>
+                <Icon icon={tip.icon} style={{ fontSize: 15, flexShrink: 0, marginTop: 1, color: 'var(--g1)' }} />
                 <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.5 }}>
                   <strong style={{ color: 'var(--ink2)', fontWeight: 500 }}>{tip.title}</strong> — {tip.desc}
                 </div>

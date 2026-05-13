@@ -8,6 +8,7 @@ import { createPublicClient, http } from 'viem'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
+import { Icon } from '@iconify/react'
 
 const arcTestnet = {
   id: 1038,
@@ -134,26 +135,26 @@ export default function DashboardPage() {
         <nav style={{ flex: 1, padding: '16px 12px' }}>
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 6 }}>Main</div>
           {[
-            { label: 'Dashboard', icon: '⊞', href: '/dashboard', active: true },
-            { label: 'Send money', icon: '→', href: '/send' },
-            { label: 'Create link', icon: '🔗', href: '/create' },
-            { label: 'Pay a link', icon: '💳', href: '/' },
+            { label: 'Dashboard', icon: 'ph:squares-four-bold', href: '/dashboard', active: true },
+            { label: 'Send money', icon: 'ph:paper-plane-right-bold', href: '/send' },
+            { label: 'Create link', icon: 'ph:link-bold', href: '/create' },
+            { label: 'Pay a link', icon: 'ph:credit-card-bold', href: '/' },
           ].map(item => (
             <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: item.active ? 700 : 500, color: item.active ? 'var(--g1)' : 'var(--ink3)', background: item.active ? 'var(--g-soft)' : 'transparent', textDecoration: 'none', marginBottom: 2 }}>
-              <span style={{ fontSize: 16 }}>{item.icon}</span>{item.label}
+              <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
             </Link>
           ))}
 
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', margin: '16px 0 6px' }}>Account</div>
           {[
-            { label: 'Transaction history', icon: '🕐', href: '#' },
-            { label: 'My links', icon: '🔗', href: '#' },
-            { label: 'Bank settings', icon: '🏦', href: '/bank-setup' },
-            { label: 'Settings', icon: '⚙️', href: '#' },
-            { label: 'Help & support', icon: '❓', href: '#' },
+            { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#' },
+            { label: 'My links', icon: 'ph:link-simple-bold', href: '#' },
+            { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
+            { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
+            { label: 'Help & support', icon: 'ph:question-bold', href: '#' },
           ].map(item => (
             <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2 }}>
-              <span style={{ fontSize: 16 }}>{item.icon}</span>{item.label}
+              <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
             </Link>
           ))}
         </nav>
@@ -179,8 +180,8 @@ export default function DashboardPage() {
         <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(250,251,250,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>Good morning, {displayName} 👋</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}>+</button>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}>🔔</div>
+            <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
           </div>
         </div>
 
@@ -214,7 +215,14 @@ export default function DashboardPage() {
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 3 }}>{displayName}</div>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>{email || phone}</div>
-                  {walletAddress && <div style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 4, fontFamily: 'monospace' }}>{walletAddress.slice(0,8)}...{walletAddress.slice(-4)}</div>}
+                  {walletAddress && (
+                    <div onClick={() => { navigator.clipboard.writeText(walletAddress); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+                      title="Click to copy"
+                      style={{ fontSize: 10, color: copied ? 'var(--g3)' : 'rgba(255,255,255,.4)', marginTop: 4, fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, transition: 'color .2s' }}>
+                      {walletAddress.slice(0,8)}...{walletAddress.slice(-4)}
+                      <span style={{ fontSize: 9 }}>{copied ? '✓' : '⎘'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -230,15 +238,15 @@ export default function DashboardPage() {
           {/* Quick actions */}
           <div className="quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 24 }}>
             {[
-              { label: 'Send', icon: '→', bg: 'var(--g1)', color: '#fff', href: '/send' },
-              { label: 'Create link', icon: '🔗', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
-              { label: 'Top up', icon: '↓', bg: '#EEF2FF', color: '#4F46E5', action: () => setTopUpOpen(true) },
-              { label: 'Withdraw', icon: '↑', bg: '#FFF8E8', color: '#B8880A', action: () => {} },
+              { label: 'Send', icon: 'ph:paper-plane-right-bold', bg: 'var(--g1)', color: '#fff', href: '/send' },
+              { label: 'Create link', icon: 'ph:link-bold', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
+              { label: 'Top up', icon: 'ph:arrow-down-bold', bg: '#EEF2FF', color: '#4F46E5', action: () => setTopUpOpen(true) },
+              { label: 'Withdraw', icon: 'ph:arrow-up-bold', bg: '#FFF8E8', color: '#B8880A', action: () => {} },
             ].map(item => (
               <div key={item.label}
                 onClick={item.href ? () => router.push(item.href!) : item.action}
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, background: '#fff', borderRadius: 18, border: '1px solid var(--border)', padding: '16px 10px', cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,.05)', transition: 'all .2s' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 13, background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{item.icon}</div>
+                <div style={{ width: 44, height: 44, borderRadius: 13, background: item.bg, color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}><Icon icon={item.icon} /></div>
                 <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink2)' }}>{item.label}</span>
               </div>
             ))}
@@ -316,7 +324,7 @@ export default function DashboardPage() {
               <div style={cardStyle}>
                 {displayLinks.map((link: any, i: number) => (
                   <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < displayLinks.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 11, background: link.status === 'expired' ? 'var(--page)' : 'var(--g-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: link.status === 'expired' ? 'var(--ink4)' : 'var(--g1)', flexShrink: 0 }}>🔗</div>
+                    <div style={{ width: 38, height: 38, borderRadius: 11, background: link.status === 'expired' ? 'var(--page)' : 'var(--g-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: link.status === 'expired' ? 'var(--ink4)' : 'var(--g1)', flexShrink: 0 }}><Icon icon="ph:link-bold" /></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: link.status === 'expired' ? 'var(--ink3)' : 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{link.note || 'Payment link'}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
@@ -358,7 +366,7 @@ export default function DashboardPage() {
                 ))}
                 <button onClick={() => setTopUpOpen(true)}
                   style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginTop: 14, boxShadow: '0 4px 14px rgba(30,107,50,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                  ↓ Top up wallet
+                  <Icon icon="ph:arrow-down-bold" /> Top up wallet
                 </button>
               </div>
 
@@ -415,7 +423,7 @@ export default function DashboardPage() {
       {/* Top up modal */}
       {topUpOpen && (
         <div onClick={() => setTopUpOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 24, padding: 28, width: '100%', maxWidth: 400, boxShadow: '0 24px 60px rgba(0,0,0,.15)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: 24, padding: 28, width: '100%', maxWidth: 400, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.15)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>Top up wallet</div>
               <button onClick={() => setTopUpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--ink3)' }}>×</button>
@@ -433,13 +441,13 @@ export default function DashboardPage() {
             )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {[
-                { id: 0, icon: '💳', label: 'Debit or credit card', desc: 'Visa, Mastercard — global · ~1.5%' },
-                { id: 1, icon: '🏦', label: 'Bank transfer', desc: 'GTBank, Access, Zenith · ~0.5%' },
-                { id: 2, icon: '📱', label: 'Mobile money', desc: 'MTN MoMo, Opay · ~0.5%' },
-                { id: 3, icon: '⛓️', label: 'Crypto wallet', desc: 'USDC on Arc Testnet · $0 fee' },
+                { id: 0, icon: 'ph:credit-card-bold', label: 'Debit or credit card', desc: 'Visa, Mastercard — global · ~1.5%' },
+                { id: 1, icon: 'ph:bank-bold', label: 'Bank transfer', desc: 'GTBank, Access, Zenith · ~0.5%' },
+                { id: 2, icon: 'ph:device-mobile-bold', label: 'Mobile money', desc: 'MTN MoMo, Opay · ~0.5%' },
+                { id: 3, icon: 'ph:currency-circle-dollar-bold', label: 'Crypto wallet', desc: 'USDC on Arc Testnet · $0 fee' },
               ].map((m) => (
                 <div key={m.id} onClick={() => setTopUpMethod(m.id)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, border: `1.5px solid ${topUpMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, background: topUpMethod === m.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 20 }}>{m.icon}</span>
+                  <Icon icon={m.icon} style={{ fontSize: 20 }} />
                   <div><div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{m.label}</div><div style={{ fontSize: 11, color: 'var(--ink3)' }}>{m.desc}</div></div>
                 </div>
               ))}
@@ -463,7 +471,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(30,107,50,.2)' }}>
-                ↓ Top up $100
+                <Icon icon="ph:arrow-down-bold" /> Top up $100
               </button>
             )}
           </div>

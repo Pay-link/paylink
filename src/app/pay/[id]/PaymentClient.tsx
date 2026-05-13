@@ -12,6 +12,7 @@ import {
   getInitials,
   shortenTxHash,
 } from '@/lib/utils'
+import { Icon } from '@iconify/react'
 
 const arcTestnet = {
   id: 1038,
@@ -80,7 +81,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
         padding: '40px 20px',
       }}>
         <div style={{ textAlign: 'center', maxWidth: 420 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔗</div>
+          <Icon icon="ph:link-break-bold" style={{ fontSize: 48, marginBottom: 16, color: 'var(--ink3)' }} />
           <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
             {error === 'This link has expired' ? 'Link expired' : 'Link not found'}
           </h1>
@@ -117,7 +118,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       const activeWallet = wallets[0]
       if (!activeWallet) throw new Error('No active wallet found')
 
-      await activeWallet.switchChain(1038)
+      try { await activeWallet.switchChain(1038) } catch (_) { /* already on Arc or embedded wallet doesn't need explicit switch */ }
       
       const provider = await activeWallet.getEthereumProvider()
       const walletClient = createWalletClient({
@@ -172,13 +173,13 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       minHeight: 'calc(100vh - 62px)',
     }}>
       {/* Breadcrumb */}
-      <div style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
+      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
         <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
         <span style={{ opacity: .5 }}>›</span>
         <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Payment</span>
       </div>
 
-      <div style={{ padding: '16px 40px 24px' }}>
+      <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>
           Complete your payment
         </h1>
@@ -188,7 +189,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       </div>
 
       {/* Two column layout */}
-      <div style={{
+      <div className="two-col-layout" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 340px',
         gap: 24,
@@ -257,10 +258,10 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                 <span style={{ fontSize: 14, color: 'var(--ink2)', fontWeight: 500 }}>{link.note || 'No note'}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--ink3)' }}>
-                ⚡ Settles in <strong style={{ color: 'var(--ink2)' }}>&lt;1 second</strong>
+                <Icon icon="ph:lightning-bold" style={{ color: 'var(--g1)' }} /> Settles in <strong style={{ color: 'var(--ink2)' }}>&lt;1 second</strong>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--ink3)' }}>
-                🕐 {getExpiryLabel(link.expiry)}
+                <Icon icon="ph:clock-bold" /> {getExpiryLabel(link.expiry)}
               </div>
             </div>
           </div>
@@ -360,7 +361,9 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   </div>
 
                   <button className="btn-primary" onClick={handlePayNow}>
-                    {selectedMethod === 'wallet' ? '🔗 Connect Wallet to Pay' : `🔒 Continue to pay · ${formatUSD(link.amount)}`}
+                    {selectedMethod === 'wallet'
+                      ? <><Icon icon="ph:link-bold" /> Connect Wallet to Pay</>
+                      : <><Icon icon="ph:lock-bold" /> Continue to pay · {formatUSD(link.amount)}</>}
                   </button>
                 </>
               )}
@@ -402,7 +405,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     }}
                     disabled={(!authenticated && (!contact || contact.length < 5))}
                   >
-                    {authenticated ? '🔒 Secure Checkout' : '✉️ Verify to pay'}
+                    {authenticated ? <><Icon icon="ph:lock-bold" /> Secure Checkout</> : <><Icon icon="ph:envelope-bold" /> Verify to pay</>}
                   </button>
                 </>
               )}
@@ -444,8 +447,8 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     {formatUSD(link.amount)}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
-                    <span style={{ fontSize: 12, background: 'var(--g-soft)', color: 'var(--g1)', padding: '4px 12px', borderRadius: 20, fontWeight: 500 }}>
-                      ⚡ Settled in {(settlementMs / 1000).toFixed(1)}s
+                    <span style={{ fontSize: 12, background: 'var(--g-soft)', color: 'var(--g1)', padding: '4px 12px', borderRadius: 20, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <Icon icon="ph:lightning-bold" /> Settled in {(settlementMs / 1000).toFixed(1)}s
                     </span>
                     <span style={{ fontSize: 12, background: 'var(--page)', color: 'var(--ink3)', padding: '4px 12px', borderRadius: 20 }}>
                       Arc Network
@@ -475,7 +478,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   </div>
 
                   <button className="btn-primary" onClick={() => window.location.href = '/'}>
-                    🏠 Done
+                    <Icon icon="ph:house-bold" /> Done
                   </button>
                 </div>
               )}
@@ -519,7 +522,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
 
           <div className="card" style={{ padding: '16px 20px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
             <div style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--g-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: 'var(--g1)', flexShrink: 0 }}>
-              🛡
+              <Icon icon="ph:shield-check-bold" />
             </div>
             <div>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 3 }}>Secure checkout</div>
