@@ -1,15 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import type { PayLink, PaymentMethod } from '@/types'
+import { createWalletClient, custom, parseUnits } from 'viem'
+import { useWallets } from '@privy-io/react-auth'
 import {
   formatUSD,
   getExpiryLabel,
   getInitials,
   shortenTxHash,
 } from '@/lib/utils'
+
+const arcTestnet = {
+  id: 1038,
+  name: 'Arc Testnet',
+  network: 'arc-testnet',
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+  rpcUrls: {
+    default: { http: ['https://rpc.testnet.arc.network'] },
+    public: { http: ['https://rpc.testnet.arc.network'] },
+  },
+  blockExplorers: {
+    default: { name: 'Arc Explorer', url: 'https://testnet.arcscan.app' },
+  },
+  testnet: true,
+}
+
+const usdcAddress = '0x3600000000000000000000000000000000000000' as const
+const usdcAbi = [
+  {
+    "type": "function",
+    "name": "transfer",
+    "inputs": [
+      { "name": "to", "type": "address" },
+      { "name": "value", "type": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }],
+    "stateMutability": "nonpayable"
+  }
+] as const
 
 interface PaymentClientProps {
   link: PayLink | null
@@ -21,6 +52,7 @@ type PayState = 'method' | 'email' | 'otp' | 'wallet' | 'card' | 'processing' | 
 
 export function PaymentClient({ link, error, slug }: PaymentClientProps) {
   const { login, authenticated, user } = usePrivy()
+  const { wallets } = useWallets()
   const router = useRouter()
 
   const [state, setState] = useState<PayState>('method')
@@ -29,6 +61,15 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
   const [txHash, setTxHash] = useState('')
   const [settlementMs, setSettlementMs] = useState(0)
   const [step, setStep] = useState('Step 1 of 2')
+  const [wantsToPay, setWantsToPay] = useState(false)
+
+  // Auto-pay when authenticated after clicking pay
+  useEffect(() => {
+    if (wantsToPay && authenticated && wallets.length > 0) {
+      setWantsToPay(false)
+      handleProcess()
+    }
+  }, [wantsToPay, authenticated, wallets])
 
   // Link not found or error
   if (error || !link) {
@@ -59,40 +100,70 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
   }
 
   const handlePayNow = () => {
-    if (selectedMethod === 'wallet') { setState('wallet'); setStep('Step 2 of 2') }
+    if (selectedMethod === 'wallet') {
+      setWantsToPay(true)
+      if (!authenticated) login()
+    }
     else if (selectedMethod === 'card') { setState('card'); setStep('Step 2 of 2') }
     else { setState('email'); setStep('Step 2 of 2') }
   }
 
   const handleProcess = async () => {
+    if (!link) return
     setState('processing')
     const start = Date.now()
 
-    // In production: call Arc App Kit kit.send() here
-    // For now simulate with a timeout
-    await new Promise(r => setTimeout(r, 2800))
+    try {
+      const activeWallet = wallets[0]
+      if (!activeWallet) throw new Error('No active wallet found')
 
-    const mockTxHash = '0x' + Math.random().toString(16).slice(2, 10) + '...' + Math.random().toString(16).slice(2, 6)
-    setTxHash(mockTxHash)
-    setSettlementMs(Date.now() - start)
+      await activeWallet.switchChain(1038)
+      
+      const provider = await activeWallet.getEthereumProvider()
+      const walletClient = createWalletClient({
+        account: activeWallet.address as `0x${string}`,
+        chain: arcTestnet,
+        transport: custom(provider)
+      })
 
-    // Record transaction in Supabase
-    await fetch('/api/transactions/confirm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        link_id: link.id,
-        sender_wallet: user?.wallet?.address || '0x' + Math.random().toString(16).slice(2, 42),
-        recipient_id: link.owner_id,
-        recipient_wallet: link.owner_wallet,
-        amount: link.amount,
-        note: link.note,
-        tx_hash: mockTxHash,
-        payment_method: selectedMethod,
-      }),
-    })
+      const amountRaw = parseUnits(link.amount.toString(), 6)
+      const recipient = link.owner_wallet as `0x${string}`
 
-    setState('success')
+      const realTxHash = await walletClient.writeContract({
+        address: usdcAddress,
+        abi: usdcAbi,
+        functionName: 'transfer',
+        args: [recipient, amountRaw]
+      })
+
+      const elapsed = Date.now() - start
+      if (elapsed < 1500) await new Promise(r => setTimeout(r, 1500 - elapsed))
+
+      setTxHash(realTxHash)
+      setSettlementMs(Date.now() - start)
+
+      await fetch('/api/transactions/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          link_id: link.id,
+          sender_wallet: activeWallet.address,
+          recipient_id: link.owner_id,
+          recipient_wallet: link.owner_wallet,
+          amount: link.amount,
+          note: link.note,
+          tx_hash: realTxHash,
+          payment_method: selectedMethod,
+        }),
+      })
+
+      setState('success')
+    } catch (err: any) {
+      console.error('Payment Error:', err)
+      alert(err.message || 'Payment failed')
+      setState('email')
+      setStep('Step 2 of 2')
+    }
   }
 
   return (
@@ -156,7 +227,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   {link.owner_name}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--ink3)' }}>
-                  {link.owner_email || `paylink.xyz/pay/${slug}`}
+                  {link.owner_email || `paylink-1.netlify.app/pay/${slug}`}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -289,7 +360,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   </div>
 
                   <button className="btn-primary" onClick={handlePayNow}>
-                    🔒 Continue to pay · {formatUSD(link.amount)}
+                    {selectedMethod === 'wallet' ? '🔗 Connect Wallet to Pay' : `🔒 Continue to pay · ${formatUSD(link.amount)}`}
                   </button>
                 </>
               )}
@@ -323,10 +394,15 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   </div>
                   <button
                     className="btn-primary"
-                    onClick={handleProcess}
-                    disabled={!contact || contact.length < 5}
+                    onClick={() => {
+                      setWantsToPay(true)
+                      if (!authenticated) {
+                        login()
+                      }
+                    }}
+                    disabled={(!authenticated && (!contact || contact.length < 5))}
                   >
-                    ✉️ Send verification code
+                    {authenticated ? '🔒 Secure Checkout' : '✉️ Verify to pay'}
                   </button>
                 </>
               )}

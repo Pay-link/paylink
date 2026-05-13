@@ -34,6 +34,22 @@ export async function POST(request: NextRequest) {
       attempts++
     }
 
+    // Ensure user exists in the database
+    const { error: userError } = await supabase
+      .from('users')
+      .upsert({
+        id: owner_id,
+        display_name: owner_name || 'PayLink User',
+        email: owner_email,
+        wallet_address: owner_wallet,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' })
+
+    if (userError) {
+      console.error('Supabase user upsert error:', userError)
+      return NextResponse.json({ error: 'Failed to sync user' }, { status: 500 })
+    }
+
     // Create the link
     const { data: link, error } = await supabase
       .from('payment_links')
@@ -58,7 +74,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create link' }, { status: 500 })
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink.xyz'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
 
     return NextResponse.json({
       data: {

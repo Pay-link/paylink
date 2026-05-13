@@ -20,6 +20,10 @@ export default function CreatePage() {
   const [expiry, setExpiry] = useState('7 days')
   const [generatedSlug, setGeneratedSlug] = useState('')
   const [creating, setCreating] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
+  
+  // Mock bank setup for now
+  const hasBankSetup = false
 
   useEffect(() => {
     if (ready && !authenticated) login()
@@ -62,14 +66,16 @@ export default function CreatePage() {
       const data = await res.json()
       if (data.data?.link?.slug) {
         setGeneratedSlug(data.data.link.slug)
+        setStep(4)
       } else {
-        setGeneratedSlug(generateLinkSlug())
+        alert('Failed to generate link. Please try again.')
       }
-    } catch {
-      setGeneratedSlug(generateLinkSlug())
+    } catch (err) {
+      alert('An error occurred while creating the link.')
+      console.error(err)
+    } finally {
+      setCreating(false)
     }
-    setCreating(false)
-    setStep(4)
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
@@ -214,7 +220,7 @@ export default function CreatePage() {
 
                   {receiveType === 'bank' && (
                     <div style={{ marginBottom: 16 }}>
-                      <a href="/bank-setup" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--g-soft)', textDecoration: 'none' }}>
+                      <a href="#" onClick={(e) => { e.preventDefault(); alert('Bank integration via Yellow Card coming soon!'); }} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--g-soft)', textDecoration: 'none' }}>
                         <span style={{ fontSize: 18 }}>🏦</span>
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--g1)' }}>Set up bank account</div>
@@ -237,8 +243,12 @@ export default function CreatePage() {
                     </div>
                   </div>
 
-                  <button style={{ ...s.btn, opacity: creating ? .6 : 1 }} disabled={creating} onClick={generateLink}>
-                    🔗 {creating ? 'Generating...' : 'Generate my link'}
+                  <button 
+                    style={{ ...s.btn, opacity: creating || (receiveType === 'bank' && !hasBankSetup) ? .6 : 1 }} 
+                    disabled={creating || (receiveType === 'bank' && !hasBankSetup)} 
+                    onClick={generateLink}
+                  >
+                    🔗 {creating ? 'Generating...' : (receiveType === 'bank' && !hasBankSetup) ? 'Bank setup required' : 'Generate my link'}
                   </button>
                 </div>
               )}
@@ -269,7 +279,7 @@ export default function CreatePage() {
                       { label: 'Email', icon: '📧', href: shareUrls?.email },
                       { label: 'X / Twitter', icon: '𝕏', href: shareUrls?.x },
                       { label: 'QR code', icon: '⬛', action: () => alert('QR code generation coming soon') },
-                      { label: 'Copy link', icon: '📋', action: () => { navigator.clipboard.writeText(linkUrl); alert('Link copied!') } },
+                      { label: 'Copy link', icon: '📋', action: () => { navigator.clipboard.writeText(linkUrl); setToast('Link copied!'); setTimeout(() => setToast(null), 3000) } },
                     ].map(item => (
                       <div key={item.label}
                         onClick={() => item.href ? window.open(item.href, '_blank') : item.action?.()}
@@ -339,8 +349,15 @@ export default function CreatePage() {
 
       <style>{`
         @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+        @keyframes toastUp { from{transform:translate(-50%,20px);opacity:0} to{transform:translate(-50%,0);opacity:1} }
         :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
       `}</style>
+
+      {toast && (
+        <div style={{ position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'var(--ink)', color: '#fff', padding: '12px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, boxShadow: '0 8px 32px rgba(0,0,0,.15)', zIndex: 1000, animation: 'toastUp .3s ease forwards' }}>
+          ✓ {toast}
+        </div>
+      )}
     </div>
   )
 }

@@ -101,7 +101,7 @@ export default function SendPage() {
                   <input style={s.input} type="text" placeholder="you@email.com or +234 800 000 0000" value={senderContact} onChange={e => setSenderContact(e.target.value)} />
                   <div style={{ fontSize: 12, color: 'var(--ink3)', marginTop: 7, lineHeight: 1.6 }}>A verification code will be sent. No account created — your wallet is set up automatically.</div>
                   <button style={{ ...s.btn, opacity: !isValidContact(senderContact) ? .4 : 1 }} disabled={!isValidContact(senderContact)} onClick={nextStep}>
-                    ✉️ Send verification code
+                    ✉️ Verify to pay
                   </button>
                 </div>
               )}

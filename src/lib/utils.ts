@@ -9,12 +9,13 @@ export function generateLinkSlug(): string {
 }
 
 export function getLinkUrl(slug: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink.xyz'
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
   return `${base}/pay/${slug}`
 }
 
 export function getShortLinkUrl(slug: string): string {
-  return `paylink.xyz/pay/${slug}`
+  const domain = (process.env.NEXT_PUBLIC_APP_URL || 'paylink-1.netlify.app').replace(/^https?:\/\//, '')
+  return `${domain}/pay/${slug}`
 }
 
 // ── FORMATTING ─────────────────────────────────────────────────

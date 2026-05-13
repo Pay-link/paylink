@@ -17,6 +17,9 @@ export default function DashboardPage() {
   const [displayBalance, setDisplayBalance] = useState(0)
   const [topUpOpen, setTopUpOpen] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
+  const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD')
+  const [topUpMethod, setTopUpMethod] = useState(0)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (ready && !authenticated) router.push('/login')
@@ -72,33 +75,16 @@ export default function DashboardPage() {
     requestAnimationFrame(animate)
   }
 
-  // Show mock data if no real data yet
-  const mockTxs = [
-    { id: '1', amount: 500, note: 'Website redesign', status: 'confirmed', created_at: new Date(Date.now()-3600000).toISOString(), type: 'sent', name: 'James K.', initials: 'JK', color: 'rgba(30,107,50,.1)', tc: 'var(--g1)' },
-    { id: '2', amount: 150, note: 'Consulting fee', status: 'confirmed', created_at: new Date(Date.now()-7200000).toISOString(), type: 'received', name: 'Amara M.', initials: 'AM', color: 'rgba(255,180,0,.1)', tc: '#CC8800' },
-    { id: '3', amount: 800, note: 'April retainer', status: 'confirmed', created_at: new Date(Date.now()-86400000).toISOString(), type: 'received', name: 'Tolu L.', initials: 'TL', color: 'rgba(100,130,255,.1)', tc: '#6080FF' },
-    { id: '4', amount: 1000, note: 'Top up via Ramp', status: 'confirmed', created_at: new Date(Date.now()-172800000).toISOString(), type: 'received', name: 'Top up', initials: '↓', color: 'rgba(30,107,50,.1)', tc: 'var(--g1)' },
-    { id: '5', amount: 250, note: 'Freelance payment', status: 'confirmed', created_at: new Date(Date.now()-259200000).toISOString(), type: 'sent', name: 'Rita C.', initials: 'RC', color: 'rgba(220,50,50,.1)', tc: '#CC2020' },
-  ]
+  const displayTxs = transactions.map(tx => ({
+    ...tx,
+    type: tx.recipient_id === userId ? 'received' : 'sent',
+    name: tx.sender_email || tx.recipient_wallet?.slice(0,8) || 'Unknown',
+    initials: (tx.sender_email || 'UK').slice(0,2).toUpperCase(),
+    color: tx.recipient_id === userId ? 'rgba(30,107,50,.1)' : 'rgba(220,50,50,.1)',
+    tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
+  }))
 
-  const mockLinks = [
-    { id: '1', slug: 'ox-apr-8f2k', amount: 250, note: 'Logo design — April invoice', status: 'active', paid_count: 0, expiry: new Date(Date.now()+6*86400000).toISOString() },
-    { id: '2', slug: 'ret-may-9g3k', amount: 800, note: 'Monthly retainer — May', status: 'active', paid_count: 3, expiry: null },
-    { id: '3', slug: 'con-q1-2m1x', amount: 150, note: 'Consulting session — Q1', status: 'expired', paid_count: 1, expiry: new Date(Date.now()-30*86400000).toISOString() },
-  ]
-
-  const displayTxs = transactions.length > 0
-    ? transactions.map(tx => ({
-        ...tx,
-        type: tx.recipient_id === userId ? 'received' : 'sent',
-        name: tx.sender_email || tx.recipient_wallet?.slice(0,8) || 'Unknown',
-        initials: (tx.sender_email || 'UK').slice(0,2).toUpperCase(),
-        color: tx.recipient_id === userId ? 'rgba(30,107,50,.1)' : 'rgba(220,50,50,.1)',
-        tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
-      }))
-    : mockTxs
-
-  const displayLinks = links.length > 0 ? links : mockLinks
+  const displayLinks = links
   const balance = displayBalance || (dataLoaded ? 0 : 0)
 
   const favourites = [
@@ -187,13 +173,22 @@ export default function DashboardPage() {
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.55)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6 }}>Available balance</div>
+                  <div style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.55)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    Available balance
+                    <button onClick={() => setCurrency(c => c === 'USD' ? 'NGN' : 'USD')} style={{ background: 'rgba(255,255,255,.1)', border: 'none', color: '#fff', fontSize: 10, padding: '2px 8px', borderRadius: 10, cursor: 'pointer', transition: 'all .2s' }}>
+                      ⇄ {currency === 'USD' ? 'NGN' : 'USD'}
+                    </button>
+                  </div>
                   <div style={{ fontSize: 52, fontWeight: 700, color: '#fff', letterSpacing: '-.06em', lineHeight: 1 }}>
-                    <span style={{ fontSize: '0.42em', fontWeight: 500, verticalAlign: 'super', color: 'rgba(255,255,255,.7)' }}>$</span>
-                    {displayBalance.toFixed(2)}
+                    <span style={{ fontSize: '0.42em', fontWeight: 500, verticalAlign: 'super', color: 'rgba(255,255,255,.7)' }}>
+                      {currency === 'USD' ? '$' : '₦'}
+                    </span>
+                    {currency === 'USD' ? displayBalance.toFixed(2) : (displayBalance * 1650).toLocaleString()}
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 5 }}>
-                    ≈ <strong style={{ color: 'rgba(255,255,255,.75)' }}>₦{(displayBalance * 1650).toLocaleString()}</strong> NGN
+                    ≈ <strong style={{ color: 'rgba(255,255,255,.75)' }}>
+                      {currency === 'USD' ? `₦${(displayBalance * 1650).toLocaleString()} NGN` : `$${displayBalance.toFixed(2)} USD`}
+                    </strong>
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -216,7 +211,7 @@ export default function DashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 24 }}>
             {[
               { label: 'Send', icon: '→', bg: 'var(--g1)', color: '#fff', href: '/send' },
-              { label: 'Request', icon: '🔗', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
+              { label: 'Create link', icon: '🔗', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
               { label: 'Top up', icon: '↓', bg: '#EEF2FF', color: '#4F46E5', action: () => setTopUpOpen(true) },
               { label: 'Withdraw', icon: '↑', bg: '#FFF8E8', color: '#B8880A', action: () => {} },
             ].map(item => (
@@ -406,27 +401,51 @@ export default function DashboardPage() {
               <button onClick={() => setTopUpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--ink3)' }}>×</button>
             </div>
             <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 20, lineHeight: 1.6 }}>Add USDC to your PayLink wallet. Send to anyone instantly with $0 gas.</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-              {['$50', '$100', '$250', '$500'].map(amt => (
-                <div key={amt} style={{ padding: '7px 14px', borderRadius: 100, border: '1.5px solid var(--border)', background: '#fff', fontSize: 13, fontWeight: 500, color: 'var(--ink3)', cursor: 'pointer' }}>{amt}</div>
-              ))}
-            </div>
-            <input type="text" defaultValue="100" style={{ width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none', marginBottom: 16 }} placeholder="Custom amount" />
+            {topUpMethod !== 3 && (
+              <>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+                  {['$50', '$100', '$250', '$500'].map(amt => (
+                    <div key={amt} style={{ padding: '7px 14px', borderRadius: 100, border: '1.5px solid var(--border)', background: '#fff', fontSize: 13, fontWeight: 500, color: 'var(--ink3)', cursor: 'pointer' }}>{amt}</div>
+                  ))}
+                </div>
+                <input type="text" defaultValue="100" style={{ width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none', marginBottom: 16 }} placeholder="Custom amount" />
+              </>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {[
-                { icon: '💳', label: 'Debit or credit card', desc: 'Visa, Mastercard — global · ~1.5%' },
-                { icon: '🏦', label: 'Bank transfer', desc: 'GTBank, Access, Zenith · ~0.5%' },
-                { icon: '📱', label: 'Mobile money', desc: 'MTN MoMo, Opay · ~0.5%' },
-              ].map((m, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, border: `1.5px solid ${i === 0 ? 'var(--g1)' : 'var(--border)'}`, background: i === 0 ? 'var(--g-soft)' : '#fff', cursor: 'pointer' }}>
+                { id: 0, icon: '💳', label: 'Debit or credit card', desc: 'Visa, Mastercard — global · ~1.5%' },
+                { id: 1, icon: '🏦', label: 'Bank transfer', desc: 'GTBank, Access, Zenith · ~0.5%' },
+                { id: 2, icon: '📱', label: 'Mobile money', desc: 'MTN MoMo, Opay · ~0.5%' },
+                { id: 3, icon: '⛓️', label: 'Crypto wallet', desc: 'USDC on Arc Testnet · $0 fee' },
+              ].map((m) => (
+                <div key={m.id} onClick={() => setTopUpMethod(m.id)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, border: `1.5px solid ${topUpMethod === m.id ? 'var(--g1)' : 'var(--border)'}`, background: topUpMethod === m.id ? 'var(--g-soft)' : '#fff', cursor: 'pointer' }}>
                   <span style={{ fontSize: 20 }}>{m.icon}</span>
                   <div><div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{m.label}</div><div style={{ fontSize: 11, color: 'var(--ink3)' }}>{m.desc}</div></div>
                 </div>
               ))}
             </div>
-            <button style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(30,107,50,.2)' }}>
-              ↓ Top up $100
-            </button>
+            
+            {topUpMethod === 3 ? (
+              <div style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 16, padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: 13, color: 'var(--ink3)', marginBottom: 12 }}>Send only Testnet USDC to this address on the Arc Network.</div>
+                <div style={{ background: '#fff', border: '1.5px dashed var(--border)', borderRadius: 12, padding: '16px', wordBreak: 'break-all', fontSize: 14, fontFamily: 'monospace', color: 'var(--ink)', marginBottom: 16 }}>
+                  {walletAddress || 'Loading...'}
+                </div>
+                <button onClick={() => {
+                  if (walletAddress) {
+                    navigator.clipboard.writeText(walletAddress);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }
+                }} style={{ width: '100%', background: copied ? 'var(--g-soft)' : '#fff', color: copied ? 'var(--g1)' : 'var(--ink)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>
+                  {copied ? '✓ Copied' : '📄 Copy address'}
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(30,107,50,.2)' }}>
+                ↓ Top up $100
+              </button>
+            )}
           </div>
         </div>
       )}

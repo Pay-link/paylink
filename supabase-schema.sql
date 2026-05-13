@@ -128,3 +128,11 @@ CREATE TRIGGER users_updated_at
 CREATE TRIGGER payment_links_updated_at
   BEFORE UPDATE ON payment_links
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ── RPC FUNCTIONS ─────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION increment_paid_count(link_id uuid)
+RETURNS void AS $$
+BEGIN
+  UPDATE payment_links SET paid_count = paid_count + 1 WHERE id = link_id;
+END;
+$$ LANGUAGE plpgsql;
