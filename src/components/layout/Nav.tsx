@@ -36,11 +36,12 @@ export function Nav({ variant = 'app', pageName }: NavProps) {
         .nav-create-link { padding: 7px 14px; border-radius: 100px; background: var(--g1); color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; }
         .nav-dash-link { padding: 7px 14px; border-radius: 100px; background: var(--g-soft); color: var(--g1); font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid var(--border-g); white-space: nowrap; }
         /* App nav — breadcrumb tabs */
-        .nav-breadcrumb { display: flex; align-items: center; gap: 2px; }
+        .nav-breadcrumb { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: flex-end; margin-right: 8px; }
         .nav-bc-item { font-size: 13px; color: var(--ink3); text-decoration: none; padding: 5px 10px; border-radius: 8px; font-weight: 500; transition: all .15s; white-space: nowrap; }
         .nav-bc-item:hover { color: var(--ink); background: rgba(255,255,255,0.06); }
         .nav-bc-item.active { color: var(--ink); background: rgba(255,255,255,0.08); font-weight: 600; }
         .nav-bc-sep { color: var(--ink4); font-size: 12px; padding: 0 2px; }
+        .nav-bc-home { display: flex; align-items: center; gap: 0; }
         /* Logout button */
         .nav-logout { padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); color: var(--ink3); font-size: 12px; font-weight: 500; cursor: pointer; background: transparent; font-family: var(--font); white-space: nowrap; }
         .nav-logout:hover { color: var(--ink); border-color: var(--ink3); }
@@ -51,7 +52,7 @@ export function Nav({ variant = 'app', pageName }: NavProps) {
           .nav-center-links { display: none !important; }
           .nav-arc-badge { display: none !important; }
           .nav-send-link { display: none !important; }
-          .nav-breadcrumb { display: none !important; }
+          .nav-bc-home { display: none !important; }
         }
       `}</style>
       <nav style={{
@@ -88,11 +89,13 @@ export function Nav({ variant = 'app', pageName }: NavProps) {
           </div>
         )}
 
-        {/* App: breadcrumb tabs centered (desktop) */}
+        {/* App: breadcrumb tabs — all screen sizes */}
         {variant === 'app' && pageName && (
-          <div className="nav-breadcrumb" style={{ flex: 1, justifyContent: 'flex-end', marginRight: 8 }}>
-            <Link href="/" className="nav-bc-item">Home</Link>
-            <span className="nav-bc-sep">›</span>
+          <div className="nav-breadcrumb">
+            <span className="nav-bc-home">
+              <Link href="/" className="nav-bc-item">Home</Link>
+              <span className="nav-bc-sep">›</span>
+            </span>
             <span className="nav-bc-item active">{pageName}</span>
           </div>
         )}
