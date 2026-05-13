@@ -1,11 +1,13 @@
-import { customAlphabet } from 'nanoid'
-
 // ── LINK ID GENERATION ─────────────────────────────────────────
 const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
-const nanoid = customAlphabet(alphabet, 8)
 
 export function generateLinkSlug(): string {
-  return nanoid()
+  let result = ''
+  const bytes = crypto.getRandomValues(new Uint8Array(8))
+  for (const byte of bytes) {
+    result += alphabet[byte % alphabet.length]
+  }
+  return result
 }
 
 export function getLinkUrl(slug: string): string {

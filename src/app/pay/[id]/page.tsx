@@ -1,5 +1,6 @@
 import { Nav } from '@/components/layout/Nav'
 import { PaymentClient } from './PaymentClient'
+import { createServerClient } from '@/lib/supabase'
 
 interface PayPageProps {
   params: { id: string }
@@ -7,15 +8,27 @@ interface PayPageProps {
 
 async function getLink(slug: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/links/${slug}`,
-      { cache: 'no-store' }
-    )
-    const json = await res.json()
-    if (!res.ok) return { link: null, error: json.error }
-    return { link: json.data, error: null }
-  } catch {
-    return { link: null, error: 'Failed to load payment link' }
+    const supabase = createServerClient()
+    const { data: link, error } = await supabase
+      .from('payment_links')
+      .select('*')
+      .eq('slug', slug)
+      .single()
+
+    if (error || !link) return { link: null, error: 'Link not found' }
+
+    if (link.expiry && new Date(link.expiry) < new Date()) {
+      await supabase.from('payment_links').update({ status: 'expired' }).eq('id', link.id)
+      return { link: null, error: 'This link has expired' }
+    }
+
+    if (link.status === 'paid') return { link: null, error: 'This link has already been paid' }
+    if (link.status === 'cancelled') return { link: null, error: 'This link has been cancelled' }
+
+    return { link, error: null }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to load payment link'
+    return { link: null, error: message }
   }
 }
 

@@ -47,13 +47,17 @@ export default function CreatePage() {
   }
 
   const generateLink = async () => {
+    if (!userId) {
+      alert('Please sign in before generating a link.')
+      return
+    }
     setCreating(true)
     try {
       const res = await fetch('/api/links/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          owner_id: userId || 'demo',
+          owner_id: userId,
           owner_name: displayName,
           owner_email: email,
           owner_wallet: walletAddress || '0x0000000000000000000000000000000000000000',
@@ -68,10 +72,10 @@ export default function CreatePage() {
         setGeneratedSlug(data.data.link.slug)
         setStep(4)
       } else {
-        alert('Failed to generate link. Please try again.')
+        alert(`Failed to generate link: ${data.error || 'Unknown error'}`)
       }
     } catch (err) {
-      alert('An error occurred while creating the link.')
+      alert('Network error while creating the link. Check your connection.')
       console.error(err)
     } finally {
       setCreating(false)

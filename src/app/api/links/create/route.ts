@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     if (userError) {
       console.error('Supabase user upsert error:', userError)
-      return NextResponse.json({ error: 'Failed to sync user' }, { status: 500 })
+      return NextResponse.json({ error: `Failed to sync user: ${userError.message}` }, { status: 500 })
     }
 
     // Create the link
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error)
-      return NextResponse.json({ error: 'Failed to create link' }, { status: 500 })
+      return NextResponse.json({ error: `Failed to create link: ${error.message}` }, { status: 500 })
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
@@ -84,7 +84,8 @@ export async function POST(request: NextRequest) {
       error: null,
     })
   } catch (err) {
-    console.error('Create link error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('Create link error:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
