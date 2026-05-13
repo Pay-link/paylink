@@ -4,9 +4,9 @@ const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
 export function generateLinkSlug(): string {
   let result = ''
   const bytes = crypto.getRandomValues(new Uint8Array(8))
-  for (const byte of bytes) {
+  Array.from(bytes).forEach(byte => {
     result += alphabet[byte % alphabet.length]
-  }
+  })
   return result
 }
 
