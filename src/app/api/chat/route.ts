@@ -2,7 +2,11 @@ import OpenAI from 'openai'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
 import { sanitizeText } from '@/lib/sanitize'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+function getOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) return null
+  return new OpenAI({ apiKey })
+}
 
 const MAX_MESSAGES = 20        // max conversation turns kept
 const MAX_MSG_LENGTH = 1000    // max characters per message
@@ -39,6 +43,11 @@ Tone: warm, helpful, brief. Keep responses under 120 words unless a step-by-step
 export async function POST(req: Request) {
   // Rate limit: 20 messages per minute per IP — prevents API bill abuse
   if (!rateLimit(`chat:${getIp(req)}`, 20, 60_000)) return rateLimitResponse()
+
+  const openai = getOpenAI()
+  if (!openai) {
+    return new Response(JSON.stringify({ error: 'Chat is not configured' }), { status: 503, headers: { 'Content-Type': 'application/json' } })
+  }
 
   try {
     const body = await req.json()
