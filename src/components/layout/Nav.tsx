@@ -52,10 +52,7 @@ export function Nav({ variant = 'app', pageName }: NavProps) {
           .nav-arc-badge { display: none !important; }
           .nav-send-link { display: none !important; }
           .nav-breadcrumb { display: none !important; }
-          /* On mobile app pages show only the logout button */
-          .nav-mobile-logout { display: flex !important; }
         }
-        .nav-mobile-logout { display: none; }
       `}</style>
       <nav style={{
         position: 'sticky',
@@ -113,18 +110,13 @@ export function Nav({ variant = 'app', pageName }: NavProps) {
             )
           ) : (
             <>
-              {/* Desktop: Arc badge */}
+              {/* Desktop only: Arc badge */}
               <div className="nav-arc-badge">
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite', flexShrink: 0 }} />
                 Arc Testnet
               </div>
-              {/* Desktop: Log out */}
               {authenticated && (
                 <button onClick={logout} className="nav-logout">Log out</button>
-              )}
-              {/* Mobile: Log out only (breadcrumb is hidden, Dashboard removed) */}
-              {authenticated && (
-                <button onClick={logout} className="nav-mobile-logout nav-logout">Log out</button>
               )}
             </>
           )}

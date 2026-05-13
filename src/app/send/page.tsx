@@ -40,8 +40,7 @@ export default function SendPage() {
   const amt = parseFloat(amountStr) || 0
 
   const s = {
-    page: { background: 'var(--page)', minHeight: '100vh', overflowX: 'hidden' } as React.CSSProperties,
-    main: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' } as React.CSSProperties,
+    page: { background: 'var(--page)', minHeight: '100vh' } as React.CSSProperties,
     card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', overflow: 'hidden', minWidth: 0 } as React.CSSProperties,
     title: { fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 } as React.CSSProperties,
     sub: { fontSize: 15, color: 'var(--ink3)' } as React.CSSProperties,
@@ -51,14 +50,24 @@ export default function SendPage() {
 
   return (
     <div style={s.page}>
+      <style>{`
+        .send-page-header { padding: 16px 40px 24px; }
+        .send-two-col { display: grid; grid-template-columns: 1fr 340px; gap: 24px; padding: 0 40px 60px; max-width: 1100px; margin: 0 auto; align-items: start; }
+        .send-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 82px; }
+        @media (max-width: 768px) {
+          .send-page-header { padding: 16px 16px 20px; }
+          .send-two-col { grid-template-columns: 1fr; padding: 0 16px 60px; gap: 0; }
+          .send-sidebar { display: none; }
+        }
+      `}</style>
       <Nav variant="app" pageName="Send money" />
-      <div className="page-header" style={{ padding: '16px 40px 24px' }}>
+      <div className="send-page-header">
         <h1 style={s.title}>Send money</h1>
         <p style={s.sub}>Send USDC to anyone using their email or phone. Settles in under a second.</p>
       </div>
 
-      <div className="two-col-layout" style={s.main}>
-        <div>
+      <div className="send-two-col">
+        <div style={{ minWidth: 0 }}>
           <div style={s.card}>
             {/* Step progress */}
             <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)', overflowX: 'auto', gap: 0 }}>
@@ -215,7 +224,7 @@ export default function SendPage() {
         </div>
 
         {/* Right sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'sticky', top: 82 }}>
+        <div className="send-sidebar">
           <div style={{ ...s.card, padding: '22px 24px' }}>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>Payment summary</div>
             <div style={{ fontSize: 13, color: 'var(--ink3)', marginBottom: 18 }}>Details update as you go</div>
