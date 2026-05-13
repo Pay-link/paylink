@@ -107,14 +107,15 @@ export default function DashboardPage() {
 
   const displayLinks = links
   const balance = displayBalance || (dataLoaded ? 0 : 0)
+  const favourites: any[] = []
 
-  const favourites = [
-    { name: 'James K.', initials: 'JK', color: 'rgba(255,107,0,.12)', tc: 'var(--g1)', online: true },
-    { name: 'Amara M.', initials: 'AM', color: 'rgba(255,180,0,.1)', tc: '#CC8800', online: false },
-    { name: 'Tolu L.', initials: 'TL', color: 'rgba(100,130,255,.1)', tc: '#6080FF', online: false },
-    { name: 'Rita C.', initials: 'RC', color: 'rgba(220,50,50,.1)', tc: '#CC2020', online: true },
-    { name: 'Sam K.', initials: 'SK', color: 'rgba(0,150,200,.1)', tc: '#0096C8', online: false },
-  ]
+  const now = new Date()
+  const monthTxs = transactions.filter(tx => {
+    const d = new Date(tx.created_at)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  })
+  const monthReceived = monthTxs.filter(tx => tx.recipient_id === userId).reduce((a, tx) => a + (tx.amount || 0), 0)
+  const monthSent = monthTxs.filter(tx => tx.recipient_id !== userId).reduce((a, tx) => a + (tx.amount || 0), 0)
 
   if (!authenticated) return null
 
@@ -262,22 +263,32 @@ export default function DashboardPage() {
                 <span style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, cursor: 'pointer' }}>Manage</span>
               </div>
               <div style={{ ...cardStyle, marginBottom: 20 }}>
-                <div style={{ display: 'flex', gap: 12, padding: '16px 18px', overflowX: 'auto' }}>
-                  {favourites.map(fav => (
-                    <div key={fav.name} onClick={() => router.push('/send')}
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, cursor: 'pointer', flexShrink: 0, width: 60 }}>
-                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: fav.color, color: fav.tc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,.08)', position: 'relative' }}>
-                        {fav.initials}
-                        {fav.online && <div style={{ position: 'absolute', bottom: 1, right: 1, width: 11, height: 11, borderRadius: '50%', background: 'var(--g3)', border: '2px solid #fff' }} />}
-                      </div>
-                      <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink3)', textAlign: 'center', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{fav.name.split(' ')[0]}</div>
+                {favourites.length === 0 ? (
+                  <div style={{ padding: '20px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--page)', border: '1.5px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: 'var(--ink4)', cursor: 'pointer', flexShrink: 0 }} onClick={() => router.push('/send')}>+</div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 2 }}>No favourites yet</div>
+                      <div style={{ fontSize: 12, color: 'var(--ink4)' }}>Send money to someone and they'll appear here for quick access.</div>
                     </div>
-                  ))}
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, flexShrink: 0, width: 60 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--page)', border: '1.5px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--ink4)', cursor: 'pointer' }}>+</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink4)' }}>Add</div>
                   </div>
-                </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: 12, padding: '16px 18px', overflowX: 'auto' }}>
+                    {favourites.map((fav: any) => (
+                      <div key={fav.name} onClick={() => router.push('/send')}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, cursor: 'pointer', flexShrink: 0, width: 60 }}>
+                        <div style={{ width: 48, height: 48, borderRadius: '50%', background: fav.color, color: fav.tc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, border: '2px solid var(--border)', position: 'relative' }}>
+                          {fav.initials}
+                          {fav.online && <div style={{ position: 'absolute', bottom: 1, right: 1, width: 11, height: 11, borderRadius: '50%', background: 'var(--g3)', border: '2px solid var(--white)' }} />}
+                        </div>
+                        <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink3)', textAlign: 'center', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{fav.name.split(' ')[0]}</div>
+                      </div>
+                    ))}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, flexShrink: 0, width: 60 }}>
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--page)', border: '1.5px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--ink4)', cursor: 'pointer' }}>+</div>
+                      <div style={{ fontSize: 10, color: 'var(--ink4)' }}>Add</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Transactions */}
@@ -374,13 +385,13 @@ export default function DashboardPage() {
               <div style={{ ...cardStyle, padding: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>This month</div>
-                  <span style={{ fontSize: 11, color: 'var(--ink4)' }}>May 2026</span>
+                  <span style={{ fontSize: 11, color: 'var(--ink4)' }}>{now.toLocaleString('default', { month: 'long' })} {now.getFullYear()}</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   {[
-                    { label: 'Received', val: '$950', green: true, change: '+12%', up: true },
-                    { label: 'Sent', val: '$870', green: false, change: '-4%', up: false },
-                    { label: 'Payments', val: '14', green: false, change: '+3', up: true },
+                    { label: 'Received', val: `$${monthReceived.toFixed(2)}`, green: true, change: monthReceived > 0 ? `+$${monthReceived.toFixed(0)}` : '$0', up: true },
+                    { label: 'Sent', val: `$${monthSent.toFixed(2)}`, green: false, change: monthSent > 0 ? `-$${monthSent.toFixed(0)}` : '$0', up: false },
+                    { label: 'Payments', val: `${monthTxs.length}`, green: false, change: `${monthTxs.length} total`, up: monthTxs.length > 0 },
                     { label: 'Gas saved', val: '$0', green: true, change: 'vs chains', up: true },
                   ].map(stat => (
                     <div key={stat.label} style={{ background: 'var(--page)', borderRadius: 12, padding: '12px 12px' }}>
@@ -501,29 +512,29 @@ export default function DashboardPage() {
       <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
         <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>pay<span style={{color:'var(--g1)'}}>link</span></div>
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-          <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>+</button>
+          <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="ph:plus-bold" /></button>
           <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>
         </div>
       </div>
 
       {/* Mobile bottom nav */}
-      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'var(--white)', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 8px' }}>
+      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'var(--white)', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 4px' }}>
         {[
-          { id:'home', icon:'⊞', label:'Home' },
-          { id:'links', icon:'🔗', label:'Links' },
-          { id:'send', icon:'→', label:'Send' },
-          { id:'activity', icon:'🕐', label:'Activity' },
+          { id:'home', icon:'ph:squares-four-bold', label:'Home' },
+          { id:'links', icon:'ph:link-bold', label:'Links' },
+          { id:'send', icon:'ph:paper-plane-right-bold', label:'Send' },
+          { id:'activity', icon:'ph:clock-countdown-bold', label:'Activity' },
         ].map(tab => (
           <button key={tab.id} onClick={() => tab.id === 'send' ? router.push('/send') : setMobileTab(tab.id as any)}
-            style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'none', border:'none', cursor:'pointer', padding:'8px 16px', borderRadius:12, color: mobileTab === tab.id ? 'var(--g1)' : 'var(--ink4)', fontFamily:'var(--font)' }}>
-            <span style={{ fontSize:20 }}>{tab.icon}</span>
+            style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'none', border:'none', cursor:'pointer', padding:'8px 12px', borderRadius:12, color: mobileTab === tab.id ? 'var(--g1)' : 'var(--ink4)', fontFamily:'var(--font)' }}>
+            <Icon icon={tab.icon} style={{ fontSize: 22 }} />
             <span style={{ fontSize:10, fontWeight:600 }}>{tab.label}</span>
           </button>
         ))}
         <button onClick={() => router.push('/create')}
-          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'var(--g1)', border:'none', cursor:'pointer', padding:'10px 18px', borderRadius:14, color:'#fff', fontFamily:'var(--font)' }}>
-          <span style={{ fontSize:18 }}>＋</span>
-          <span style={{ fontSize:10, fontWeight:600 }}>Create</span>
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'var(--g1)', border:'none', cursor:'pointer', padding:'10px 16px', borderRadius:14, color:'#fff', fontFamily:'var(--font)', boxShadow:'0 4px 14px rgba(255,107,0,.3)' }}>
+          <Icon icon="ph:plus-bold" style={{ fontSize: 20 }} />
+          <span style={{ fontSize:10, fontWeight:700 }}>Create</span>
         </button>
       </div>
     </div>

@@ -114,7 +114,7 @@ export default function CreatePage() {
         <div>
           <div style={s.card}>
             {/* Step progress */}
-            <div style={{ display: 'flex', alignItems: 'center', padding: '20px 28px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)', overflowX: 'auto', gap: 0 }}>
               {steps.map((label, i) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', flex: i < steps.length - 1 ? 1 : 0 }}>
                   <div style={{
@@ -125,7 +125,7 @@ export default function CreatePage() {
                     border: i > currentStepIndex ? '1.5px solid var(--border)' : 'none',
                     boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
                   }}>{i < currentStepIndex ? '✓' : i + 1}</div>
-                  <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)' }}>{label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>{label}</div>
                   {i < steps.length - 1 && <div style={{ flex: 1, height: 1.5, background: i < currentStepIndex ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
                 </div>
               ))}

@@ -72,7 +72,7 @@ export default function SendPage() {
         <div>
           <div style={s.card}>
             {/* Step progress */}
-            <div style={{ display: 'flex', alignItems: 'center', padding: '20px 28px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)', overflowX: 'auto', gap: 0 }}>
               {[1,2,3,4].map((n, i) => (
                 <div key={n} style={{ display: 'flex', alignItems: 'center', flex: n < 4 ? 1 : 0 }}>
                   <div style={{
@@ -83,8 +83,8 @@ export default function SendPage() {
                     border: n > step ? '1.5px solid var(--border)' : 'none',
                     boxShadow: n === step ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
                   }}>{n < step ? '✓' : n}</div>
-                  <div style={{ fontSize: 13, fontWeight: 500, marginLeft: 8, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)' }}>
-                    {['Your identity','Recipient','Amount','Payment'][n-1]}
+                  <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>
+                    {['Identity','Recipient','Amount','Payment'][n-1]}
                   </div>
                   {n < 4 && <div style={{ flex: 1, height: 1.5, background: n < step ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
                 </div>

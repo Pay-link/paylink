@@ -670,6 +670,10 @@ footer{
   .hero{padding:40px 5%}
   .hero-right{display:none}
   .nav-links{display:none}
+  /* Landing nav on mobile — hide ghost button, shrink pills */
+  .btn-ghost{display:none!important}
+  .btn-pill{padding:7px 14px!important;font-size:12px!important}
+  nav{padding:0 16px!important}
   .hero-stats{gap:16px}
   .h-stat-div{display:none}
   .footer-top{grid-template-columns:1fr}
