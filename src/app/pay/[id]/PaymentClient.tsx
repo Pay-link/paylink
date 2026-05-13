@@ -15,10 +15,10 @@ import {
 import { Icon } from '@iconify/react'
 
 const arcTestnet = {
-  id: 1038,
+  id: 5042002,
   name: 'Arc Testnet',
   network: 'arc-testnet',
-  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
   rpcUrls: {
     default: { http: ['https://rpc.testnet.arc.network'] },
     public: { http: ['https://rpc.testnet.arc.network'] },
@@ -125,7 +125,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       try {
         await provider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x40E' }],
+          params: [{ chainId: '0x4CEF52' }], // 5042002 decimal
         })
       } catch (_) {}
 

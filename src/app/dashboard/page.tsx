@@ -11,10 +11,10 @@ import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
 const arcTestnet = {
-  id: 1038,
+  id: 5042002,
   name: 'Arc Testnet',
   network: 'arc-testnet',
-  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
   rpcUrls: { default: { http: ['https://rpc.testnet.arc.network'] }, public: { http: ['https://rpc.testnet.arc.network'] } },
 } as const
 

@@ -5,13 +5,13 @@ import { PrivyProvider } from '@privy-io/react-auth'
 import { TestnetBanner } from '@/components/ui/TestnetBanner'
 
 const arcTestnet = {
-  id: 1038,
+  id: 5042002,
   name: 'Arc Testnet',
   network: 'arc-testnet',
   nativeCurrency: {
     name: 'USDC',
     symbol: 'USDC',
-    decimals: 6,
+    decimals: 18,
   },
   rpcUrls: {
     default: { http: ['https://rpc.testnet.arc.network'] },
