@@ -585,15 +585,14 @@ nav{
 .trust-h3{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
 .trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
 .trust-pill{
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
   background:rgba(255,255,255,.04);border:0.5px solid var(--border);
-  border-radius:16px;padding:18px 28px;
-  min-width:130px;height:64px;
-  transition:all .2s;
+  border-radius:16px;padding:18px 24px;min-width:110px;
+  transition:all .2s;cursor:default;
 }
 .trust-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);}
-.trust-pill img{height:28px;width:auto;max-width:110px;object-fit:contain;filter:brightness(0) invert(1);opacity:.7;transition:opacity .2s}
-.trust-pill:hover img{opacity:1}
+.trust-pill-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;}
+.trust-pill-name{font-size:11px;font-weight:500;color:var(--ink3);white-space:nowrap}
 
 /* ══════════════════════════════
    FINAL CTA
@@ -1098,27 +1097,19 @@ footer{
       <section className="trust-section reveal">
         <div className="trust-h3">Built on trusted infrastructure</div>
         <div className="trust-pills">
-          {[
-            { name: 'Arc Network',   domain: 'arc.network' },
-            { name: 'Circle',        domain: 'circle.com' },
-            { name: 'Privy',         domain: 'privy.io' },
-            { name: 'Pimlico',       domain: 'pimlico.io' },
-            { name: 'Ramp Network',  domain: 'ramp.network' },
-            { name: 'Yellow Card',   domain: 'yellowcard.io' },
-          ].map(p => (
+          {([
+            { name: 'Arc Network',  icon: 'ph:lightning-fill',        bg: '#FF6B00',  fg: '#fff' },
+            { name: 'Circle',       icon: 'simple-icons:circle',      bg: '#00D395',  fg: '#fff' },
+            { name: 'Privy',        icon: 'ph:shield-check-fill',     bg: '#7B3FE4',  fg: '#fff' },
+            { name: 'Pimlico',      icon: 'ph:gas-pump-fill',         bg: '#3B82F6',  fg: '#fff' },
+            { name: 'Ramp Network', icon: 'ph:arrows-left-right-bold',bg: '#1A1A2E',  fg: '#E040FB' },
+            { name: 'Yellow Card',  icon: 'ph:credit-card-fill',      bg: '#F5C518',  fg: '#1a1a1a' },
+          ] as const).map(p => (
             <div key={p.name} className="trust-pill">
-              <img
-                src={`https://logo.clearbit.com/${p.domain}`}
-                alt={p.name}
-                onError={(e) => {
-                  const el = e.currentTarget
-                  el.style.display = 'none'
-                  const span = document.createElement('span')
-                  span.textContent = p.name
-                  span.style.cssText = 'font-size:13px;font-weight:500;color:rgba(255,255,255,.7)'
-                  el.parentElement?.appendChild(span)
-                }}
-              />
+              <div className="trust-pill-icon" style={{ background: p.bg, color: p.fg }}>
+                <iconify-icon icon={p.icon} style={{ fontSize: '22px' }} />
+              </div>
+              <span className="trust-pill-name">{p.name}</span>
             </div>
           ))}
         </div>

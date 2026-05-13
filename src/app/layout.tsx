@@ -3,6 +3,7 @@
 import './globals.css'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { TestnetBanner } from '@/components/ui/TestnetBanner'
+import { ChatWidget } from '@/components/ui/ChatWidget'
 
 const arcTestnet = {
   id: 5042002,
@@ -61,6 +62,7 @@ export default function RootLayout({
         >
           <TestnetBanner />
           {children}
+          <ChatWidget />
         </PrivyProvider>
       </body>
     </html>

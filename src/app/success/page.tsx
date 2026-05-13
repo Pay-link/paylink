@@ -7,15 +7,27 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { formatDateTime } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+
 function SuccessContent() {
   const router = useRouter()
   const params = useSearchParams()
   const [date] = useState(new Date().toISOString())
 
+  const flow = params.get('flow') || 'send'
   const amount = params.get('amount') || '0.00'
   const to = params.get('to') || params.get('contact') || 'Recipient'
   const note = params.get('note') || 'Payment'
+  const claimToken = params.get('claim_token') || ''
+  const claimUrl = claimToken ? `${APP_URL}/claim/${claimToken}` : ''
   const txId = '#PL' + Date.now().toString().slice(-8)
+  const [copied, setCopied] = useState(false)
+
+  const copyClaimLink = () => {
+    navigator.clipboard.writeText(claimUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
 
   useEffect(() => {
     const colors = ['#FF6B00', '#FF9A3C', '#FFB347', '#FFF0E0']
@@ -42,8 +54,14 @@ function SuccessContent() {
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
       <Nav variant="app" pageName="Payment receipt" />
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
-        <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>Payment successful</h1>
-        <p style={{ fontSize: 15, color: 'var(--ink3)' }}>Your payment has been confirmed and settled on Arc Network.</p>
+        <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>
+          {flow === 'claim' ? 'Funds held — share to claim' : 'Payment successful'}
+        </h1>
+        <p style={{ fontSize: 15, color: 'var(--ink3)' }}>
+          {flow === 'claim'
+            ? `$${amount} USDC is being held safely. Share the link below with ${to} so they can claim it.`
+            : 'Your payment has been confirmed and settled on Arc Network.'}
+        </p>
       </div>
 
       <div className="two-col-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' }}>
@@ -91,6 +109,31 @@ function SuccessContent() {
                   </div>
                 ))}
               </div>
+
+              {/* Claim link card — shown when recipient wasn't registered */}
+              {flow === 'claim' && claimUrl && (
+                <div style={{ background: 'rgba(245,158,11,.07)', border: '1.5px solid rgba(245,158,11,.3)', borderRadius: 18, padding: '20px 22px', marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    <Icon icon="ph:link-bold" style={{ fontSize: 18, color: '#FDB64E' }} />
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#FDB64E' }}>Share this claim link with {to}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--ink3)', marginBottom: 14, lineHeight: 1.6 }}>
+                    Paste it in WhatsApp, iMessage, DM — anywhere they'll see it from <em>you</em>. They tap the link, verify with OTP, and the ${amount} goes straight to their wallet. <strong style={{ color: 'var(--ink2)' }}>Expires in 7 days.</strong>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--page)', border: '1px solid var(--border)', borderRadius: 12, padding: '10px 14px', marginBottom: 12, wordBreak: 'break-all', fontSize: 12, fontFamily: 'monospace', color: 'var(--ink2)' }}>
+                    {claimUrl}
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={copyClaimLink} style={{ flex: 1, background: copied ? 'var(--g-soft)' : 'var(--page)', color: copied ? 'var(--g1)' : 'var(--ink)', border: `1.5px solid ${copied ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 100, padding: '11px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all .2s' }}>
+                      <Icon icon={copied ? 'ph:check-bold' : 'ph:copy-bold'} /> {copied ? 'Copied!' : 'Copy link'}
+                    </button>
+                    <a href={`https://wa.me/?text=${encodeURIComponent(`Hey! I sent you $${amount} on PayLink. Tap this link to claim it: ${claimUrl}`)}`} target="_blank" rel="noopener noreferrer"
+                      style={{ flex: 1, background: '#25D366', color: '#fff', border: 'none', borderRadius: 100, padding: '11px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}>
+                      <Icon icon="ph:whatsapp-logo-bold" /> Share on WhatsApp
+                    </a>
+                  </div>
+                </div>
+              )}
 
               <button onClick={() => router.push('/send')}
                 style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 10, boxShadow: '0 6px 20px rgba(255,107,0,.28)' }}>

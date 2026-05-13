@@ -20,6 +20,9 @@ export default function SendPage() {
   const [amountStr, setAmountStr] = useState('0')
   const [note, setNote] = useState('')
   const [selectedMethod, setSelectedMethod] = useState('email_otp')
+  const [recipientChecking, setRecipientChecking] = useState(false)
+  const [recipientUnregistered, setRecipientUnregistered] = useState(false)
+  const [isPendingClaim, setIsPendingClaim] = useState(false)
 
   // Skip Identity step for already-authenticated users
   useEffect(() => {
@@ -117,14 +120,81 @@ export default function SendPage() {
                   <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Send to who?</div>
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Enter the recipient's email or phone number.</div>
                   <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 8, display: 'block' }}>Recipient's email or phone</label>
-                  <input style={{ ...s.input, marginBottom: 16 }} type="text" placeholder="them@email.com or +44 700 000 0000" value={recipient.contact} onChange={e => setRecipient({ name: e.target.value, contact: e.target.value, initials: e.target.value.slice(0,2).toUpperCase() })} />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, background: 'var(--page)', border: '1px dashed var(--border)' }}>
-                    <Icon icon="ph:users-bold" style={{ fontSize: 20, color: 'var(--ink4)', flexShrink: 0 }} />
-                    <div style={{ fontSize: 13, color: 'var(--ink4)' }}>No recent contacts yet. Send to someone and they'll appear here.</div>
-                  </div>
-                  <button style={{ ...s.btn, opacity: !recipient.contact ? .4 : 1 }} disabled={!recipient.contact} onClick={nextStep}>
-                    Continue →
-                  </button>
+                  <input
+                    style={{ ...s.input, marginBottom: 16, borderColor: recipientUnregistered ? 'rgba(245,158,11,.6)' : undefined }}
+                    type="text"
+                    placeholder="them@email.com or +44 700 000 0000"
+                    value={recipient.contact}
+                    onChange={e => {
+                      setRecipient({ name: e.target.value, contact: e.target.value, initials: e.target.value.slice(0,2).toUpperCase() })
+                      setRecipientUnregistered(false)
+                      setIsPendingClaim(false)
+                    }}
+                  />
+
+                  {/* Unregistered recipient warning */}
+                  {recipientUnregistered && (
+                    <div style={{ background: 'rgba(245,158,11,.08)', border: '1.5px solid rgba(245,158,11,.3)', borderRadius: 16, padding: '16px 18px', marginBottom: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                        <Icon icon="ph:warning-bold" style={{ fontSize: 18, color: '#FDB64E', flexShrink: 0 }} />
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#FDB64E' }}>This contact isn't on PayLink yet</div>
+                      </div>
+                      <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.6, marginBottom: 14 }}>
+                        No problem — you can still send. The funds will be <strong style={{ color: 'var(--ink2)' }}>held safely for 7 days</strong>. You'll get a personal claim link to share with them directly via WhatsApp, iMessage, or any app. They just tap the link and verify their identity to receive the money.
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          onClick={() => { setIsPendingClaim(true); nextStep() }}
+                          style={{ flex: 1, background: '#FDB64E', color: '#000', border: 'none', borderRadius: 100, padding: '11px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                        >
+                          Send anyway →
+                        </button>
+                        <button
+                          onClick={() => { setRecipientUnregistered(false); setRecipient({ name: '', contact: '', initials: '' }) }}
+                          style={{ padding: '11px 18px', background: 'transparent', border: '1.5px solid var(--border)', borderRadius: 100, fontFamily: 'var(--font)', fontSize: 13, color: 'var(--ink3)', cursor: 'pointer' }}
+                        >
+                          Change
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {!recipientUnregistered && (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, background: 'var(--page)', border: '1px dashed var(--border)', marginBottom: 0 }}>
+                        <Icon icon="ph:users-bold" style={{ fontSize: 20, color: 'var(--ink4)', flexShrink: 0 }} />
+                        <div style={{ fontSize: 13, color: 'var(--ink4)' }}>No recent contacts yet. Send to someone and they'll appear here.</div>
+                      </div>
+                      <button
+                        style={{ ...s.btn, opacity: (!recipient.contact || recipientChecking) ? .4 : 1 }}
+                        disabled={!recipient.contact || recipientChecking}
+                        onClick={async () => {
+                          setRecipientChecking(true)
+                          try {
+                            const { supabase } = await import('@/lib/supabase')
+                            const { data } = await supabase
+                              .from('users')
+                              .select('id')
+                              .or(`email.eq.${recipient.contact},phone.eq.${recipient.contact}`)
+                              .maybeSingle()
+                            if (data) {
+                              nextStep()
+                            } else {
+                              setRecipientUnregistered(true)
+                            }
+                          } catch {
+                            nextStep() // fail open — don't block the send
+                          } finally {
+                            setRecipientChecking(false)
+                          }
+                        }}
+                      >
+                        {recipientChecking
+                          ? <><Icon icon="ph:spinner-bold" /> Checking…</>
+                          : <>Continue →</>}
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -207,7 +277,7 @@ export default function SendPage() {
 
                   <button style={s.btn} onClick={() => {
                     const params = new URLSearchParams({
-                      flow: 'send',
+                      flow: isPendingClaim ? 'claim' : 'send',
                       amount: amt.toFixed(2),
                       to: recipient.name || recipient.contact,
                       contact: recipient.contact,

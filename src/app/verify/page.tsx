@@ -7,7 +7,7 @@ import { Icon } from '@iconify/react'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 
 function VerifyContent() {
-  const { authenticated, login, ready } = usePrivy()
+  const { authenticated, login, ready, user } = usePrivy()
   const router = useRouter()
   const params = useSearchParams()
   const flow = params.get('flow') || 'pay'
@@ -23,9 +23,29 @@ function VerifyContent() {
   const [showConfirm, setShowConfirm] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const successUrl = () => {
-    const p = new URLSearchParams({ flow, amount, to, contact, note })
-    return `/success?${p.toString()}`
+  const buildSuccessUrl = async (userId: string, displayName: string, userEmail: string | null) => {
+    const base = new URLSearchParams({ flow, amount, to, contact, note })
+    if (flow === 'claim') {
+      try {
+        const res = await fetch('/api/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId: userId,
+            senderName: displayName,
+            senderEmail: userEmail,
+            recipientEmail: contact || to,
+            amount: parseFloat(amount),
+            note,
+          }),
+        })
+        const json = await res.json()
+        if (json.token) base.set('claim_token', json.token)
+      } catch (err) {
+        console.error('Failed to create claim:', err)
+      }
+    }
+    return `/success?${base.toString()}`
   }
 
   useEffect(() => {
@@ -46,10 +66,12 @@ function VerifyContent() {
 
   // After login completes via OTP
   useEffect(() => {
-    if (ready && authenticated && verifying) {
-      router.push(successUrl())
+    if (ready && authenticated && verifying && user) {
+      const userEmail = user.email?.address || null
+      const userName = userEmail?.split('@')[0] || user.phone?.number || 'Someone'
+      buildSuccessUrl(user.id, userName, userEmail).then(url => router.push(url))
     }
-  }, [ready, authenticated, verifying])
+  }, [ready, authenticated, verifying, user])
 
   const handleVerify = async () => {
     setVerifying(true)
@@ -109,7 +131,12 @@ function VerifyContent() {
                 </div>
               ))}
               <button
-                onClick={() => router.push(successUrl())}
+                onClick={async () => {
+                  const userEmail = user?.email?.address || null
+                  const userName = userEmail?.split('@')[0] || user?.phone?.number || 'Someone'
+                  const url = await buildSuccessUrl(user?.id || '', userName, userEmail)
+                  router.push(url)
+                }}
                 style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(255,107,0,.28)' }}>
                 <Icon icon="ph:paper-plane-right-bold" /> Confirm & send{amount ? ` $${amount}` : ''}
               </button>

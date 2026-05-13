@@ -5,10 +5,11 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import Link from 'next/link'
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, http, parseAbiItem } from 'viem'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
+import { useLocalCurrency } from '@/hooks/useLocalCurrency'
 import { Icon } from '@iconify/react'
 
 const arcTestnet = {
@@ -33,15 +34,25 @@ export default function DashboardPage() {
   const [displayBalance, setDisplayBalance] = useState(0)
   const [topUpOpen, setTopUpOpen] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
-  const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD')
+  const [showLocal, setShowLocal] = useState(false)
+  const localCurrency = useLocalCurrency()
   const [topUpMethod, setTopUpMethod] = useState(0)
   const [copied, setCopied] = useState(false)
   const [mobileTab, setMobileTab] = useState<'home' | 'links' | 'send' | 'activity'>('home')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (ready && !authenticated) router.push('/login')
   }, [ready, authenticated])
+
+  useEffect(() => {
+    if (!notifOpen) return
+    const close = () => setNotifOpen(false)
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [notifOpen])
 
   useEffect(() => {
     if (authenticated && userId) loadRealData()
@@ -64,10 +75,12 @@ export default function DashboardPage() {
 
   // Fetch live USDC balance from Arc chain
   useEffect(() => {
-    if (!walletAddress) return
+    if (!walletAddress || !userId) return
+
+    const client = createPublicClient({ chain: arcTestnet, transport: http('https://rpc.testnet.arc.network') })
+
     const fetchBalance = async () => {
       try {
-        const client = createPublicClient({ chain: arcTestnet, transport: http('https://rpc.testnet.arc.network') })
         const raw = await client.readContract({
           address: usdcAddress,
           abi: usdcAbi,
@@ -80,10 +93,54 @@ export default function DashboardPage() {
         console.error('Balance fetch error:', err)
       }
     }
+
+    // Initial fetch
     fetchBalance()
-    const interval = setInterval(fetchBalance, 15000) // refresh every 15s
-    return () => clearInterval(interval)
-  }, [walletAddress])
+
+    const transferAbi = [...usdcAbi, parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)')] as const
+    const addr = walletAddress as `0x${string}`
+
+    // 1a. On-chain: incoming transfers (top-up / received payment)
+    const unwatchIn = client.watchContractEvent({
+      address: usdcAddress, abi: transferAbi, eventName: 'Transfer',
+      args: { to: addr },
+      onLogs: () => fetchBalance(),
+      poll: true, pollingInterval: 4000,
+    })
+
+    // 1b. On-chain: outgoing transfers (send money)
+    const unwatchOut = client.watchContractEvent({
+      address: usdcAddress, abi: transferAbi, eventName: 'Transfer',
+      args: { from: addr },
+      onLogs: () => fetchBalance(),
+      poll: true, pollingInterval: 4000,
+    })
+
+    // 2. Supabase Realtime: any transaction involving this user (sent or received)
+    const channel = supabase
+      .channel(`txns-${userId}`)
+      .on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'transactions',
+        filter: `recipient_id=eq.${userId}`,
+      }, (payload) => {
+        fetchBalance()
+        setTransactions(prev => [payload.new as any, ...prev])
+      })
+      .on('postgres_changes', {
+        event: 'INSERT', schema: 'public', table: 'transactions',
+        filter: `sender_id=eq.${userId}`,
+      }, (payload) => {
+        fetchBalance()
+        setTransactions(prev => [payload.new as any, ...prev])
+      })
+      .subscribe()
+
+    return () => {
+      unwatchIn()
+      unwatchOut()
+      supabase.removeChannel(channel)
+    }
+  }, [walletAddress, userId])
 
   const animateBalance = (target: number) => {
     const duration = 1200
@@ -110,6 +167,34 @@ export default function DashboardPage() {
   const displayLinks = links
   const balance = displayBalance || (dataLoaded ? 0 : 0)
   const favourites: any[] = []
+
+  const notifications = [
+    ...transactions.filter(tx => tx.recipient_id === userId).map(tx => ({
+      id: tx.id,
+      icon: 'ph:arrow-down-bold',
+      color: 'var(--g1)',
+      bg: 'var(--g-soft)',
+      title: `Received $${(tx.amount || 0).toFixed(2)} USDC`,
+      body: tx.note || 'Payment received',
+      time: tx.created_at,
+    })),
+    ...links.filter(l => l.paid_count > 0).map(l => ({
+      id: `link-${l.id}`,
+      icon: 'ph:link-bold',
+      color: '#818CF8',
+      bg: 'rgba(99,102,241,.15)',
+      title: `Link paid ×${l.paid_count}`,
+      body: l.note || 'Payment link',
+      time: l.updated_at || l.created_at,
+    })),
+  ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 10)
+
+  const unreadCount = notifications.filter(n => !seenIds.has(n.id)).length
+
+  const openNotifs = () => {
+    setNotifOpen(o => !o)
+    setSeenIds(new Set(notifications.map(n => n.id)))
+  }
 
   const now = new Date()
   const monthTxs = transactions.filter(tx => {
@@ -191,7 +276,46 @@ export default function DashboardPage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
+            <div style={{ position: 'relative' }}>
+              <button onClick={openNotifs} style={{ width: 36, height: 36, borderRadius: '50%', background: notifOpen ? 'var(--g-soft)' : 'var(--white)', border: `1px solid ${notifOpen ? 'var(--border-g)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: notifOpen ? 'var(--g1)' : 'var(--ink3)', cursor: 'pointer', transition: 'all .15s' }}>
+                <Icon icon="ph:bell-bold" />
+              </button>
+              {unreadCount > 0 && (
+                <div style={{ position: 'absolute', top: -3, right: -3, width: 16, height: 16, borderRadius: '50%', background: '#E53935', border: '2px solid var(--page)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: '#fff', pointerEvents: 'none' }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </div>
+              )}
+              {notifOpen && (
+                <div onClick={e => e.stopPropagation()} style={{ position: 'absolute', top: 44, right: 0, width: 320, background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 18, boxShadow: '0 12px 40px rgba(0,0,0,.5)', zIndex: 300, overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px 10px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Notifications</div>
+                    <button onClick={() => setNotifOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink3)', fontSize: 16, lineHeight: 1 }}>×</button>
+                  </div>
+                  <div style={{ maxHeight: 360, overflowY: 'auto' }}>
+                    {notifications.length === 0 ? (
+                      <div style={{ padding: '32px 20px', textAlign: 'center', color: 'var(--ink4)', fontSize: 13 }}>
+                        <Icon icon="ph:bell-slash-bold" style={{ fontSize: 28, display: 'block', margin: '0 auto 10px' }} />
+                        No notifications yet
+                      </div>
+                    ) : notifications.map((n, i) => (
+                      <div key={n.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 18px', borderBottom: i < notifications.length - 1 ? '1px solid var(--border)' : 'none', background: seenIds.has(n.id) ? 'transparent' : 'rgba(255,107,0,.04)' }}>
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: n.bg, color: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, flexShrink: 0 }}>
+                          <Icon icon={n.icon} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', marginBottom: 2 }}>{n.title}</div>
+                          <div style={{ fontSize: 12, color: 'var(--ink3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.body}</div>
+                          <div style={{ fontSize: 11, color: 'var(--ink4)', marginTop: 3 }}>{timeAgo(n.time)}</div>
+                        </div>
+                        {!seenIds.has(n.id) && (
+                          <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--g1)', flexShrink: 0, marginTop: 6 }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <button onClick={logout} style={{ padding: '7px 16px', borderRadius: 100, border: '1px solid var(--border)', color: 'var(--ink3)', fontSize: 13, fontWeight: 500, cursor: 'pointer', background: 'transparent', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}>Log out</button>
           </div>
         </div>
@@ -207,20 +331,32 @@ export default function DashboardPage() {
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.55)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
                     Available balance
-                    <button onClick={() => setCurrency(c => c === 'USD' ? 'NGN' : 'USD')} style={{ background: 'rgba(255,255,255,.1)', border: 'none', color: '#fff', fontSize: 10, padding: '2px 8px', borderRadius: 10, cursor: 'pointer', transition: 'all .2s' }}>
-                      ⇄ {currency === 'USD' ? 'NGN' : 'USD'}
-                    </button>
+                    {!localCurrency.loading && localCurrency.code !== 'USD' && (
+                      <button onClick={() => setShowLocal(v => !v)} style={{ background: 'rgba(255,255,255,.1)', border: 'none', color: '#fff', fontSize: 10, padding: '2px 8px', borderRadius: 10, cursor: 'pointer', transition: 'all .2s' }}>
+                        ⇄ {showLocal ? 'USD' : localCurrency.code}
+                      </button>
+                    )}
                   </div>
                   <div style={{ fontSize: 52, fontWeight: 700, color: '#fff', letterSpacing: '-.06em', lineHeight: 1 }}>
                     <span style={{ fontSize: '0.42em', fontWeight: 500, verticalAlign: 'super', color: 'rgba(255,255,255,.7)' }}>
-                      {currency === 'USD' ? '$' : '₦'}
+                      {showLocal ? localCurrency.symbol : '$'}
                     </span>
-                    {currency === 'USD' ? displayBalance.toFixed(2) : (displayBalance * 1650).toLocaleString()}
+                    {showLocal
+                      ? (displayBalance * localCurrency.rate).toLocaleString(undefined, { maximumFractionDigits: 0 })
+                      : displayBalance.toFixed(2)}
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 5 }}>
-                    ≈ <strong style={{ color: 'rgba(255,255,255,.75)' }}>
-                      {currency === 'USD' ? `₦${(displayBalance * 1650).toLocaleString()} NGN` : `$${displayBalance.toFixed(2)} USD`}
-                    </strong>
+                    {localCurrency.loading ? (
+                      <span>Detecting your currency…</span>
+                    ) : localCurrency.code === 'USD' ? (
+                      <span>Arc Network · USDC</span>
+                    ) : (
+                      <span>≈ <strong style={{ color: 'rgba(255,255,255,.75)' }}>
+                        {showLocal
+                          ? `$${displayBalance.toFixed(2)} USD`
+                          : `${localCurrency.symbol}${(displayBalance * localCurrency.rate).toLocaleString(undefined, { maximumFractionDigits: 0 })} ${localCurrency.code}`}
+                      </strong></span>
+                    )}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -376,7 +512,7 @@ export default function DashboardPage() {
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 14 }}>Your wallet</div>
                 {[
                   { key: 'USDC balance', val: `$${displayBalance.toFixed(2)}`, green: true },
-                  { key: 'Local value', val: `₦${(displayBalance * 1650).toLocaleString()}` },
+                  { key: `Local value (${localCurrency.code})`, val: localCurrency.loading ? '…' : localCurrency.code === 'USD' ? '—' : `${localCurrency.symbol}${(displayBalance * localCurrency.rate).toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
                   { key: 'Gas paid', val: '$0.00', green: true },
                   { key: 'Network', val: 'Arc · USDC' },
                 ].map((row, i) => (
