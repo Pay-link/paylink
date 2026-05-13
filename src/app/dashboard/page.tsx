@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const [topUpMethod, setTopUpMethod] = useState(0)
   const [copied, setCopied] = useState(false)
   const [mobileTab, setMobileTab] = useState<'home' | 'links' | 'send' | 'activity'>('home')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   useEffect(() => {
     if (ready && !authenticated) router.push('/login')
@@ -126,12 +127,17 @@ export default function DashboardPage() {
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--page)', fontFamily: 'var(--font)' }}>
 
       {/* Sidebar */}
-      <aside className="desktop-sidebar" style={{ width: 240, flexShrink: 0, background: 'var(--white)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto' }}>
-        <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid var(--border)' }}>
-          <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
-            pay<span style={{ color: 'var(--g1)' }}>link</span>
-          </Link>
-          <div style={{ fontSize: 12, color: 'var(--ink4)', marginTop: 3 }}>Your global wallet</div>
+      <aside className="desktop-sidebar" style={{ width: sidebarOpen ? 240 : 0, flexShrink: 0, background: 'var(--white)', borderRight: sidebarOpen ? '1px solid var(--border)' : 'none', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto', overflowX: 'hidden', transition: 'width .2s ease', }}>
+        <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 208 }}>
+          <div>
+            <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
+              pay<span style={{ color: 'var(--g1)' }}>link</span>
+            </Link>
+            <div style={{ fontSize: 12, color: 'var(--ink4)', marginTop: 3 }}>Your global wallet</div>
+          </div>
+          <button onClick={() => setSidebarOpen(false)} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--ink3)', flexShrink: 0 }}>
+            <Icon icon="ph:x-bold" style={{ fontSize: 14 }} />
+          </button>
         </div>
 
         <nav style={{ flex: 1, padding: '16px 12px' }}>
@@ -169,26 +175,21 @@ export default function DashboardPage() {
           ))}
         </nav>
 
-        <div style={{ padding: '16px 12px', borderTop: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: 'var(--g1)', flexShrink: 0 }}>
-              {displayName.slice(0,2).toUpperCase()}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 1 }}>{displayName}</div>
-              <div style={{ fontSize: 11, color: 'var(--ink4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{email || phone || 'paylink user'}</div>
-            </div>
-            <button onClick={logout} style={{ padding: '6px 12px', borderRadius: 100, border: '1px solid var(--border)', color: 'var(--ink3)', fontSize: 12, fontWeight: 500, cursor: 'pointer', background: 'transparent', fontFamily: 'var(--font)', whiteSpace: 'nowrap', flexShrink: 0 }}>Log out</button>
-          </div>
-        </div>
       </aside>
 
       {/* Main content */}
-      <div className="desktop-main" style={{ flex: 1, marginLeft: 240, minWidth: 0 }}>
+      <div className="desktop-main" style={{ flex: 1, marginLeft: sidebarOpen ? 240 : 0, minWidth: 0, transition: 'margin-left .2s ease' }}>
 
         {/* Top bar */}
         <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>Good morning, {displayName} <Icon icon="ph:hand-waving-bold" style={{ color: 'var(--g3)' }} /></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {!sidebarOpen && (
+              <button onClick={() => setSidebarOpen(true)} style={{ width: 34, height: 34, borderRadius: '50%', border: '1px solid var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--ink3)', flexShrink: 0 }}>
+                <Icon icon="ph:list-bold" style={{ fontSize: 16 }} />
+              </button>
+            )}
+            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>Good morning, {displayName} <Icon icon="ph:hand-waving-bold" style={{ color: 'var(--g3)' }} /></div>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
