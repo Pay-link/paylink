@@ -178,7 +178,7 @@ nav{
 .nav-links{display:flex;gap:28px;justify-content:center}
 .nav-links a{font-size:14px;color:var(--ink3);text-decoration:none;font-weight:500;transition:color .15s}
 .nav-links a:hover{color:#fff}
-.nav-right{display:flex;gap:10px;align-items:center}
+.nav-right{display:flex;gap:10px;align-items:center;grid-column:3}
 .btn-pill{
   padding:9px 22px;border-radius:100px;font-size:14px;font-weight:600;
   cursor:pointer;text-decoration:none;transition:all .2s;
@@ -670,10 +670,8 @@ footer{
   .hero{padding:40px 5%}
   .hero-right{display:none}
   .nav-links{display:none}
-  /* Landing nav on mobile — hide ghost button, shrink pills */
-  .btn-ghost{display:none!important}
   .btn-pill{padding:7px 14px!important;font-size:12px!important}
-  nav{padding:0 16px!important}
+  nav{padding:0 16px!important;grid-template-columns:auto 1fr auto!important}
   .hero-stats{gap:16px}
   .h-stat-div{display:none}
   .footer-top{grid-template-columns:1fr}
@@ -681,6 +679,9 @@ footer{
   .stats-bar{flex-direction:column;gap:0}
   .sb-item{border-right:none;border-bottom:0.5px solid var(--border);width:100%;padding:16px 0}
   .sb-item:last-child{border-bottom:none}
+  /* Hero CTAs side-by-side on mobile */
+  .hero-ctas{flex-wrap:nowrap;gap:8px}
+  .btn-hero-orange,.btn-hero-ghost{flex:1;padding:13px 16px!important;font-size:14px!important;justify-content:center}
 }
 ` }} />
 
