@@ -14,6 +14,24 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Icon } from '@iconify/react'
 
+function TrustLogo({ domain, name, icon, bg, fg }: { domain: string; name: string; icon: string; bg: string; fg: string }) {
+  const [failed, setFailed] = useState(false)
+  const src = `https://logo.clearbit.com/${domain}`
+  if (failed) {
+    return (
+      <div className="trust-pill-icon" style={{ background: bg }}>
+        <Icon icon={icon} style={{ fontSize: '22px', color: fg }} />
+      </div>
+    )
+  }
+  return (
+    <div className="trust-pill-icon" style={{ background: '#fff', padding: 6 }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={name} width={28} height={28} style={{ objectFit: 'contain', borderRadius: 4 }} onError={() => setFailed(true)} />
+    </div>
+  )
+}
+
 export default function HomePage() {
   const { authenticated, login, logout } = usePrivy()
   const router = useRouter()
@@ -1099,17 +1117,15 @@ footer{
         <div className="trust-h3">Built on trusted infrastructure</div>
         <div className="trust-pills">
           {([
-            { name: 'Arc Network',  icon: 'ph:lightning-fill',         bg: '#FF6B00', fg: '#fff' },
-            { name: 'Circle',       icon: 'ph:currency-circle-dollar-fill', bg: '#00D395', fg: '#fff' },
-            { name: 'Privy',        icon: 'ph:shield-check-fill',      bg: '#7B3FE4', fg: '#fff' },
-            { name: 'Pimlico',      icon: 'ph:gas-pump-fill',          bg: '#3B82F6', fg: '#fff' },
-            { name: 'Ramp Network', icon: 'ph:arrows-left-right-bold', bg: '#6C47FF', fg: '#fff' },
-            { name: 'Yellow Card',  icon: 'ph:credit-card-fill',       bg: '#F5C518', fg: '#1a1a1a' },
+            { name: 'Arc Network',  domain: 'arc.network',    icon: 'ph:lightning-fill',         bg: '#FF6B00', fg: '#fff' },
+            { name: 'Circle',       domain: 'circle.com',     icon: 'ph:currency-circle-dollar-fill', bg: '#00D395', fg: '#fff' },
+            { name: 'Privy',        domain: 'privy.io',       icon: 'ph:shield-check-fill',      bg: '#7B3FE4', fg: '#fff' },
+            { name: 'Pimlico',      domain: 'pimlico.io',     icon: 'ph:gas-pump-fill',          bg: '#3B82F6', fg: '#fff' },
+            { name: 'Ramp Network', domain: 'ramp.network',   icon: 'ph:arrows-left-right-bold', bg: '#6C47FF', fg: '#fff' },
+            { name: 'Yellow Card',  domain: 'yellowcard.io',  icon: 'ph:credit-card-fill',       bg: '#F5C518', fg: '#1a1a1a' },
           ] as const).map(p => (
             <div key={p.name} className="trust-pill">
-              <div className="trust-pill-icon" style={{ background: p.bg, color: p.fg }}>
-                <Icon icon={p.icon} style={{ fontSize: '22px' }} />
-              </div>
+              <TrustLogo domain={p.domain} name={p.name} icon={p.icon} bg={p.bg} fg={p.fg} />
               <span className="trust-pill-name">{p.name}</span>
             </div>
           ))}
