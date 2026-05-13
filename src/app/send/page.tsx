@@ -46,9 +46,9 @@ export default function SendPage() {
   const amt = parseFloat(amountStr) || 0
 
   const s = {
-    page: { background: 'var(--page)', minHeight: '100vh' } as React.CSSProperties,
+    page: { background: 'var(--page)', minHeight: '100vh', overflowX: 'hidden' } as React.CSSProperties,
     main: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, padding: '0 40px 60px', maxWidth: 1100, margin: '0 auto', alignItems: 'start' } as React.CSSProperties,
-    card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)' } as React.CSSProperties,
+    card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', overflow: 'hidden', minWidth: 0 } as React.CSSProperties,
     title: { fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 } as React.CSSProperties,
     sub: { fontSize: 15, color: 'var(--ink3)' } as React.CSSProperties,
     input: { width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none' } as React.CSSProperties,
@@ -57,12 +57,7 @@ export default function SendPage() {
 
   return (
     <div style={s.page}>
-      <Nav variant="app" />
-      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
-        <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
-        <span>›</span>
-        <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Send money</span>
-      </div>
+      <Nav variant="app" pageName="Send money" />
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={s.title}>Send money</h1>
         <p style={s.sub}>Send USDC to anyone using their email or phone. Settles in under a second.</p>

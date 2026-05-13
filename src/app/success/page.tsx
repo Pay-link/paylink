@@ -39,12 +39,7 @@ function SuccessContent() {
 
   return (
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
-      <Nav variant="app" />
-      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
-        <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
-        <span>›</span>
-        <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Payment receipt</span>
-      </div>
+      <Nav variant="app" pageName="Payment receipt" />
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>Payment successful</h1>
         <p style={{ fontSize: 15, color: 'var(--ink3)' }}>Your payment has been confirmed and settled on Arc Network.</p>

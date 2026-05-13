@@ -99,12 +99,7 @@ export default function CreatePage() {
 
   return (
     <div style={s.page}>
-      <Nav variant="app" />
-      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
-        <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
-        <span>›</span>
-        <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Create link</span>
-      </div>
+      <Nav variant="app" pageName="Create link" />
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>Create a payment link</h1>
         <p style={{ fontSize: 15, color: 'var(--ink3)' }}>Generate a link anyone can use to pay you — no wallet or account needed on their end.</p>

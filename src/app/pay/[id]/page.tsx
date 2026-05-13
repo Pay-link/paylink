@@ -37,7 +37,7 @@ export default async function PayPage({ params }: PayPageProps) {
 
   return (
     <>
-      <Nav variant="minimal" />
+      <Nav variant="app" pageName="Payment" />
       <PaymentClient link={link} error={error} slug={params.id} />
     </>
   )

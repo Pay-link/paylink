@@ -184,12 +184,6 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       background: 'var(--page)',
       minHeight: 'calc(100vh - 62px)',
     }}>
-      {/* Breadcrumb */}
-      <div className="page-breadcrumb" style={{ padding: '20px 40px 0', fontSize: 13, color: 'var(--ink3)', display: 'flex', gap: 8 }}>
-        <a href="/" style={{ color: 'var(--ink3)', textDecoration: 'none' }}>Home</a>
-        <span style={{ opacity: .5 }}>›</span>
-        <span style={{ color: 'var(--ink2)', fontWeight: 500 }}>Payment</span>
-      </div>
 
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>
