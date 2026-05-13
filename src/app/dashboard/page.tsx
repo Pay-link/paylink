@@ -179,7 +179,7 @@ export default function DashboardPage() {
 
         {/* Top bar */}
         <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>Good morning, {displayName} 👋</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>Good morning, {displayName} <Icon icon="ph:hand-waving-bold" style={{ color: 'var(--g3)' }} /></div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:plus-bold" /></button>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--white)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: 'var(--ink3)' }}><Icon icon="ph:bell-bold" /></div>
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                       title="Click to copy"
                       style={{ fontSize: 10, color: copied ? 'var(--g3)' : 'rgba(255,255,255,.4)', marginTop: 4, fontFamily: 'monospace', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, transition: 'color .2s' }}>
                       {walletAddress.slice(0,8)}...{walletAddress.slice(-4)}
-                      <span style={{ fontSize: 9 }}>{copied ? '✓' : '⎘'}</span>
+                      <Icon icon={copied ? 'ph:check-bold' : 'ph:copy-bold'} style={{ fontSize: 10 }} />
                     </div>
                   )}
                 </div>
@@ -477,7 +477,8 @@ export default function DashboardPage() {
                     setTimeout(() => setCopied(false), 2000);
                   }
                 }} style={{ width: '100%', background: copied ? 'var(--g-soft)' : 'var(--page)', color: copied ? 'var(--g1)' : 'var(--ink)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>
-                  {copied ? '✓ Copied' : '📄 Copy address'}
+                  <Icon icon={copied ? 'ph:check-bold' : 'ph:copy-bold'} style={{ fontSize: 16 }} />
+                  {copied ? 'Copied' : 'Copy address'}
                 </button>
               </div>
             ) : (

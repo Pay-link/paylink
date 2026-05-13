@@ -10,12 +10,6 @@ import { Icon } from '@iconify/react'
 
 type Step = 1 | 2 | 3 | 4
 
-const contacts = [
-  { name: 'James K.', contact: 'james@email.com', initials: 'JK', color: 'rgba(255,107,0,.12)', textColor: 'var(--g1)' },
-  { name: 'Amara M.', contact: 'amara@email.com', initials: 'AM', color: 'rgba(255,180,0,.1)', textColor: '#CC8800' },
-  { name: 'Tolu L.', contact: '+234 801 234 5678', initials: 'TL', color: 'rgba(100,130,255,.1)', textColor: '#6080FF' },
-]
-
 export default function SendPage() {
   const { authenticated, login, ready } = usePrivy()
   const router = useRouter()
@@ -77,7 +71,7 @@ export default function SendPage() {
                     color: n <= step ? '#fff' : 'var(--ink3)',
                     border: n > step ? '1.5px solid var(--border)' : 'none',
                     boxShadow: n === step ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
-                  }}>{n < step ? '✓' : n}</div>
+                  }}>{n < step ? <Icon icon="ph:check-bold" style={{ fontSize: 13 }} /> : n}</div>
                   <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>
                     {['Identity','Recipient','Amount','Payment'][n-1]}
                   </div>
@@ -110,15 +104,9 @@ export default function SendPage() {
                   <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Enter the recipient's email or phone number.</div>
                   <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 8, display: 'block' }}>Recipient's email or phone</label>
                   <input style={{ ...s.input, marginBottom: 16 }} type="text" placeholder="them@email.com or +44 700 000 0000" value={recipient.contact} onChange={e => setRecipient({ name: e.target.value, contact: e.target.value, initials: e.target.value.slice(0,2).toUpperCase() })} />
-                  <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 10 }}>Recent contacts</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {contacts.map(c => (
-                      <div key={c.name} onClick={() => setRecipient({ name: c.name, contact: c.contact, initials: c.initials })}
-                        style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 14, border: `1.5px solid ${recipient.name === c.name ? 'var(--g1)' : 'var(--border)'}`, background: recipient.name === c.name ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer' }}>
-                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: c.color, color: c.textColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{c.initials}</div>
-                        <div><div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{c.name}</div><div style={{ fontSize: 12, color: 'var(--ink3)' }}>{c.contact}</div></div>
-                      </div>
-                    ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderRadius: 14, background: 'var(--page)', border: '1px dashed var(--border)' }}>
+                    <Icon icon="ph:users-bold" style={{ fontSize: 20, color: 'var(--ink4)', flexShrink: 0 }} />
+                    <div style={{ fontSize: 13, color: 'var(--ink4)' }}>No recent contacts yet. Send to someone and they'll appear here.</div>
                   </div>
                   <button style={{ ...s.btn, opacity: !recipient.contact ? .4 : 1 }} disabled={!recipient.contact} onClick={nextStep}>
                     Continue →
@@ -137,7 +125,7 @@ export default function SendPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--page)', marginBottom: 20 }}>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{recipient.initials}</div>
                     <div><div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{recipient.name}</div><div style={{ fontSize: 12, color: 'var(--ink3)' }}>{recipient.contact}</div></div>
-                    <div style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#fff' }}>✓</div>
+                    <div style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#fff' }}><Icon icon="ph:check-bold" /></div>
                   </div>
 
                   {/* Amount display */}
@@ -179,7 +167,7 @@ export default function SendPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', borderRadius: 14, border: '1.5px solid var(--border-g)', background: 'var(--page)', marginBottom: 20 }}>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{recipient.initials}</div>
                     <div><div style={{ fontSize: 14, fontWeight: 500 }}>{recipient.name}</div><div style={{ fontSize: 12, color: 'var(--ink3)' }}>Sending <strong style={{ color: 'var(--g1)' }}>${amt.toFixed(2)}</strong> USDC</div></div>
-                    <div style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#fff' }}>✓</div>
+                    <div style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#fff' }}><Icon icon="ph:check-bold" /></div>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>

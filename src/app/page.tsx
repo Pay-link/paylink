@@ -793,10 +793,10 @@ footer{
                 <div className="fp-status"><span>9:41</span><span>●●●</span></div>
                 <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
                 <div className="fp2-body">
-                  <div className="fp2-avatar">OX</div>
-                  <div className="fp2-name">Oxy Akins</div>
-                  <div className="fp2-note">Logo design — April</div>
-                  <div className="fp2-amount">$250</div>
+                  <div className="fp2-avatar">AK</div>
+                  <div className="fp2-name">Alex K.</div>
+                  <div className="fp2-note">Freelance invoice — April</div>
+                  <div className="fp2-amount">$120</div>
                   <button className="fp2-btn">Pay now →</button>
                   <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
@@ -915,10 +915,10 @@ footer{
                 <div className="fp-status"><span>9:41</span><span>●●●</span></div>
                 <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
                 <div className="fp2-body">
-                  <div className="fp2-avatar">OX</div>
-                  <div className="fp2-name">Oxy Akins</div>
-                  <div className="fp2-note">Logo design — April</div>
-                  <div className="fp2-amount">$250</div>
+                  <div className="fp2-avatar">AK</div>
+                  <div className="fp2-name">Alex K.</div>
+                  <div className="fp2-note">Freelance invoice — April</div>
+                  <div className="fp2-amount">$120</div>
                   <button className="fp2-btn">Pay now →</button>
                   <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
@@ -1069,9 +1069,9 @@ footer{
                 <div className="app-s-lbl">Payments this month</div>
                 <div className="app-tx">
                   {[
-                    { initials: 'JK', color: 'rgba(255,107,0,.2)', textColor: 'var(--o3)', name: 'James K.', note: 'Website redesign', amt: '+$500' },
-                    { initials: 'AM', color: 'rgba(255,180,0,.15)', textColor: '#FFB400', name: 'Amara M.', note: 'Consulting fee', amt: '+$150' },
-                    { initials: 'TL', color: 'rgba(100,130,255,.15)', textColor: '#8090FF', name: 'Tolu L.', note: 'April retainer', amt: '+$800' },
+                    { initials: 'AK', color: 'rgba(255,107,0,.2)', textColor: 'var(--o3)', name: 'Alex K.', note: 'Freelance invoice', amt: '+$500' },
+                    { initials: 'SR', color: 'rgba(255,180,0,.15)', textColor: '#FFB400', name: 'Sam R.', note: 'Consulting fee', amt: '+$150' },
+                    { initials: 'JO', color: 'rgba(100,130,255,.15)', textColor: '#8090FF', name: 'Jordan O.', note: 'Monthly retainer', amt: '+$800' },
                   ].map(tx => (
                     <div key={tx.name} className="app-tx-item">
                       <div className="atav" style={{ background: tx.color, color: tx.textColor }}>{tx.initials}</div>

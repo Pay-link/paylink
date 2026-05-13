@@ -119,7 +119,7 @@ export default function CreatePage() {
                     color: i <= currentStepIndex ? '#fff' : 'var(--ink3)',
                     border: i > currentStepIndex ? '1.5px solid var(--border)' : 'none',
                     boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
-                  }}>{i < currentStepIndex ? '✓' : i + 1}</div>
+                  }}>{i < currentStepIndex ? <Icon icon="ph:check-bold" style={{ fontSize: 13 }} /> : i + 1}</div>
                   <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>{label}</div>
                   {i < steps.length - 1 && <div style={{ flex: 1, height: 1.5, background: i < currentStepIndex ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
                 </div>
@@ -159,7 +159,7 @@ export default function CreatePage() {
                         <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{displayName}</div>
                         <div style={{ fontSize: 11, color: 'var(--ink3)' }}>{email || phone}</div>
                       </div>
-                      <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--g1)', fontWeight: 500, background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20 }}>✓ Verified</div>
+                      <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--g1)', fontWeight: 500, background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 4 }}><Icon icon="ph:check-bold" style={{ fontSize: 11 }} /> Verified</div>
                     </div>
                   )}
 
@@ -257,7 +257,7 @@ export default function CreatePage() {
               {step === 4 && generatedSlug && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'var(--g1)', animation: 'popIn .5s cubic-bezier(.34,1.56,.64,1)' }}>✓</div>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: 'var(--g1)', animation: 'popIn .5s cubic-bezier(.34,1.56,.64,1)' }}><Icon icon="ph:check-bold" /></div>
                     <div>
                       <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>Your link is live!</div>
                       <div style={{ fontSize: 13, color: 'var(--ink3)' }}>Share it anywhere — anyone can pay with just a click.</div>
@@ -353,8 +353,8 @@ export default function CreatePage() {
       `}</style>
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'var(--ink)', color: '#fff', padding: '12px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, boxShadow: '0 8px 32px rgba(0,0,0,.15)', zIndex: 1000, animation: 'toastUp .3s ease forwards' }}>
-          ✓ {toast}
+        <div style={{ position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'var(--ink)', color: '#fff', padding: '12px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, boxShadow: '0 8px 32px rgba(0,0,0,.15)', zIndex: 1000, animation: 'toastUp .3s ease forwards', display: 'flex', alignItems: 'center' }}>
+          <Icon icon="ph:check-circle-bold" style={{ fontSize: 16, marginRight: 6 }} />{toast}
         </div>
       )}
     </div>

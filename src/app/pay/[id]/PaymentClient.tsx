@@ -226,8 +226,8 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   width: 18, height: 18, borderRadius: '50%',
                   background: 'var(--g1)', border: '2px solid white',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 8, color: '#fff',
-                }}>✓</div>
+                  fontSize: 10, color: '#fff',
+                }}><Icon icon="ph:check-bold" /></div>
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 3 }}>
@@ -444,7 +444,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     fontSize: 30, color: 'var(--g1)', margin: '0 auto 16px',
                     animation: 'popIn .5s cubic-bezier(.34,1.56,.64,1) forwards',
                   }}>
-                    ✓
+                    <Icon icon="ph:check-bold" style={{ fontSize: 28 }} />
                   </div>
                   <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>
                     Payment sent!
