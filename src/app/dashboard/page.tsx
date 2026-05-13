@@ -158,8 +158,7 @@ export default function DashboardPage() {
                 <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
               </Link>
             )
-          })
-          ))}
+          })}
 
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', margin: '16px 0 6px' }}>Account</div>
           {[
