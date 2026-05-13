@@ -118,13 +118,24 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       const activeWallet = wallets[0]
       if (!activeWallet) throw new Error('No active wallet found')
 
-      try { await activeWallet.switchChain(1038) } catch (_) { /* already on Arc or embedded wallet doesn't need explicit switch */ }
-      
       const provider = await activeWallet.getEthereumProvider()
+
+      // Use the raw EIP-1193 method — Privy's switchChain wrapper throws
+      // even when already on the correct chain.
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x40E' }],
+        })
+      } catch (_) {}
+
+      // Omit `chain` from walletClient and writeContract: viem's
+      // assertCurrentChain() fires when chain is defined and throws
+      // "invalid chain ID" before the tx reaches the wallet. Without it,
+      // Privy's embedded wallet fills in chainId 1038 from its own config.
       const walletClient = createWalletClient({
         account: activeWallet.address as `0x${string}`,
-        chain: arcTestnet,
-        transport: custom(provider)
+        transport: custom(provider),
       })
 
       const amountRaw = parseUnits(link.amount.toString(), 6)
@@ -134,7 +145,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
         address: usdcAddress,
         abi: usdcAbi,
         functionName: 'transfer',
-        args: [recipient, amountRaw]
+        args: [recipient, amountRaw],
       })
 
       const elapsed = Date.now() - start
