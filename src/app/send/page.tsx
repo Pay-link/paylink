@@ -208,7 +208,16 @@ export default function SendPage() {
                     ))}
                   </div>
 
-                  <button style={s.btn} onClick={() => router.push('/verify?flow=send')}>
+                  <button style={s.btn} onClick={() => {
+                    const params = new URLSearchParams({
+                      flow: 'send',
+                      amount: amt.toFixed(2),
+                      to: recipient.name || recipient.contact,
+                      contact: recipient.contact,
+                      note: note || '',
+                    })
+                    router.push(`/verify?${params.toString()}`)
+                  }}>
                     <Icon icon="ph:lock-bold" /> Send ${amt.toFixed(2)}
                   </button>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>

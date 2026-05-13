@@ -3,19 +3,36 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Icon } from '@iconify/react'
 
 function VerifyContent() {
   const { authenticated, login, ready } = usePrivy()
   const router = useRouter()
   const params = useSearchParams()
   const flow = params.get('flow') || 'pay'
+  const amount = params.get('amount') || ''
+  const to = params.get('to') || ''
+  const contact = params.get('contact') || ''
+  const note = params.get('note') || ''
+
   const [otp, setOtp] = useState('')
   const [timer, setTimer] = useState(42)
   const [canResend, setCanResend] = useState(false)
   const [verifying, setVerifying] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const successUrl = () => {
+    const p = new URLSearchParams({ flow, amount, to, contact, note })
+    return `/success?${p.toString()}`
+  }
+
   useEffect(() => {
+    // If already authenticated, show confirm instead of auto-redirecting
+    if (ready && authenticated) {
+      setShowConfirm(true)
+      return
+    }
     setTimeout(() => inputRef.current?.focus(), 400)
     const interval = setInterval(() => {
       setTimer(t => {
@@ -24,16 +41,14 @@ function VerifyContent() {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [ready, authenticated])
 
-  // Watch for auth changes after login
+  // After login completes via OTP
   useEffect(() => {
-    if (ready && authenticated) {
-      if (flow === 'create') router.push('/dashboard')
-      else if (flow === 'send') router.push('/success')
-      else router.push('/success')
+    if (ready && authenticated && verifying) {
+      router.push(successUrl())
     }
-  }, [ready, authenticated, flow])
+  }, [ready, authenticated, verifying])
 
   const handleVerify = async () => {
     setVerifying(true)
@@ -51,10 +66,66 @@ function VerifyContent() {
     if (raw.length === 6) setTimeout(handleVerify, 300)
   }
 
+  // Already authenticated — show confirmation screen
+  if (showConfirm) {
+    return (
+      <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
+        <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
+          <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+            pay<span style={{ color: 'var(--g1)' }}>link</span>
+          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
+            Arc Testnet
+          </div>
+        </nav>
+        <div style={{ minHeight: 'calc(100vh - 62px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+          <div style={{ width: '100%', maxWidth: 480 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16, color: 'var(--g1)' }}>
+                <Icon icon="ph:shield-check-bold" />
+              </div>
+              <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6, textAlign: 'center' }}>Confirm payment</h1>
+              <p style={{ fontSize: 15, color: 'var(--ink3)', textAlign: 'center', lineHeight: 1.6 }}>You're already verified. Review the details before sending.</p>
+            </div>
+            <div style={{ background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', padding: '28px 32px', marginBottom: 16 }}>
+              {amount && (
+                <div style={{ textAlign: 'center', padding: '16px 0 20px', borderBottom: '1px solid var(--border)', marginBottom: 20 }}>
+                  <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 8 }}>You are sending</div>
+                  <div style={{ fontSize: 52, fontWeight: 700, color: 'var(--g1)', letterSpacing: '-.05em' }}>${amount}</div>
+                  <div style={{ fontSize: 13, color: 'var(--ink3)', marginTop: 4 }}>{amount} USDC · Arc Network · $0 gas</div>
+                </div>
+              )}
+              {[
+                { key: 'To', val: to || contact || 'Recipient' },
+                { key: 'Note', val: note || 'No note' },
+                { key: 'Gas fee', val: '$0.00', green: true },
+                { key: 'Settlement', val: '<1 second', green: true },
+              ].map((row, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
+                  <span style={{ fontSize: 14, color: 'var(--ink3)' }}>{row.key}</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: (row as any).green ? 'var(--g1)' : 'var(--ink)' }}>{row.val}</span>
+                </div>
+              ))}
+              <button
+                onClick={() => router.push(successUrl())}
+                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(255,107,0,.28)' }}>
+                <Icon icon="ph:paper-plane-right-bold" /> Confirm & send{amount ? ` $${amount}` : ''}
+              </button>
+              <button onClick={() => router.back()}
+                style={{ width: '100%', background: 'transparent', color: 'var(--ink3)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '13px', fontFamily: 'var(--font)', fontSize: 14, cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
-      {/* Nav */}
-      <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
+      <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
         <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
           pay<span style={{ color: 'var(--g1)' }}>link</span>
         </a>
@@ -66,15 +137,15 @@ function VerifyContent() {
 
       <div style={{ minHeight: 'calc(100vh - 62px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
         <div style={{ width: '100%', maxWidth: 480 }}>
-          {/* Icon header */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16, boxShadow: '0 0 0 8px rgba(30,107,50,.05)' }}>✉️</div>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--g-soft)', border: '1.5px solid var(--border-g)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, marginBottom: 16, color: 'var(--g1)' }}>
+              <Icon icon="ph:envelope-bold" />
+            </div>
             <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6, textAlign: 'center' }}>Check your inbox</h1>
             <p style={{ fontSize: 15, color: 'var(--ink3)', textAlign: 'center', lineHeight: 1.6 }}>We sent a 6-digit verification code to your email or phone</p>
           </div>
 
-          {/* Card */}
-          <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.06)', padding: '32px 36px', marginBottom: 16 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)', padding: '32px 36px', marginBottom: 16 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink2)', marginBottom: 14, display: 'block' }}>Enter 6-digit code</label>
 
             <div style={{ display: 'flex', gap: 10, marginBottom: 8, cursor: 'text' }} onClick={() => inputRef.current?.focus()}>
@@ -86,7 +157,7 @@ function VerifyContent() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 28, fontWeight: 700,
                   color: i < otp.length ? 'var(--g1)' : 'var(--ink)',
-                  boxShadow: i === otp.length ? '0 0 0 3px rgba(30,107,50,.08)' : 'none',
+                  boxShadow: i === otp.length ? '0 0 0 3px rgba(255,107,0,.12)' : 'none',
                   transition: 'all .2s',
                 }}>{otp[i] || ''}</div>
               ))}
@@ -104,7 +175,7 @@ function VerifyContent() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-              <span style={{ fontSize: 17, flexShrink: 0 }}>🛡</span>
+              <Icon icon="ph:shield-bold" style={{ fontSize: 18, color: 'var(--g1)', flexShrink: 0, marginTop: 2 }} />
               <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}>
                 <strong>Your wallet is set up automatically.</strong> No MetaMask, no seed phrase. Powered by Privy — SOC 2 Type II certified.
               </div>
@@ -119,14 +190,17 @@ function VerifyContent() {
                 cursor: otp.length < 6 || verifying ? 'not-allowed' : 'pointer',
                 opacity: otp.length < 6 || verifying ? .4 : 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                marginBottom: 14, boxShadow: '0 6px 20px rgba(30,107,50,.2)',
+                marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.25)',
               }}>
-              {verifying ? '⏳ Verifying...' : '✓ Verify & continue'}
+              <Icon icon={verifying ? 'ph:spinner-bold' : 'ph:check-bold'} />
+              {verifying ? 'Verifying...' : 'Verify & continue'}
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
-              {['256-bit encrypted', 'Wallet by Privy', 'Powered by Arc'].map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--ink3)' }}>🛡 {item}</div>
+              {[['ph:lock-bold', '256-bit encrypted'], ['ph:wallet-bold', 'Wallet by Privy'], ['ph:lightning-bold', 'Powered by Arc']].map(([icon, label], i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--ink3)' }}>
+                  <Icon icon={icon} /> {label}
+                </div>
               ))}
             </div>
           </div>
@@ -139,17 +213,13 @@ function VerifyContent() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
-      `}</style>
     </div>
   )
 }
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>Loading...</div>}>
+    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--page)' }}>Loading...</div>}>
       <VerifyContent />
     </Suspense>
   )
