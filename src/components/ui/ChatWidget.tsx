@@ -135,7 +135,7 @@ export function ChatWidget() {
 
       {/* Floating bubble */}
       <button className="chat-bubble-btn" onClick={() => setOpen(o => !o)} aria-label="Open support chat">
-        <Icon icon={open ? 'ph:x-bold' : 'ph:chat-circle-dots-bold'} />
+        <Icon icon={open ? 'ph:x-bold' : 'ph:robot-bold'} />
       </button>
 
       {/* Chat panel */}
@@ -143,8 +143,8 @@ export function ChatWidget() {
         <div className="chat-widget-panel">
           {/* Header */}
           <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--g-soft, rgba(255,107,0,.12))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--g1, #FF6B00)', fontSize: 18 }}>
-              <Icon icon="ph:sparkle-bold" />
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--g1, #FF6B00)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20 }}>
+              <Icon icon="ph:robot-bold" />
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>PayLink Support</div>

@@ -130,18 +130,34 @@ export default function CreatePage() {
 
             <div style={{ padding: '28px 28px 32px' }}>
 
-              {/* STEP 1 — Account (only if not authenticated) */}
+              {/* STEP 1 — Choose link type + Account (only if not authenticated) */}
               {step === 1 && !authenticated && (
                 <div>
-                  <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>Your account</div>
-                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24, lineHeight: 1.6 }}>Sign in to get started. We'll verify you with a one-time code.</div>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
-                    <Icon icon="ph:info-bold" style={{ fontSize: 18, color: 'var(--g1)', flexShrink: 0 }} />
-                    <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every PayLink you create pays out to your account automatically.</div>
+                  <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 4 }}>What are you creating?</div>
+                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 18 }}>Pick your link type, then sign in to continue.</div>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+                    {[
+                      { id: 'fixed' as const, label: 'Fixed amount', desc: 'You set the exact price. Sender pays that amount.', icon: 'ph:currency-dollar-bold' },
+                      { id: 'open' as const, label: 'Open link', desc: 'No amount set. Great for tips, bios, donations.', icon: 'ph:link-simple-bold' },
+                    ].map(t => (
+                      <div key={t.id} onClick={() => setLinkType(t.id)}
+                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${linkType === t.id ? 'var(--g1)' : 'var(--border)'}`, background: linkType === t.id ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer', transition: 'all .2s' }}>
+                        <Icon icon={t.icon} style={{ fontSize: 22, color: linkType === t.id ? 'var(--g1)' : 'var(--ink3)', marginBottom: 8, display: 'block' }} />
+                        <div style={{ fontSize: 14, fontWeight: 600, color: linkType === t.id ? 'var(--g1)' : 'var(--ink2)', marginBottom: 4 }}>{t.label}</div>
+                        <div style={{ fontSize: 12, color: 'var(--ink3)', lineHeight: 1.5 }}>{t.desc}</div>
+                      </div>
+                    ))}
                   </div>
-                  <button style={s.btn} onClick={() => login()}>
-                    <Icon icon="ph:envelope-bold" /> Sign in with email or phone
-                  </button>
+                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginBottom: 4 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 12 }}>Sign in to continue</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
+                      <Icon icon="ph:info-bold" style={{ fontSize: 18, color: 'var(--g1)', flexShrink: 0 }} />
+                      <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every PayLink you create pays out to your account automatically.</div>
+                    </div>
+                    <button style={s.btn} onClick={() => login()}>
+                      <Icon icon="ph:envelope-bold" /> Sign in with email or phone
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -353,7 +369,7 @@ export default function CreatePage() {
               { key: 'For', val: linkType === 'open' ? 'Sender adds note' : note || 'No note', empty: linkType === 'fixed' && !note },
               { key: 'Receive via', val: receiveType === 'crypto' ? 'Crypto wallet' : 'Bank / mobile' },
               { key: 'Gas fee for sender', val: '$0.00', green: true },
-              { key: 'Expires', val: expiry },
+              { key: 'Expires', val: step < 3 ? 'Your choice' : expiry, empty: step < 3 },
             ].map((row, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                 <span style={{ fontSize: 13, color: 'var(--ink3)' }}>{row.key}</span>
