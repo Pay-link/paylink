@@ -126,7 +126,7 @@ window.addEventListener('scroll', () => {
   if(!ticking){
     requestAnimationFrame(()=>{
       const sy = window.scrollY;
-      const glows = document.querySelectorAll('.deep-bg-glow,.phones-bg-glow,.app-glow,.testi-glow');
+      const glows = document.querySelectorAll<HTMLElement>('.deep-bg-glow,.phones-bg-glow,.app-glow,.testi-glow');
       glows.forEach((g, i) => {
         g.style.transform = `translateY(${sy * (i % 2 === 0 ? 0.08 : -0.06)}px)`;
       });
