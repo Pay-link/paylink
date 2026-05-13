@@ -50,20 +50,36 @@ interface PaymentClientProps {
   slug: string
 }
 
-type PayState = 'method' | 'email' | 'otp' | 'wallet' | 'card' | 'processing' | 'success'
+type PayState = 'amount' | 'method' | 'email' | 'otp' | 'wallet' | 'card' | 'processing' | 'success'
 
 export function PaymentClient({ link, error, slug }: PaymentClientProps) {
   const { login, authenticated, user } = usePrivy()
   const { wallets } = useWallets()
   const router = useRouter()
 
-  const [state, setState] = useState<PayState>('method')
+  const isOpen = link?.amount === 0
+  const [state, setState] = useState<PayState>(isOpen ? 'amount' : 'method')
+  const [openAmountStr, setOpenAmountStr] = useState('0')
+  const [openNote, setOpenNote] = useState('')
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('email_otp')
   const [contact, setContact] = useState('')
   const [txHash, setTxHash] = useState('')
   const [settlementMs, setSettlementMs] = useState(0)
   const [step, setStep] = useState('Step 1 of 2')
   const [wantsToPay, setWantsToPay] = useState(false)
+
+  const openAmt = parseFloat(openAmountStr) || 0
+  const effectiveAmount = isOpen ? openAmt : (link?.amount ?? 0)
+
+  const openNumpad = (key: string) => {
+    setOpenAmountStr(prev => {
+      if (key === 'del') return prev.length > 1 ? prev.slice(0, -1) : '0'
+      if (key === '.') return prev.includes('.') ? prev : prev + '.'
+      if (prev === '0') return key
+      if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev
+      return prev + key
+    })
+  }
 
   // Auto-pay when authenticated after clicking pay
   useEffect(() => {
@@ -139,7 +155,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
         transport: custom(provider),
       })
 
-      const amountRaw = parseUnits(link.amount.toString(), 6)
+      const amountRaw = parseUnits(effectiveAmount.toString(), 6)
       const recipient = link.owner_wallet as `0x${string}`
 
       const realTxHash = await walletClient.writeContract({
@@ -188,15 +204,54 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
 
       <div className="page-header" style={{ padding: '16px 40px 24px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 }}>
-          Complete your payment
+          {isOpen ? `Pay ${link?.owner_name || 'someone'}` : 'Complete your payment'}
         </h1>
         <p style={{ fontSize: 15, color: 'var(--ink3)' }}>
-          Review the details below and choose how you'd like to pay.
+          {isOpen ? 'Enter the amount you want to send and a note, then choose how to pay.' : 'Review the details below and choose how you\'d like to pay.'}
         </p>
       </div>
 
-      {/* Two column layout */}
-      <div className="two-col-layout" style={{
+      {/* Open link: amount + note input screen */}
+      {state === 'amount' && isOpen && (
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '0 20px 60px' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', padding: '28px 28px 32px' }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--ink)', marginBottom: 4 }}>How much do you want to send?</div>
+            <div style={{ fontSize: 13, color: 'var(--ink3)', marginBottom: 20 }}>You're paying {link?.owner_name || 'this person'} — enter any amount.</div>
+
+            <div style={{ background: openAmt > 0 ? 'var(--g-soft)' : 'var(--page)', border: `1.5px solid ${openAmt > 0 ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16, textAlign: 'center', transition: 'all .2s' }}>
+              <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>Amount</div>
+              <div style={{ fontSize: 56, fontWeight: 700, color: openAmt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
+                <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{openAmountStr}
+              </div>
+              {openAmt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{openAmt.toFixed(2)} USDC · Arc</span>}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
+              {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (
+                <button key={k} onClick={() => openNumpad(k)} style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '12px 8px', fontFamily: 'var(--font)', fontSize: k === 'del' ? 17 : 20, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 50 }}>
+                  {k === 'del' ? <Icon icon="ph:backspace-bold" /> : k}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', marginBottom: 20 }}>
+              <Icon icon="ph:pencil-simple-bold" style={{ fontSize: 18, color: 'var(--ink3)' }} />
+              <input style={{ border: 'none', background: 'transparent', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--ink)', outline: 'none', flex: 1 }} placeholder="Add a note (e.g. Thanks for the coffee)" value={openNote} onChange={e => setOpenNote(e.target.value)} />
+            </div>
+
+            <button
+              style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(255,107,0,.28)', opacity: openAmt <= 0 ? .4 : 1 }}
+              disabled={openAmt <= 0}
+              onClick={() => setState('method')}
+            >
+              Continue →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Two column layout — hidden during open link amount entry */}
+      {state !== 'amount' && <div className="two-col-layout" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 340px',
         gap: 24,
@@ -539,7 +594,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
       <MobileBottomNav />
     </div>
   )

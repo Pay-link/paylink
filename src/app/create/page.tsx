@@ -16,6 +16,7 @@ export default function CreatePage() {
   const { walletAddress, email, phone, displayName, userId } = useUser()
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
+  const [linkType, setLinkType] = useState<'fixed'|'open'>('fixed')
   const [amountStr, setAmountStr] = useState('0')
   const [note, setNote] = useState('')
   const [receiveType, setReceiveType] = useState<'crypto'|'bank'>('crypto')
@@ -63,8 +64,8 @@ export default function CreatePage() {
           owner_name: displayName,
           owner_email: email,
           owner_wallet: walletAddress || '0x0000000000000000000000000000000000000000',
-          amount: amt,
-          note,
+          amount: linkType === 'open' ? 0 : amt,
+          note: linkType === 'open' ? '' : note,
           receive_type: receiveType,
           expiry,
         }),
@@ -144,48 +145,64 @@ export default function CreatePage() {
                 </div>
               )}
 
-              {/* STEP 2 — Amount */}
+              {/* STEP 2 — Link type + Amount */}
               {step === 2 && (
                 <div>
                   {!authenticated && <button onClick={() => setStep(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--ink3)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font)', padding: 0 }}>← Back</button>}
-                  <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>How much are you requesting?</div>
-                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 24 }}>Set the amount and add a note.</div>
 
-                  {authenticated && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', borderRadius: 12, padding: '10px 14px', marginBottom: 20, border: '1px solid var(--border)' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
-                        {displayName.slice(0,2).toUpperCase()}
+                  {/* Link type selector */}
+                  <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>What kind of link?</div>
+                  <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 18 }}>Choose how senders will interact with your link.</div>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+                    {[
+                      { id: 'fixed' as const, label: 'Fixed request', desc: 'You set the exact amount. Sender pays that amount.', icon: 'ph:currency-dollar-bold' },
+                      { id: 'open' as const, label: 'Open link', desc: 'Sender sets any amount. Great for bio or tips.', icon: 'ph:link-simple-bold' },
+                    ].map(t => (
+                      <div key={t.id} onClick={() => setLinkType(t.id)}
+                        style={{ flex: 1, borderRadius: 16, padding: '16px 14px', border: `1.5px solid ${linkType === t.id ? 'var(--g1)' : 'var(--border)'}`, background: linkType === t.id ? 'var(--g-soft)' : 'var(--page)', cursor: 'pointer', transition: 'all .2s' }}>
+                        <Icon icon={t.icon} style={{ fontSize: 22, color: linkType === t.id ? 'var(--g1)' : 'var(--ink3)', marginBottom: 8, display: 'block' }} />
+                        <div style={{ fontSize: 14, fontWeight: 600, color: linkType === t.id ? 'var(--g1)' : 'var(--ink2)', marginBottom: 4 }}>{t.label}</div>
+                        <div style={{ fontSize: 12, color: 'var(--ink3)', lineHeight: 1.5 }}>{t.desc}</div>
                       </div>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{displayName}</div>
-                        <div style={{ fontSize: 11, color: 'var(--ink3)' }}>{email || phone}</div>
-                      </div>
-                      <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--g1)', fontWeight: 500, background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 4 }}><Icon icon="ph:check-bold" style={{ fontSize: 11 }} /> Verified</div>
-                    </div>
-                  )}
-
-                  <div style={{ background: amt > 0 ? 'var(--g-soft)' : 'var(--page)', border: `1.5px solid ${amt > 0 ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16, textAlign: 'center', transition: 'all .2s' }}>
-                    <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>Amount to request</div>
-                    <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
-                      <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
-                    </div>
-                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
-                    {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (
-                      <button key={k} onClick={() => numpad(k)} style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', fontFamily: 'var(--font)', fontSize: k === 'del' ? 17 : 20, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 54 }}>
-                        {k === 'del' ? <Icon icon="ph:backspace-bold" /> : k}
-                      </button>
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px' }}>
-                    <Icon icon="ph:pencil-simple-bold" style={{ fontSize: 18, color: 'var(--ink3)' }} />
-                    <input style={{ border: 'none', background: 'transparent', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--ink)', outline: 'none', flex: 1 }} placeholder="What's this for? e.g. Design work" value={note} onChange={e => setNote(e.target.value)} />
-                  </div>
+                  {/* Fixed: show numpad */}
+                  {linkType === 'fixed' && (
+                    <>
+                      <div style={{ background: amt > 0 ? 'var(--g-soft)' : 'var(--page)', border: `1.5px solid ${amt > 0 ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 14, padding: '20px 24px', marginBottom: 16, textAlign: 'center', transition: 'all .2s' }}>
+                        <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>Amount to request</div>
+                        <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
+                          <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
+                        </div>
+                        {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
+                        {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (
+                          <button key={k} onClick={() => numpad(k)} style={{ background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 8px', fontFamily: 'var(--font)', fontSize: k === 'del' ? 17 : 20, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 54 }}>
+                            {k === 'del' ? <Icon icon="ph:backspace-bold" /> : k}
+                          </button>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px' }}>
+                        <Icon icon="ph:pencil-simple-bold" style={{ fontSize: 18, color: 'var(--ink3)' }} />
+                        <input style={{ border: 'none', background: 'transparent', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--ink)', outline: 'none', flex: 1 }} placeholder="What's this for? e.g. Design work" value={note} onChange={e => setNote(e.target.value)} />
+                      </div>
+                    </>
+                  )}
 
-                  <button style={{ ...s.btn, opacity: amt <= 0 ? .4 : 1 }} disabled={amt <= 0} onClick={() => setStep(3)}>Continue →</button>
+                  {/* Open: info card */}
+                  {linkType === 'open' && (
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: 'var(--g-soft)', border: '1px solid var(--border-g)', borderRadius: 14, padding: '18px 20px' }}>
+                      <Icon icon="ph:info-bold" style={{ fontSize: 20, color: 'var(--g1)', flexShrink: 0, marginTop: 1 }} />
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--g1)', marginBottom: 6 }}>Open link — sender controls the amount</div>
+                        <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.6 }}>When someone opens your link, they'll enter the amount they want to send and add their own note. Perfect for a tip jar, donations, or a link-in-bio page.</div>
+                      </div>
+                    </div>
+                  )}
+
+                  <button style={{ ...s.btn, opacity: linkType === 'fixed' && amt <= 0 ? .4 : 1 }} disabled={linkType === 'fixed' && amt <= 0} onClick={() => setStep(3)}>Continue →</button>
                 </div>
               )}
 
@@ -265,13 +282,28 @@ export default function CreatePage() {
                     </div>
                   </div>
 
-                  <div style={{ background: 'var(--page)', borderRadius: 14, padding: '18px 20px', marginBottom: 20, border: '1.5px solid var(--border-g)' }}>
+                  {/* Copy box — prominent for open links */}
+                  <div style={{ background: 'var(--page)', borderRadius: 14, padding: '18px 20px', marginBottom: 16, border: '1.5px solid var(--border-g)' }}>
                     <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.07em', textTransform: 'uppercase', marginBottom: 8 }}>Your PayLink</div>
-                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--g1)', wordBreak: 'break-all', marginBottom: 10, fontFamily: 'monospace' }}>{linkUrl}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
-                      <Icon icon="ph:clock-bold" /> ${amt.toFixed(2)} · Expires in {expiry}
+                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--g1)', wordBreak: 'break-all', marginBottom: 12, fontFamily: 'monospace' }}>{linkUrl}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
+                        <Icon icon="ph:clock-bold" />
+                        {linkType === 'open' ? `Any amount · ${expiry === 'Never' ? 'No expiry' : `Expires in ${expiry}`}` : `$${amt.toFixed(2)} · Expires in ${expiry}`}
+                      </div>
+                      <button onClick={() => { navigator.clipboard.writeText(linkUrl); setToast('Link copied!'); setTimeout(() => setToast(null), 3000) }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}>
+                        <Icon icon="ph:copy-bold" style={{ fontSize: 14 }} /> Copy link
+                      </button>
                     </div>
                   </div>
+
+                  {linkType === 'open' && (
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '1px solid var(--border-g)', borderRadius: 12, padding: '12px 16px', marginBottom: 16 }}>
+                      <Icon icon="ph:link-simple-bold" style={{ fontSize: 16, color: 'var(--g1)', flexShrink: 0, marginTop: 1 }} />
+                      <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.5 }}>Add this link to your Instagram, TikTok, or Twitter bio — anyone can send you any amount, anytime.</div>
+                    </div>
+                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
                     {[
@@ -317,8 +349,8 @@ export default function CreatePage() {
               </div>
             </div>
             {[
-              { key: 'Amount', val: amt > 0 ? `$${amt.toFixed(2)}` : 'Not set', empty: amt <= 0 },
-              { key: 'For', val: note || 'No note', empty: !note },
+              { key: 'Amount', val: linkType === 'open' ? 'Sender decides' : amt > 0 ? `$${amt.toFixed(2)}` : 'Not set', empty: linkType === 'fixed' && amt <= 0 },
+              { key: 'For', val: linkType === 'open' ? 'Sender adds note' : note || 'No note', empty: linkType === 'fixed' && !note },
               { key: 'Receive via', val: receiveType === 'crypto' ? 'Crypto wallet' : 'Bank / mobile' },
               { key: 'Gas fee for sender', val: '$0.00', green: true },
               { key: 'Expires', val: expiry },
