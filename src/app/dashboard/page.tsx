@@ -4,9 +4,23 @@ import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { createPublicClient, http } from 'viem'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
+
+const arcTestnet = {
+  id: 1038,
+  name: 'Arc Testnet',
+  network: 'arc-testnet',
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+  rpcUrls: { default: { http: ['https://rpc.testnet.arc.network'] }, public: { http: ['https://rpc.testnet.arc.network'] } },
+} as const
+
+const usdcAddress = '0x3600000000000000000000000000000000000000' as `0x${string}`
+const usdcAbi = [
+  { type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view' },
+] as const
 
 export default function DashboardPage() {
   const { authenticated, ready, logout } = usePrivy()
@@ -20,6 +34,7 @@ export default function DashboardPage() {
   const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD')
   const [topUpMethod, setTopUpMethod] = useState(0)
   const [copied, setCopied] = useState(false)
+  const [mobileTab, setMobileTab] = useState<'home' | 'links' | 'send' | 'activity'>('home')
 
   useEffect(() => {
     if (ready && !authenticated) router.push('/login')
@@ -31,36 +46,41 @@ export default function DashboardPage() {
 
   const loadRealData = async () => {
     try {
-      // Load payment links
-      const { data: linksData } = await supabase
-        .from('payment_links')
-        .select('*')
-        .eq('owner_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (linksData && linksData.length > 0) setLinks(linksData)
-
-      // Load transactions
-      const { data: txData } = await supabase
-        .from('transactions')
-        .select('*')
-        .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (txData && txData.length > 0) setTransactions(txData)
-
-      // Animate balance
-      const bal = profile?.balance_usdc || 0
-      animateBalance(bal)
-
+      const [linksData, txData] = await Promise.all([
+        supabase.from('payment_links').select('*').eq('owner_id', userId).order('created_at', { ascending: false }).limit(10),
+        supabase.from('transactions').select('*').or(`sender_id.eq.${userId},recipient_id.eq.${userId}`).order('created_at', { ascending: false }).limit(10),
+      ])
+      if (linksData.data?.length) setLinks(linksData.data)
+      if (txData.data?.length) setTransactions(txData.data)
     } catch (err) {
       console.error('Dashboard data error:', err)
     } finally {
       setDataLoaded(true)
     }
   }
+
+  // Fetch live USDC balance from Arc chain
+  useEffect(() => {
+    if (!walletAddress) return
+    const fetchBalance = async () => {
+      try {
+        const client = createPublicClient({ chain: arcTestnet, transport: http('https://rpc.testnet.arc.network') })
+        const raw = await client.readContract({
+          address: usdcAddress,
+          abi: usdcAbi,
+          functionName: 'balanceOf',
+          args: [walletAddress as `0x${string}`],
+        })
+        const bal = Number(raw) / 1_000_000 // USDC has 6 decimals
+        animateBalance(bal)
+      } catch (err) {
+        console.error('Balance fetch error:', err)
+      }
+    }
+    fetchBalance()
+    const interval = setInterval(fetchBalance, 15000) // refresh every 15s
+    return () => clearInterval(interval)
+  }, [walletAddress])
 
   const animateBalance = (target: number) => {
     const duration = 1200
@@ -103,7 +123,7 @@ export default function DashboardPage() {
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--page)', fontFamily: 'var(--font)' }}>
 
       {/* Sidebar */}
-      <aside style={{ width: 240, flexShrink: 0, background: '#fff', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto' }}>
+      <aside className="desktop-sidebar" style={{ width: 240, flexShrink: 0, background: '#fff', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto' }}>
         <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid var(--border)' }}>
           <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
             pay<span style={{ color: 'var(--g1)' }}>link</span>
@@ -153,10 +173,10 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main content */}
-      <div style={{ flex: 1, marginLeft: 240, minWidth: 0 }}>
+      <div className="desktop-main" style={{ flex: 1, marginLeft: 240, minWidth: 0 }}>
 
         {/* Top bar */}
-        <div style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(250,251,250,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
+        <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(250,251,250,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>Good morning, {displayName} 👋</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setTopUpOpen(true)} title="Top up" style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 17, color: 'var(--ink3)' }}>+</button>
@@ -164,7 +184,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div style={{ padding: '24px 20px 60px' }}>
+        <div style={{ padding: '24px 20px 60px' }} className="dash-content">
 
           {/* Balance card */}
           <div style={{ background: 'var(--g1)', borderRadius: 24, padding: '24px 24px', marginBottom: 20, position: 'relative', overflow: 'hidden' }}>
@@ -208,7 +228,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick actions */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 24 }}>
+          <div className="quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 24 }}>
             {[
               { label: 'Send', icon: '→', bg: 'var(--g1)', color: '#fff', href: '/send' },
               { label: 'Create link', icon: '🔗', bg: 'var(--g-soft)', color: 'var(--g1)', href: '/create' },
@@ -225,7 +245,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Main grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start' }}>
+          <div className="desktop-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, alignItems: 'start' }}>
             <div>
 
               {/* Favourites */}
@@ -320,7 +340,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Right sidebar */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 70 }}>
+            <div className="desktop-right-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 70 }}>
 
               {/* Wallet */}
               <div style={{ ...cardStyle, padding: '18px 18px' }}>
@@ -453,8 +473,52 @@ export default function DashboardPage() {
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
         :root { --g1:#1E6B32;--g2:#155226;--g3:#8DC63F;--g-soft:#EBF5EC;--g-mid:#C8E6CA;--ink:#0D1410;--ink2:#2D3D30;--ink3:#5C6E5E;--ink4:#8A9B8C;--page:#FAFBFA;--white:#FFFFFF;--border:#E8EDE8;--border-g:rgba(30,107,50,0.15);--font:'Google Sans','sans-serif'; }
-        @media(max-width:768px){ aside{display:none!important} div[style*="marginLeft: 240"]{margin-left:0!important} }
+        @media(max-width:768px){
+          .desktop-sidebar{display:none!important}
+          .desktop-main{margin-left:0!important}
+          .desktop-topbar{display:none!important}
+          .desktop-right-sidebar{display:none!important}
+          .desktop-grid{grid-template-columns:1fr!important}
+          .quick-actions{grid-template-columns:repeat(2,1fr)!important}
+          .mobile-topbar{display:flex!important}
+          .mobile-bottom-nav{display:flex!important}
+          .dash-content{padding-top:72px!important;padding-bottom:90px!important;padding-left:16px!important;padding-right:16px!important}
+        }
+        @media(min-width:769px){
+          .mobile-topbar{display:none!important}
+          .mobile-bottom-nav{display:none!important}
+        }
       `}</style>
+
+      {/* Mobile top bar */}
+      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'#fff', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
+        <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>pay<span style={{color:'var(--g1)'}}>link</span></div>
+        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+          <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>+</button>
+          <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>
+        </div>
+      </div>
+
+      {/* Mobile bottom nav */}
+      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'#fff', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 8px' }}>
+        {[
+          { id:'home', icon:'⊞', label:'Home' },
+          { id:'links', icon:'🔗', label:'Links' },
+          { id:'send', icon:'→', label:'Send' },
+          { id:'activity', icon:'🕐', label:'Activity' },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => tab.id === 'send' ? router.push('/send') : setMobileTab(tab.id as any)}
+            style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'none', border:'none', cursor:'pointer', padding:'8px 16px', borderRadius:12, color: mobileTab === tab.id ? 'var(--g1)' : 'var(--ink4)', fontFamily:'var(--font)' }}>
+            <span style={{ fontSize:20 }}>{tab.icon}</span>
+            <span style={{ fontSize:10, fontWeight:600 }}>{tab.label}</span>
+          </button>
+        ))}
+        <button onClick={() => router.push('/create')}
+          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'var(--g1)', border:'none', cursor:'pointer', padding:'10px 18px', borderRadius:14, color:'#fff', fontFamily:'var(--font)' }}>
+          <span style={{ fontSize:18 }}>＋</span>
+          <span style={{ fontSize:10, fontWeight:600 }}>Create</span>
+        </button>
+      </div>
     </div>
   )
 }

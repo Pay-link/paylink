@@ -34,20 +34,19 @@ export async function POST(request: NextRequest) {
       attempts++
     }
 
-    // Ensure user exists in the database
-    const { error: userError } = await supabase
-      .from('users')
-      .upsert({
-        id: owner_id,
-        display_name: owner_name || 'PayLink User',
-        email: owner_email,
-        wallet_address: owner_wallet,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' })
-
-    if (userError) {
-      console.error('Supabase user upsert error:', userError)
-      return NextResponse.json({ error: `Failed to sync user: ${userError.message}` }, { status: 500 })
+    // Ensure user exists in the database (non-blocking — link creation proceeds even if this fails)
+    try {
+      await supabase
+        .from('users')
+        .upsert({
+          id: owner_id,
+          display_name: owner_name || 'PayLink User',
+          email: owner_email,
+          wallet_address: owner_wallet,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' })
+    } catch (upsertErr) {
+      console.warn('User upsert failed (non-fatal):', upsertErr)
     }
 
     // Create the link
