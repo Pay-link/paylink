@@ -583,16 +583,17 @@ nav{
 ══════════════════════════════ */
 .trust-section{background:var(--page2);padding:56px 5%;text-align:center;border-top:0.5px solid var(--border)}
 .trust-h3{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
-.trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
 .trust-pill{
-  display:flex;align-items:center;gap:7px;
+  display:flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,.04);border:0.5px solid var(--border);
-  border-radius:100px;padding:9px 18px;
-  font-size:13px;font-weight:500;color:var(--ink2);
+  border-radius:16px;padding:18px 28px;
+  min-width:130px;height:64px;
   transition:all .2s;
 }
-.trust-pill:hover{background:rgba(255,107,0,.08);border-color:var(--border-o);color:var(--o3)}
-.tp-dot{width:7px;height:7px;border-radius:50%;background:var(--o1);flex-shrink:0}
+.trust-pill:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);}
+.trust-pill img{height:28px;width:auto;max-width:110px;object-fit:contain;filter:brightness(0) invert(1);opacity:.7;transition:opacity .2s}
+.trust-pill:hover img{opacity:1}
 
 /* ══════════════════════════════
    FINAL CTA
@@ -1097,8 +1098,28 @@ footer{
       <section className="trust-section reveal">
         <div className="trust-h3">Built on trusted infrastructure</div>
         <div className="trust-pills">
-          {['Arc Network', 'Circle USDC', 'Privy Wallets', 'Pimlico', 'Ramp Network', 'Yellow Card'].map(name => (
-            <div key={name} className="trust-pill"><div className="tp-dot"></div>{name}</div>
+          {[
+            { name: 'Arc Network',   domain: 'arc.network' },
+            { name: 'Circle',        domain: 'circle.com' },
+            { name: 'Privy',         domain: 'privy.io' },
+            { name: 'Pimlico',       domain: 'pimlico.io' },
+            { name: 'Ramp Network',  domain: 'ramp.network' },
+            { name: 'Yellow Card',   domain: 'yellowcard.io' },
+          ].map(p => (
+            <div key={p.name} className="trust-pill">
+              <img
+                src={`https://logo.clearbit.com/${p.domain}`}
+                alt={p.name}
+                onError={(e) => {
+                  const el = e.currentTarget
+                  el.style.display = 'none'
+                  const span = document.createElement('span')
+                  span.textContent = p.name
+                  span.style.cssText = 'font-size:13px;font-weight:500;color:rgba(255,255,255,.7)'
+                  el.parentElement?.appendChild(span)
+                }}
+              />
+            </div>
           ))}
         </div>
       </section>
