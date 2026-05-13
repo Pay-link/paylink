@@ -11,11 +11,28 @@ declare global {
 import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 export default function HomePage() {
   const { authenticated, login } = usePrivy()
   const router = useRouter()
-  const [bannerOpen, setBannerOpen] = useState(true)
+  const [liveStats, setLiveStats] = useState({ links: 0, txs: 0 })
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [linksRes, txsRes] = await Promise.all([
+          supabase.from('payment_links').select('id', { count: 'exact', head: true }),
+          supabase.from('transactions').select('id', { count: 'exact', head: true }),
+        ])
+        setLiveStats({
+          links: linksRes.count ?? 0,
+          txs: txsRes.count ?? 0,
+        })
+      } catch (_) {}
+    }
+    fetchStats()
+  }, [])
 
   useEffect(() => {
     import('iconify-icon').catch(() => {})
@@ -250,48 +267,82 @@ nav{
 .h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
 .h-stat-div{width:1px;height:28px;background:var(--border)}
 
-/* Hero phone mockup */
+/* Hero phone mockup — iPhone-style */
 .floating-phone{
-  position:absolute;border-radius:40px;padding:8px;
-  box-shadow:0 40px 80px rgba(0,0,0,.7);
+  position:absolute;
   transition:transform .1s ease;
 }
+/* Outer shell — thick physical iPhone frame */
+.fp-shell{
+  border-radius:44px;
+  padding:12px;
+  position:relative;
+}
+.fp-main .fp-shell{
+  background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08),
+    0 4px 0 0 rgba(255,255,255,.04),
+    0 50px 100px rgba(0,0,0,.85),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+.fp-secondary .fp-shell{
+  background:linear-gradient(160deg,#1E1010 0%,#0D0707 40%,#080808 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,107,0,.15),
+    0 30px 70px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+/* Side button notch on right edge */
+.fp-shell::before{
+  content:'';position:absolute;right:-3px;top:90px;
+  width:3px;height:28px;border-radius:0 3px 3px 0;
+  background:rgba(255,255,255,.06);
+  box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06);
+}
 .fp-main{
-  background:#14141E;border:0.5px solid rgba(255,255,255,.1);
-  width:220px;left:50%;transform:translateX(-50%);top:0;
+  width:230px;left:50%;transform:translateX(-50%);top:0;
   animation:phoneFloat 5s ease-in-out infinite;
 }
 .fp-secondary{
-  background:#0E0E18;border:0.5px solid rgba(255,107,0,.2);
-  width:180px;right:0;top:120px;
+  width:190px;right:-10px;top:130px;
   animation:phoneFloat2 5s ease-in-out 1.2s infinite;
 }
 @keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
 @keyframes phoneFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
+/* Inner screen */
 .fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
-.fp-notch{display:flex;justify-content:center;padding:10px 0 4px}
-.fp-pill{width:90px;height:28px;background:#000;border-radius:20px;margin-top:2px}
-.fp-status{display:flex;justify-content:space-between;padding:0 14px 5px;font-size:9px;color:rgba(255,255,255,.2);font-weight:500}
-.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:4px 14px 10px}
+/* Dynamic Island */
+.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
+.fp-pill{
+  width:80px;height:26px;
+  background:#000;border-radius:20px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
+.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
+.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
 .fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
 .fp-logo span{color:var(--o1)}
-.fp-body{padding:0 14px 20px}
-.fp-card{background:var(--o1);border-radius:16px;padding:16px 14px;margin-bottom:12px}
-.fp-card-lbl{font-size:9px;color:rgba(255,255,255,.6);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:500}
-.fp-amount{font-family:var(--font-display);font-size:28px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:3px}
-.fp-note{font-size:9px;color:rgba(255,255,255,.6)}
-.fp-tog-row{display:flex;gap:5px;margin-bottom:10px}
-.fp-tog{flex:1;padding:7px 4px;border-radius:9px;text-align:center;font-size:9px;font-weight:500;border:0.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:rgba(255,255,255,.35)}
-.fp-tog.on{background:rgba(255,107,0,.15);border-color:rgba(255,107,0,.35);color:var(--o3)}
-.fp-note-row{background:rgba(255,255,255,.05);border-radius:9px;padding:9px 11px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.4)}
-.fp-btn{width:100%;background:var(--o3);color:#09090E;border:none;border-radius:9px;padding:12px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer}
-.fp2-body{padding:12px 12px 16px}
-.fp2-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,107,0,.2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:12px;font-weight:900;color:var(--o3);margin:0 auto 7px}
-.fp2-name{text-align:center;font-family:var(--font-display);font-size:12px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
-.fp2-note{text-align:center;font-size:9px;color:rgba(255,255,255,.4);margin-bottom:10px}
-.fp2-amount{text-align:center;font-family:var(--font-display);font-size:24px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:12px}
-.fp2-btn{width:100%;background:var(--o1);color:#fff;border:none;border-radius:9px;padding:10px;font-family:var(--font-display);font-size:10px;font-weight:800;cursor:pointer;margin-bottom:6px}
-.fp2-sub{text-align:center;font-size:8px;color:rgba(255,255,255,.25)}
+.fp-body{padding:0 12px 18px}
+.fp-card{background:var(--o1);border-radius:18px;padding:16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
+.fp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.08),transparent);border-radius:18px 18px 0 0;pointer-events:none}
+.fp-card-lbl{font-size:8px;color:rgba(255,255,255,.65);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.fp-amount{font-family:var(--font-display);font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:4px}
+.fp-note{font-size:9px;color:rgba(255,255,255,.65)}
+.fp-tog-row{display:flex;gap:5px;margin-bottom:9px}
+.fp-tog{flex:1;padding:8px 4px;border-radius:10px;text-align:center;font-size:9px;font-weight:600;border:0.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
+.fp-tog.on{background:rgba(255,107,0,.18);border-color:rgba(255,107,0,.4);color:var(--o3)}
+.fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
+.fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
+.fp2-body{padding:14px 12px 16px}
+.fp2-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,107,0,.2);border:1.5px solid rgba(255,107,0,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--o3);margin:0 auto 8px}
+.fp2-name{text-align:center;font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
+.fp2-note{text-align:center;font-size:9px;color:rgba(255,255,255,.4);margin-bottom:12px}
+.fp2-amount{text-align:center;font-family:var(--font-display);font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:14px}
+.fp2-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:10px;font-weight:800;cursor:pointer;margin-bottom:7px;letter-spacing:-.01em}
+.fp2-sub{text-align:center;font-size:8px;color:rgba(255,255,255,.2)}
 .float-tag{
   position:absolute;
   background:rgba(255,255,255,.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
@@ -629,14 +680,6 @@ footer{
 }
 ` }} />
 
-      {/* TESTNET BANNER */}
-      <div style={{ display: bannerOpen ? 'flex' : 'none', background: 'rgba(255,107,0,0.15)', borderBottom: '0.5px solid rgba(255,107,0,0.3)', color: '#fff', padding: '8px 20px', alignItems: 'center', justifyContent: 'center', gap: 10, fontSize: 13, fontWeight: 500, position: 'relative', zIndex: 1000 }}>
-        <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--o1)', display: 'inline-block', flexShrink: 0 }}></span>
-        PayLink is live on Arc Testnet — all transactions use test funds.
-        <a href="https://testnet.arcscan.app" target="_blank" style={{ color: 'var(--o3)', textDecoration: 'underline' }}>View explorer</a>
-        <button onClick={() => setBannerOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '18px', position: 'absolute', right: '16px' }}>×</button>
-      </div>
-
       {/* NAV */}
       <nav>
         <a href="#" className="nav-logo">pay<span>link</span></a>
@@ -714,40 +757,44 @@ footer{
         {/* RIGHT — floating phones */}
         <div className="hero-right">
           <div className="floating-phone fp-main">
-            <div className="fp-screen">
-              <div className="fp-notch"><div className="fp-pill"></div></div>
-              <div className="fp-status"><span>9:41</span><span>●●●</span></div>
-              <div className="fp-nav">
-                <div className="fp-logo">pay<span>link</span></div>
-                <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
-              </div>
-              <div className="fp-body">
-                <div className="fp-card">
-                  <div className="fp-card-lbl">Amount to receive</div>
-                  <div className="fp-amount">$250.00</div>
-                  <div className="fp-note">Logo design — April invoice</div>
+            <div className="fp-shell">
+              <div className="fp-screen">
+                <div className="fp-notch"><div className="fp-pill"></div></div>
+                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-nav">
+                  <div className="fp-logo">pay<span>link</span></div>
+                  <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
                 </div>
-                <div className="fp-tog-row">
-                  <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
-                  <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
+                <div className="fp-body">
+                  <div className="fp-card">
+                    <div className="fp-card-lbl">Amount to receive</div>
+                    <div className="fp-amount">$250.00</div>
+                    <div className="fp-note">Logo design — April invoice</div>
+                  </div>
+                  <div className="fp-tog-row">
+                    <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
+                    <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
+                  </div>
+                  <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
+                  <button className="fp-btn">Generate link →</button>
                 </div>
-                <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
-                <button className="fp-btn">Generate link →</button>
               </div>
             </div>
           </div>
           <div className="floating-phone fp-secondary">
-            <div className="fp-screen">
-              <div className="fp-notch"><div className="fp-pill"></div></div>
-              <div className="fp-status"><span>9:41</span><span>●●●</span></div>
-              <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
-              <div className="fp2-body">
-                <div className="fp2-avatar">OX</div>
-                <div className="fp2-name">Oxy Akins</div>
-                <div className="fp2-note">Logo design — April</div>
-                <div className="fp2-amount">$250</div>
-                <button className="fp2-btn">Pay now →</button>
-                <div className="fp2-sub">Secured · Powered by Arc</div>
+            <div className="fp-shell">
+              <div className="fp-screen">
+                <div className="fp-notch"><div className="fp-pill"></div></div>
+                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
+                <div className="fp2-body">
+                  <div className="fp2-avatar">OX</div>
+                  <div className="fp2-name">Oxy Akins</div>
+                  <div className="fp2-note">Logo design — April</div>
+                  <div className="fp2-amount">$250</div>
+                  <button className="fp2-btn">Pay now →</button>
+                  <div className="fp2-sub">Secured · Powered by Arc</div>
+                </div>
               </div>
             </div>
           </div>
@@ -773,12 +820,18 @@ footer{
           <div className="sb-label">Settlement speed</div>
         </div>
         <div className="sb-item">
-          <div className="sb-val">150+</div>
-          <div className="sb-label">Countries covered</div>
+          <div className="sb-val" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {liveStats.links > 0 ? liveStats.links.toLocaleString() : '150+'}
+            {liveStats.links > 0 && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--o3)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}></span>}
+          </div>
+          <div className="sb-label">Links created</div>
         </div>
         <div className="sb-item">
-          <div className="sb-val">$0</div>
-          <div className="sb-label">To create a link</div>
+          <div className="sb-val" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {liveStats.txs > 0 ? liveStats.txs.toLocaleString() : '0'}
+            {liveStats.txs > 0 && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--o3)', display: 'inline-block', animation: 'pulse 2s ease-in-out infinite' }}></span>}
+          </div>
+          <div className="sb-label">Payments sent</div>
         </div>
       </div>
 
@@ -826,6 +879,7 @@ footer{
           </div>
           <div className="phones-right reveal reveal-delay-2">
             <div className="floating-phone fp-main" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 0 }}>
+              <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
                 <div className="fp-status"><span>9:41</span><span>●●●</span></div>
@@ -847,8 +901,10 @@ footer{
                   <button className="fp-btn">Generate link →</button>
                 </div>
               </div>
+              </div>
             </div>
             <div className="floating-phone fp-secondary">
+              <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
                 <div className="fp-status"><span>9:41</span><span>●●●</span></div>
@@ -861,6 +917,7 @@ footer{
                   <button className="fp2-btn">Pay now →</button>
                   <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
+              </div>
               </div>
             </div>
             <div className="float-tag ft1">
