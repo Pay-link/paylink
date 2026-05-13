@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { useUser } from '@/hooks/useUser'
 import { getShareUrls, generateLinkSlug } from '@/lib/utils'
 import { Icon } from '@iconify/react'
@@ -353,10 +354,11 @@ export default function CreatePage() {
       `}</style>
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'var(--ink)', color: '#fff', padding: '12px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, boxShadow: '0 8px 32px rgba(0,0,0,.15)', zIndex: 1000, animation: 'toastUp .3s ease forwards', display: 'flex', alignItems: 'center' }}>
+        <div style={{ position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)', background: 'var(--ink)', color: '#fff', padding: '12px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, boxShadow: '0 8px 32px rgba(0,0,0,.15)', zIndex: 1000, animation: 'toastUp .3s ease forwards', display: 'flex', alignItems: 'center' }}>
           <Icon icon="ph:check-circle-bold" style={{ fontSize: 16, marginRight: 6 }} />{toast}
         </div>
       )}
+      <MobileBottomNav />
     </div>
   )
 }

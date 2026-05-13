@@ -13,6 +13,7 @@ import {
   shortenTxHash,
 } from '@/lib/utils'
 import { Icon } from '@iconify/react'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 
 const arcTestnet = {
   id: 5042002,
@@ -539,6 +540,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
           </div>
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   )
 }

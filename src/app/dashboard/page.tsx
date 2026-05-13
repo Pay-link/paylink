@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import Link from 'next/link'
 import { createPublicClient, http } from 'viem'
 import { supabase } from '@/lib/supabase'
@@ -501,12 +502,10 @@ export default function DashboardPage() {
           .desktop-grid{grid-template-columns:1fr!important}
           .quick-actions{grid-template-columns:repeat(2,1fr)!important}
           .mobile-topbar{display:flex!important}
-          .mobile-bottom-nav{display:flex!important}
           .dash-content{padding-top:72px!important;padding-bottom:90px!important;padding-left:16px!important;padding-right:16px!important}
         }
         @media(min-width:769px){
           .mobile-topbar{display:none!important}
-          .mobile-bottom-nav{display:none!important}
         }
       `}</style>
 
@@ -520,26 +519,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Mobile bottom nav */}
-      <div className="mobile-bottom-nav" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:100, background:'var(--white)', borderTop:'1px solid var(--border)', height:64, alignItems:'center', justifyContent:'space-around', padding:'0 4px' }}>
-        {[
-          { id:'home', icon:'ph:squares-four-bold', label:'Home' },
-          { id:'links', icon:'ph:link-bold', label:'Links' },
-          { id:'send', icon:'ph:paper-plane-right-bold', label:'Send' },
-          { id:'activity', icon:'ph:clock-countdown-bold', label:'Activity' },
-        ].map(tab => (
-          <button key={tab.id} onClick={() => tab.id === 'send' ? router.push('/send') : setMobileTab(tab.id as any)}
-            style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'none', border:'none', cursor:'pointer', padding:'8px 12px', borderRadius:12, color: mobileTab === tab.id ? 'var(--g1)' : 'var(--ink4)', fontFamily:'var(--font)' }}>
-            <Icon icon={tab.icon} style={{ fontSize: 22 }} />
-            <span style={{ fontSize:10, fontWeight:600 }}>{tab.label}</span>
-          </button>
-        ))}
-        <button onClick={() => router.push('/create')}
-          style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, background:'var(--g1)', border:'none', cursor:'pointer', padding:'10px 16px', borderRadius:14, color:'#fff', fontFamily:'var(--font)', boxShadow:'0 4px 14px rgba(255,107,0,.3)' }}>
-          <Icon icon="ph:plus-bold" style={{ fontSize: 20 }} />
-          <span style={{ fontSize:10, fontWeight:700 }}>Create</span>
-        </button>
-      </div>
+      <MobileBottomNav activeTab={mobileTab} onTabChange={tab => setMobileTab(tab as any)} />
     </div>
   )
 }

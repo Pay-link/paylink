@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { formatDateTime } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
@@ -155,6 +156,7 @@ function SuccessContent() {
           .page-header{padding:12px 16px 20px!important}
         }
       `}</style>
+      <MobileBottomNav />
     </div>
   )
 }

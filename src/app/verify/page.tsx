@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 
 function VerifyContent() {
   const { authenticated, login, ready } = usePrivy()
@@ -213,6 +214,7 @@ function VerifyContent() {
           </div>
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   )
 }

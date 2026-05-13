@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { useState } from 'react'
 import { isValidContact } from '@/lib/utils'
 import { Icon } from '@iconify/react'
@@ -262,6 +263,7 @@ export default function SendPage() {
           </div>
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   )
 }
