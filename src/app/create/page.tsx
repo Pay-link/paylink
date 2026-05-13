@@ -296,12 +296,12 @@ export default function CreatePage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 10 }}>
-                    <button style={{ ...s.btn, marginTop: 0 }} onClick={() => router.push('/dashboard')}>
+                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: 1 }} onClick={() => router.push('/dashboard')}>
                       <Icon icon="ph:squares-four-bold" /> Go to dashboard
                     </button>
-                    <button style={{ ...s.btn, marginTop: 0, background: 'var(--page)', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
+                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: 1, background: 'var(--page)', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
                       onClick={() => { setStep(2); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
-                      + Create another
+                      <Icon icon="ph:plus-bold" /> Create another
                     </button>
                   </div>
                 </div>
