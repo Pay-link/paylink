@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { Icon } from '@iconify/react'
 
 export default function HomePage() {
   const { authenticated, login, logout } = usePrivy()
@@ -1098,23 +1099,16 @@ footer{
         <div className="trust-h3">Built on trusted infrastructure</div>
         <div className="trust-pills">
           {([
-            { name: 'Arc Network',  domain: 'arc.network' },
-            { name: 'Circle',       domain: 'circle.com' },
-            { name: 'Privy',        domain: 'privy.io' },
-            { name: 'Pimlico',      domain: 'pimlico.io' },
-            { name: 'Ramp Network', domain: 'ramp.network' },
-            { name: 'Yellow Card',  domain: 'yellowcard.io' },
+            { name: 'Arc Network',  icon: 'ph:lightning-fill',         bg: '#FF6B00', fg: '#fff' },
+            { name: 'Circle',       icon: 'ph:currency-circle-dollar-fill', bg: '#00D395', fg: '#fff' },
+            { name: 'Privy',        icon: 'ph:shield-check-fill',      bg: '#7B3FE4', fg: '#fff' },
+            { name: 'Pimlico',      icon: 'ph:gas-pump-fill',          bg: '#3B82F6', fg: '#fff' },
+            { name: 'Ramp Network', icon: 'ph:arrows-left-right-bold', bg: '#6C47FF', fg: '#fff' },
+            { name: 'Yellow Card',  icon: 'ph:credit-card-fill',       bg: '#F5C518', fg: '#1a1a1a' },
           ] as const).map(p => (
             <div key={p.name} className="trust-pill">
-              <div className="trust-pill-icon" style={{ background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://www.google.com/s2/favicons?domain=${p.domain}&sz=64`}
-                  alt={p.name}
-                  width={32}
-                  height={32}
-                  style={{ borderRadius: 6, objectFit: 'contain' }}
-                />
+              <div className="trust-pill-icon" style={{ background: p.bg, color: p.fg }}>
+                <Icon icon={p.icon} style={{ fontSize: '22px' }} />
               </div>
               <span className="trust-pill-name">{p.name}</span>
             </div>
