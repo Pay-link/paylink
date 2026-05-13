@@ -146,6 +146,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
         abi: usdcAbi,
         functionName: 'transfer',
         args: [recipient, amountRaw],
+        chain: null, // null = skip viem's chain ID assertion
       })
 
       const elapsed = Date.now() - start
