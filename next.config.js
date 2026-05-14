@@ -12,7 +12,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://code.iconify.design https://api.iconify.design",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://logo.clearbit.com https://www.google.com https://icon.horse https://*.privy.io",
+      "img-src 'self' data: blob: https://logo.clearbit.com https://www.google.com https://icon.horse https://*.privy.io https://cdn.prod.website-files.com",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://rpc.testnet.arc.network https://ipapi.co https://open.er-api.com https://api.openai.com https://auth.privy.io https://*.privy.io wss://relay.walletconnect.com wss://www.walletlink.org https://api.iconify.design https://under.iconify.design",
       "frame-src 'self' https://auth.privy.io https://*.privy.io",
       "frame-ancestors 'none'",
