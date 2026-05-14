@@ -10,7 +10,7 @@ interface MobileBottomNavProps {
 
 const TABS = [
   { id: 'home',     icon: 'ph:squares-four-bold',        label: 'Home',     href: '/dashboard' },
-  { id: 'links',    icon: 'ph:link-bold',                label: 'Links',    href: '/dashboard' },
+  { id: 'faucet',   icon: 'ph:drop-bold',                label: 'Faucet',   href: 'https://faucet.circle.com' },
   { id: 'send',     icon: 'ph:paper-plane-right-bold',   label: 'Send',     href: '/send' },
   { id: 'activity', icon: 'ph:clock-countdown-bold',     label: 'Activity', href: '/dashboard' },
 ]
@@ -28,6 +28,10 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
   )
 
   const handleTab = (tab: typeof TABS[number]) => {
+    if (tab.href.startsWith('http')) {
+      window.open(tab.href, '_blank')
+      return
+    }
     if (onTabChange) {
       onTabChange(tab.id)
       if (tab.id === 'send') router.push('/send')
