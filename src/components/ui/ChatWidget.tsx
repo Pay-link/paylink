@@ -135,7 +135,7 @@ export function ChatWidget() {
 
       {/* Floating bubble */}
       <button className="chat-bubble-btn" onClick={() => setOpen(o => !o)} aria-label="Open support chat">
-        <Icon icon={open ? 'ph:x-bold' : 'ph:robot-bold'} />
+        <Icon icon={open ? 'ph:x-bold' : 'ph:chat-teardrop-dots-bold'} />
       </button>
 
       {/* Chat panel */}
