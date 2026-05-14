@@ -371,17 +371,6 @@ nav{
    EXPERIENCE SECTION — dark 2-col
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 /* Phone mockup shared styles */
-.floating-phone{position:absolute;transition:transform .1s ease}
-.fp-shell{border-radius:44px;padding:12px;position:relative}
-.fp-main .fp-shell{background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 0 0 rgba(255,255,255,.04),0 50px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06),0 0 60px rgba(37,92,180,.12)}
-.fp-shell::before{content:'';position:absolute;right:-3px;top:90px;width:3px;height:28px;border-radius:0 3px 3px 0;background:rgba(255,255,255,.06);box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06)}
-.fp-main{width:230px;left:50%;transform:translateX(-50%);top:0;animation:phoneFloat 5s ease-in-out infinite;z-index:2}
-@keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
-.fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
-.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
-.fp-pill{width:80px;height:24px;background:#000;border-radius:20px;box-shadow:inset 0 1px 3px rgba(0,0,0,.95),0 0 0 1.5px rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden}
-.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(80,80,90,.9);border:0.5px solid rgba(255,255,255,.1)}
-.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
 .fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
 .fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
 .fp-logo span{color:var(--o1)}
@@ -396,9 +385,6 @@ nav{
 .fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
 .fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
 .fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
-.fp-secondary{width:190px;right:-15px;top:140px;animation:phoneFloat2 6s 0.4s ease-in-out infinite}
-.fp-secondary .fp-shell{background:linear-gradient(160deg,#1e2d50 0%,#0e1a38 40%,#0a1020 100%);box-shadow:0 0 0 1px rgba(37,92,180,.28),0 4px 0 0 rgba(255,255,255,.03),0 40px 80px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05),0 0 50px rgba(37,92,180,.18)}
-@keyframes phoneFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .fp2-body{padding:14px 12px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .fp2-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--o3),var(--o1));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:800;color:#fff;margin:10px auto 8px;box-shadow:0 4px 16px rgba(37,92,180,.4)}
 .fp2-name{font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
@@ -414,8 +400,25 @@ nav{
 .ft2{top:80px;right:-24px}
 @keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 /* Volume buttons (left side) via pseudo-element on fp-shell */
-.fp-shell::after{content:'';position:absolute;left:-3px;top:110px;width:3px;height:22px;border-radius:3px 0 0 3px;background:rgba(255,255,255,.07);box-shadow:0 -32px 0 rgba(255,255,255,.07),0 -56px 0 rgba(255,255,255,.07)}
 
+/* ── Phone frame (SVG asset) ── */
+/* SVG 722×1282 — screen rect at x=119.246 y=71.675 w=484.683 h=1020.64 */
+.pf-main,.pf-secondary{position:absolute;display:block}
+.pf-main{width:250px;left:50%;transform:translateX(-50%);top:0;z-index:2;animation:pfFloat 5s ease-in-out infinite}
+.pf-secondary{width:180px;right:-10px;top:120px;z-index:1;animation:pfFloat2 6s 0.5s ease-in-out infinite}
+@keyframes pfFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
+@keyframes pfFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.pf-img{width:100%;display:block;pointer-events:none;user-select:none}
+.pf-screen{
+  position:absolute;
+  left:16.52%;top:5.59%;
+  width:67.13%;height:79.61%;
+  overflow:hidden;
+  border-radius:10.12%;
+  background:#09090E;
+  display:flex;flex-direction:column;
+}
+.pf-status{display:flex;justify-content:space-between;padding:8px 12px 4px;font-size:8px;color:rgba(255,255,255,.35);font-weight:600;margin-top:6%}
 .phones-section{
   background:var(--page2);padding:80px 5% 100px;
   position:relative;overflow:hidden;
@@ -797,14 +800,14 @@ footer{
             </motion.button>
           </div>
           <div className="phones-right reveal reveal-delay-2">
-            <div className="floating-phone fp-main" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 0 }}>
-              <div className="fp-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
+            {/* Main phone — creator view */}
+            <div className="pf-main">
+              <img src="/phone-frame.svg" alt="" className="pf-img" draggable={false} />
+              <div className="pf-screen">
+                <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
                 <div className="fp-nav">
                   <div className="fp-logo">pay<span>link</span></div>
-                  <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
+                  <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
                 </div>
                 <div className="fp-body">
                   <div className="fp-card">
@@ -813,30 +816,28 @@ footer{
                     <div className="fp-note">Logo design — April invoice</div>
                   </div>
                   <div className="fp-tog-row">
-                    <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
-                    <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
+                    <div className="fp-tog on"><Icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Crypto</div>
+                    <div className="fp-tog"><Icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Bank</div>
                   </div>
-                  <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
-                  <button className="fp-btn">Generate link â†’</button>
+                  <div className="fp-note-row"><Icon icon="ph:pencil-bold" style={{ fontSize: '10px' }} />Add a note for sender...</div>
+                  <button className="fp-btn">Generate link →</button>
                 </div>
               </div>
-              </div>
             </div>
-            <div className="floating-phone fp-secondary">
-              <div className="fp-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
+            {/* Secondary phone — payer view */}
+            <div className="pf-secondary">
+              <img src="/phone-frame.svg" alt="" className="pf-img" draggable={false} />
+              <div className="pf-screen">
+                <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
                 <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
                   <div className="fp2-note">Freelance invoice — April</div>
                   <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now â†’</button>
+                  <button className="fp2-btn">Pay now →</button>
                   <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
-              </div>
               </div>
             </div>
             <div className="float-tag ft1">
@@ -849,9 +850,7 @@ footer{
             </div>
           </div>
         </div>
-      </section>
-
-      {/* â•â• HOW IT WORKS â•â• */}
+      </section>{/* â•â• HOW IT WORKS â•â• */}
       <section id="how" className="how-section">
         <div className="how-inner">
           <div className="reveal">
