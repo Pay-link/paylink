@@ -769,12 +769,12 @@ footer{
           </div>
           <div className="float-grid">
             {[
-              { icon: 'ph:user-plus-bold', title: 'No account to pay', desc: 'Senders click the link and pay. No signup. No wallet. No app download. Works on any browser worldwide.', delay: '.05s' },
-              { icon: 'ph:lightning-bold', title: 'Sub-second settlement', desc: 'Arc confirms payments in under one second. No "pending" for 3 business days. The moment they pay, you have it.', delay: '.15s' },
-              { icon: 'ph:currency-circle-dollar-bold', title: 'Any currency, any direction', desc: 'Sender pays in NGN, GBP, USD or USDC. Receiver gets local fiat or crypto. Seamlessly, automatically.', delay: '.25s' },
-              { icon: 'ph:globe-bold', title: 'Truly global coverage', desc: 'Ramp Network for 150+ countries. Yellow Card for deep Africa — mobile money, bank transfers, all of it.', delay: '.35s' },
-              { icon: 'ph:shield-check-bold', title: 'Non-custodial', desc: 'We never hold your funds. Every transaction settles directly on Arc — transparent, trustless, verifiable on-chain.', delay: '.45s' },
-              { icon: 'ph:repeat-bold', title: 'Links that never expire', desc: 'Put your PayLink in your Instagram bio and get paid forever. One link, unlimited payments, zero maintenance.', delay: '.55s' },
+              { icon: 'ph:envelope-simple-bold', title: 'Sign in in seconds', desc: "Log in with your email address and you're in. No seed phrases, no wallet setup, no crypto knowledge needed.", delay: '.05s' },
+              { icon: 'ph:lightning-bold', title: 'Sub-second settlement', desc: 'Arc settles payments in under one second. No "pending" for 3 business days. The moment they pay, you have it — confirmed on-chain.', delay: '.15s' },
+              { icon: 'ph:currency-circle-dollar-bold', title: 'Send and receive USDC', desc: 'Send or receive USDC instantly across borders. No middlemen, no conversion delays, no bank holding your money for days.', delay: '.25s' },
+              { icon: 'ph:cube-bold', title: 'Built on Arc', desc: 'Every payment settles on Arc — a fast, low-cost blockchain built for real-world transactions. Transparent, verifiable, and always on.', delay: '.35s' },
+              { icon: 'ph:lock-key-bold', title: 'Your funds, protected', desc: 'Your balance lives in your PayLink dashboard, always accessible. When you send to someone new, funds are held securely in escrow for 7 days — giving them time to claim before you can recover them.', delay: '.45s' },
+              { icon: 'ph:link-bold', title: 'Two ways to get paid', desc: 'Create a fixed link for a specific amount and note, or a reusable open link for your bio. Share either on WhatsApp, Telegram, or anywhere — one click and they pay.', delay: '.55s' },
             ].map(card => (
               <div key={card.title} className="glass-card" style={{ transitionDelay: card.delay }}>
                 <div className="gc-icon"><iconify-icon icon={card.icon}></iconify-icon></div>
