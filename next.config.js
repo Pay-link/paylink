@@ -21,6 +21,7 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
+  reactStrictMode: false,
   images: {
     domains: ['logo.clearbit.com', 'www.google.com', 'icon.horse'],
   },
