@@ -303,52 +303,67 @@ nav{
 .hero-phones{
   display:flex;align-items:flex-end;justify-content:center;
   position:relative;z-index:1;
-  width:100%;max-width:860px;
-  height:480px;
+  width:100%;max-width:900px;
+  height:500px;
   gap:0;
 }
-.hp-side{
-  width:200px;flex-shrink:0;
-  position:relative;z-index:2;
+/* Each phone is a positioned container */
+.hp-wrap{position:relative;flex-shrink:0}
+.hp-wrap img.phone-frame{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:3;
+  /* SVG handles its own shadow */
 }
-.hp-left{transform:rotate(-12deg) translateX(48px) translateY(30px);animation:phoneFloat2 5s ease-in-out 0.8s infinite}
-.hp-right{transform:rotate(12deg) translateX(-48px) translateY(30px);animation:phoneFloat2 5s ease-in-out 1.6s infinite}
+/* Screen content sits INSIDE the transparent hole of the SVG frame */
+/* Hole: x=12,y=12,w=276,h=596 inside 300×620 viewBox */
+.hp-screen{
+  position:absolute;
+  left:4%;top:1.94%;
+  width:92%;height:96.1%;
+  border-radius:13.3%;
+  overflow:hidden;
+  background:#09090E;
+  z-index:1;
+}
 .hp-center{
-  width:240px;flex-shrink:0;
-  position:relative;z-index:3;
-  transform:translateY(-20px);
+  width:244px;height:504px;
+  z-index:3;
+  transform:translateY(-24px);
   animation:phoneFloat 5s ease-in-out infinite;
 }
-@keyframes phoneFloat{0%,100%{transform:translateY(-20px)}50%{transform:translateY(-34px)}}
-@keyframes phoneFloat2{0%,100%{transform:rotate(var(--rot,0deg)) translateX(var(--tx,0)) translateY(30px)}50%{transform:rotate(var(--rot,0deg)) translateX(var(--tx,0)) translateY(18px)}}
-
-/* Phone shell */
-.fp-shell{border-radius:44px;padding:12px;position:relative}
-.fp-main-shell{
-  background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);
-  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 0 0 rgba(255,255,255,.04),0 50px 100px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06);
+.hp-side{
+  width:196px;height:405px;
+  z-index:2;
 }
-.fp-side-shell{
-  background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);
-  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 30px 70px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.04);
+.hp-left{
+  transform:rotate(-13deg) translateX(52px) translateY(36px);
+  animation:phoneFloatL 5s ease-in-out 0.9s infinite;
 }
-.fp-shell::before{
-  content:'';position:absolute;right:-3px;top:90px;
-  width:3px;height:28px;border-radius:0 3px 3px 0;
-  background:rgba(255,255,255,.06);
-  box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06);
+.hp-right{
+  transform:rotate(13deg) translateX(-52px) translateY(36px);
+  animation:phoneFloatR 5s ease-in-out 1.7s infinite;
 }
-.fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
-.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
-.fp-pill{
-  width:80px;height:26px;
-  background:#000;border-radius:20px;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);
-  display:flex;align-items:center;justify-content:center;gap:6px;
+@keyframes phoneFloat{
+  0%,100%{transform:translateY(-24px)}
+  50%{transform:translateY(-38px)}
 }
-.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
-.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
-.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
+@keyframes phoneFloatL{
+  0%,100%{transform:rotate(-13deg) translateX(52px) translateY(36px)}
+  50%{transform:rotate(-13deg) translateX(52px) translateY(22px)}
+}
+@keyframes phoneFloatR{
+  0%,100%{transform:rotate(13deg) translateX(-52px) translateY(36px)}
+  50%{transform:rotate(13deg) translateX(-52px) translateY(22px)}
+}
+/* Status bar area — leaves space for Dynamic Island */
+.fp-status-bar{
+  display:flex;justify-content:space-between;
+  padding:10px 16px 0;font-size:9px;
+  color:rgba(255,255,255,.4);font-weight:600;
+}
+/* DI spacer (the island is IN the SVG frame, so just leave top space) */
+.fp-island-space{height:36px}
+.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:4px 14px 10px}
 .fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
 .fp-logo span{color:var(--o3)}
 .fp-body{padding:0 12px 18px}
@@ -782,95 +797,97 @@ footer{
           </div>
         </div>
 
-        {/* 3 Phone mockups */}
+        {/* 3 Phone mockups — real SVG frame overlay */}
         <div className="hero-phones">
-          {/* LEFT phone — Pay screen, tilted */}
-          <div className="hp-side hp-left">
-            <div className="fp-shell fp-side-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>◉◉◉</span></div>
-                <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
-                <div className="fp2-body">
-                  <div className="fp2-avatar">AK</div>
-                  <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice — April</div>
-                  <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now →</button>
-                  <div className="fp2-sub">Secured · Powered by Arc</div>
-                </div>
+
+          {/* LEFT phone — Pay screen */}
+          <div className="hp-wrap hp-side hp-left">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
+            <div className="hp-screen">
+              <div className="fp-island-space" />
+              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
+              <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span /></div>
+              <div className="fp2-body">
+                <div className="fp2-avatar">AK</div>
+                <div className="fp2-name">Alex K.</div>
+                <div className="fp2-note">Freelance invoice — April</div>
+                <div className="fp2-amount">$120</div>
+                <button className="fp2-btn">Pay now →</button>
+                <div className="fp2-sub">Secured · Powered by Arc</div>
               </div>
             </div>
           </div>
 
-          {/* CENTER phone — Dashboard, upright, prominent */}
-          <div className="hp-center">
-            <div className="fp-shell fp-main-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>◉◉◉</span></div>
-                <div className="fpc-header">
-                  <div className="fpc-greet">Hello, Alex 👋</div>
-                  <Icon icon="ph:bell-bold" style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }} />
-                </div>
-                <div className="fpc-balance-card">
-                  <div className="fpc-bal-lbl">Total Balance</div>
-                  <div className="fpc-bal-val">$1,250.00</div>
-                  <div className="fpc-bal-sub">USDC · Arc Network <span className="fpc-badge">↑ +8.5%</span></div>
-                </div>
-                <div className="fpc-tx-hd">
-                  <div className="fpc-tx-title">Transactions</div>
-                  <div className="fpc-tx-all">View all</div>
-                </div>
-                <div className="fpc-tx-list">
-                  {[
-                    { av: 'SJ', avBg: 'rgba(74,222,128,.2)', avColor: '#4ADE80', name: 'Sarah J.', note: 'Logo design', amt: '+$250' },
-                    { av: 'MR', avBg: 'rgba(96,165,250,.2)', avColor: '#60A5FA', name: 'Mike R.', note: 'Freelance work', amt: '+$120' },
-                    { av: 'JD', avBg: 'rgba(167,139,250,.2)', avColor: '#A78BFA', name: 'John D.', note: 'April invoice', amt: '+$380' },
-                  ].map(tx => (
-                    <div key={tx.name} className="fpc-tx-item">
-                      <div className="fpc-tx-av" style={{ background: tx.avBg, color: tx.avColor }}>{tx.av}</div>
-                      <div>
-                        <div className="fpc-tx-name">{tx.name}</div>
-                        <div className="fpc-tx-note">{tx.note}</div>
-                      </div>
-                      <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                        <div className="fpc-tx-amt">{tx.amt}</div>
-                        <div className="fpc-tx-badge">Received</div>
-                      </div>
+          {/* CENTER phone — Dashboard */}
+          <div className="hp-wrap hp-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
+            <div className="hp-screen">
+              <div className="fp-island-space" />
+              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
+              <div className="fpc-header">
+                <div className="fpc-greet">Hello, Alex 🔥</div>
+                <Icon icon="ph:bell-bold" style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }} />
+              </div>
+              <div className="fpc-balance-card">
+                <div className="fpc-bal-lbl">Total Balance</div>
+                <div className="fpc-bal-val">$1,250.00</div>
+                <div className="fpc-bal-sub">USDC · Arc Network <span className="fpc-badge">↑ +8.5%</span></div>
+              </div>
+              <div className="fpc-tx-hd">
+                <div className="fpc-tx-title">Transactions</div>
+                <div className="fpc-tx-all">View all</div>
+              </div>
+              <div className="fpc-tx-list">
+                {[
+                  { av: 'SJ', avBg: 'rgba(74,222,128,.2)', avColor: '#4ADE80', name: 'Sarah J.', note: 'Logo design', amt: '+$250' },
+                  { av: 'MR', avBg: 'rgba(96,165,250,.2)', avColor: '#60A5FA', name: 'Mike R.', note: 'Freelance work', amt: '+$120' },
+                  { av: 'JD', avBg: 'rgba(167,139,250,.2)', avColor: '#A78BFA', name: 'John D.', note: 'April invoice', amt: '+$380' },
+                ].map(tx => (
+                  <div key={tx.name} className="fpc-tx-item">
+                    <div className="fpc-tx-av" style={{ background: tx.avBg, color: tx.avColor }}>{tx.av}</div>
+                    <div>
+                      <div className="fpc-tx-name">{tx.name}</div>
+                      <div className="fpc-tx-note">{tx.note}</div>
                     </div>
-                  ))}
-                </div>
+                    <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                      <div className="fpc-tx-amt">{tx.amt}</div>
+                      <div className="fpc-tx-badge">Received</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* RIGHT phone — Create link screen, tilted */}
-          <div className="hp-side hp-right">
-            <div className="fp-shell fp-side-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>◉◉◉</span></div>
-                <div className="fp-nav">
-                  <div className="fp-logo">pay<span>link</span></div>
-                  <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
+          {/* RIGHT phone — Create link */}
+          <div className="hp-wrap hp-side hp-right">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
+            <div className="hp-screen">
+              <div className="fp-island-space" />
+              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
+              <div className="fp-nav">
+                <div className="fp-logo">pay<span>link</span></div>
+                <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
+              </div>
+              <div className="fp-body">
+                <div className="fp-card">
+                  <div className="fp-card-lbl">Amount to receive</div>
+                  <div className="fp-amount">$250.00</div>
+                  <div className="fp-note">Logo design — April invoice</div>
                 </div>
-                <div className="fp-body">
-                  <div className="fp-card">
-                    <div className="fp-card-lbl">Amount to receive</div>
-                    <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design — April invoice</div>
-                  </div>
-                  <div className="fp-tog-row">
-                    <div className="fp-tog on"><Icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Crypto</div>
-                    <div className="fp-tog"><Icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Bank</div>
-                  </div>
-                  <div className="fp-note-row"><Icon icon="ph:pencil-bold" style={{ fontSize: '10px' }} />Add a note...</div>
-                  <button className="fp-btn">Generate link →</button>
+                <div className="fp-tog-row">
+                  <div className="fp-tog on"><Icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Crypto</div>
+                  <div className="fp-tog"><Icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Bank</div>
                 </div>
+                <div className="fp-note-row"><Icon icon="ph:pencil-bold" style={{ fontSize: '10px' }} />Add a note...</div>
+                <button className="fp-btn">Generate link →</button>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
