@@ -30,7 +30,7 @@ function SuccessContent() {
   }
 
   useEffect(() => {
-    const colors = ['#FF6B00', '#FF9A3C', '#FFB347', '#FFF0E0']
+    const colors = ['#255CB4', '#4a7fd4', '#6a9be4', '#e8f0fc']
     for (let i = 0; i < 18; i++) {
       const dot = document.createElement('div')
       dot.style.cssText = `position:fixed;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:50%;background:${colors[i%colors.length]};left:${10+Math.random()*80}%;top:${5+Math.random()*40}%;pointer-events:none;z-index:999;animation:confettiDrop ${0.8+Math.random()*0.8}s ease forwards ${Math.random()*0.4}s;`
@@ -136,7 +136,7 @@ function SuccessContent() {
               )}
 
               <button onClick={() => router.push('/send')}
-                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 10, boxShadow: '0 6px 20px rgba(255,107,0,.28)' }}>
+                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 10, boxShadow: '0 6px 20px rgba(37,92,180,.28)' }}>
                 <Icon icon="ph:paper-plane-right-bold" /> Send another payment
               </button>
               <button onClick={() => router.push('/')}

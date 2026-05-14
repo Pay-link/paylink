@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 declare global {
   namespace JSX {
@@ -61,7 +61,7 @@ export default function HomePage() {
   useEffect(() => {
     import('iconify-icon').catch(() => {})
 
-    /* ── PARTICLE FIELD ── */
+    /* â”€â”€ PARTICLE FIELD â”€â”€ */
     const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -90,7 +90,7 @@ export default function HomePage() {
           speed: 0.0002 + Math.random() * 0.0004,
           angle: angle,
           drift: (Math.random() - 0.5) * 0.0003,
-          color: Math.random() > 0.5 ? '255,107,0' : '255,179,71',
+          color: Math.random() > 0.5 ? '37,92,180' : '106,155,228',
           pulse: Math.random() * Math.PI * 2,
           pulseSpeed: 0.005 + Math.random() * 0.01,
         })
@@ -115,7 +115,7 @@ export default function HomePage() {
     }
     drawParticles()
 
-    /* ── TYPEWRITER HEADLINE ── */
+    /* â”€â”€ TYPEWRITER HEADLINE â”€â”€ */
     const fullText = 'Send money to\nanyone with just\na link.'
     const headline = document.getElementById('hero-headline')
     const cursor = document.getElementById('cursor')
@@ -145,7 +145,7 @@ export default function HomePage() {
     }
     setTimeout(typeChar, 600)
 
-    /* ── SCROLL REVEALS ── */
+    /* â”€â”€ SCROLL REVEALS â”€â”€ */
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
@@ -155,7 +155,7 @@ export default function HomePage() {
     }, { threshold: 0.08 })
     document.querySelectorAll('.reveal,.glass-card,.step-card,.testi-card').forEach(el => revealObserver.observe(el))
 
-    /* ── PARALLAX ON SCROLL ── */
+    /* â”€â”€ PARALLAX ON SCROLL â”€â”€ */
     let ticking = false
     window.addEventListener('scroll', () => {
       if (!ticking) {
@@ -177,18 +177,18 @@ export default function HomePage() {
       <style dangerouslySetInnerHTML={{ __html: `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --o1:#FF6B00;--o2:#E05C00;--o3:#FF9A3C;--o4:#FFB347;
-  --o-soft:rgba(255,107,0,0.08);--o-mid:rgba(255,107,0,0.18);
+  --o1:#255CB4;--o2:#1a4a9a;--o3:#4a7fd4;--o4:#6a9be4;
+  --o-soft:rgba(37,92,180,0.08);--o-mid:rgba(37,92,180,0.18);
   --page:#09090E;--page2:#0E0E18;--page3:#121220;
   --ink:#FFFFFF;--ink2:rgba(255,255,255,0.75);--ink3:rgba(255,255,255,0.42);
-  --border:rgba(255,255,255,0.08);--border-o:rgba(255,107,0,0.22);
+  --border:rgba(255,255,255,0.08);--border-o:rgba(37,92,180,0.22);
   --font-display:'Google Sans Flex','Google Sans Display','Google Sans','sans-serif';
   --font-body:'Google Sans Text','Google Sans','sans-serif';
 }
 html{scroll-behavior:smooth}
 body{font-family:'Google Sans Flex','Google Sans','sans-serif';background:var(--page);color:var(--ink);overflow-x:hidden;line-height:1.6}
 
-/* ── NAV ── */
+/* â”€â”€ NAV â”€â”€ */
 nav{
   position:sticky;top:0;z-index:200;
   display:grid;grid-template-columns:auto 1fr auto;align-items:center;
@@ -214,9 +214,9 @@ nav{
 .btn-ghost{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:0.5px solid var(--border)}
 .btn-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
 
-/* ══════════════════════════════
-   HERO — 2-column dark
-══════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO â€” 2-column dark
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .hero{
   min-height:100vh;
   display:grid;grid-template-columns:1fr 1fr;
@@ -232,7 +232,7 @@ nav{
   display:inline-flex;align-items:center;gap:7px;
   font-size:13px;font-weight:500;color:var(--o3);
   margin-bottom:28px;letter-spacing:.01em;
-  background:rgba(255,107,0,0.1);border:0.5px solid var(--border-o);
+  background:rgba(37,92,180,0.1);border:0.5px solid var(--border-o);
   padding:5px 14px;border-radius:100px;
 }
 .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--o1);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -269,9 +269,9 @@ nav{
   padding:15px 28px;border-radius:100px;
   font-family:var(--font-display);font-size:15px;font-weight:700;
   letter-spacing:-.02em;cursor:pointer;border:none;text-decoration:none;
-  transition:all .2s;box-shadow:0 8px 24px rgba(255,107,0,0.35);
+  transition:all .2s;box-shadow:0 8px 24px rgba(37,92,180,0.35);
 }
-.btn-hero-orange:hover{background:var(--o2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,107,0,0.45)}
+.btn-hero-orange:hover{background:var(--o2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,92,180,0.45)}
 .btn-hero-ghost{
   display:inline-flex;align-items:center;gap:8px;
   background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);
@@ -291,12 +291,12 @@ nav{
 .h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
 .h-stat-div{width:1px;height:28px;background:var(--border)}
 
-/* Hero phone mockup — iPhone-style */
+/* Hero phone mockup â€” iPhone-style */
 .floating-phone{
   position:absolute;
   transition:transform .1s ease;
 }
-/* Outer shell — thick physical iPhone frame */
+/* Outer shell â€” thick physical iPhone frame */
 .fp-shell{
   border-radius:44px;
   padding:12px;
@@ -313,7 +313,7 @@ nav{
 .fp-secondary .fp-shell{
   background:linear-gradient(160deg,#1E1010 0%,#0D0707 40%,#080808 100%);
   box-shadow:
-    0 0 0 1px rgba(255,107,0,.15),
+    0 0 0 1px rgba(37,92,180,.15),
     0 30px 70px rgba(0,0,0,.8),
     inset 0 1px 0 rgba(255,255,255,.04);
 }
@@ -357,11 +357,11 @@ nav{
 .fp-note{font-size:9px;color:rgba(255,255,255,.65)}
 .fp-tog-row{display:flex;gap:5px;margin-bottom:9px}
 .fp-tog{flex:1;padding:8px 4px;border-radius:10px;text-align:center;font-size:9px;font-weight:600;border:0.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
-.fp-tog.on{background:rgba(255,107,0,.18);border-color:rgba(255,107,0,.4);color:var(--o3)}
+.fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
 .fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
 .fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
 .fp2-body{padding:14px 12px 16px}
-.fp2-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,107,0,.2);border:1.5px solid rgba(255,107,0,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--o3);margin:0 auto 8px}
+.fp2-avatar{width:42px;height:42px;border-radius:50%;background:rgba(37,92,180,.2);border:1.5px solid rgba(37,92,180,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--o3);margin:0 auto 8px}
 .fp2-name{text-align:center;font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
 .fp2-note{text-align:center;font-size:9px;color:rgba(255,255,255,.4);margin-bottom:12px}
 .fp2-amount{text-align:center;font-family:var(--font-display);font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:14px}
@@ -379,9 +379,9 @@ nav{
 .ftag-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--o3);letter-spacing:-.03em}
 .ftag-lbl{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    STATS BAR (Cryptys-inspired)
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .stats-bar{
   background:var(--page2);
   border-top:0.5px solid var(--border);
@@ -398,9 +398,9 @@ nav{
 .sb-val{font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--o1);letter-spacing:-.04em}
 .sb-label{font-size:12px;color:var(--ink3);margin-top:3px;text-align:center}
 
-/* ══════════════════════════════
-   FEATURES — glass cards on dark
-══════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FEATURES â€” glass cards on dark
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .deep-section{
   background:var(--page);padding:100px 5%;
   position:relative;overflow:hidden;
@@ -408,8 +408,8 @@ nav{
 .deep-bg-glow{
   position:absolute;pointer-events:none;border-radius:50%;filter:blur(80px);opacity:.3;
 }
-.glow-1{width:500px;height:500px;background:#FF6B00;top:-100px;left:-100px;opacity:.12}
-.glow-2{width:400px;height:400px;background:#FF9A3C;bottom:-100px;right:10%;opacity:.08}
+.glow-1{width:500px;height:500px;background:#255CB4;top:-100px;left:-100px;opacity:.12}
+.glow-2{width:400px;height:400px;background:#4a7fd4;bottom:-100px;right:10%;opacity:.08}
 .deep-inner{position:relative;z-index:1}
 .deep-label{
   font-size:11px;font-weight:500;color:var(--o3);
@@ -434,27 +434,27 @@ nav{
 .glass-card.visible{opacity:1;transform:translateY(0)}
 .glass-card:hover{
   transform:translateY(-8px) !important;
-  border-color:rgba(255,107,0,.25);
-  background:rgba(255,107,0,.04);
+  border-color:rgba(37,92,180,.25);
+  background:rgba(37,92,180,.04);
 }
 .gc-icon{
   width:48px;height:48px;border-radius:14px;
-  background:rgba(255,107,0,.12);border:0.5px solid rgba(255,107,0,.22);
+  background:rgba(37,92,180,.12);border:0.5px solid rgba(37,92,180,.22);
   display:flex;align-items:center;justify-content:center;
   font-size:22px;color:var(--o3);margin-bottom:18px;
 }
 .gc-title{font-family:var(--font-display);font-size:18px;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:8px}
 .gc-desc{font-size:14px;color:var(--ink3);line-height:1.65}
 
-/* ══════════════════════════════
-   EXPERIENCE SECTION — dark 2-col
-══════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   EXPERIENCE SECTION â€” dark 2-col
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .phones-section{
   background:var(--page2);padding:80px 5% 100px;
   position:relative;overflow:hidden;
 }
 .phones-bg-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(100px)}
-.pb-glow1{width:600px;height:400px;background:#FF6B00;opacity:.07;top:0;left:50%;transform:translateX(-50%)}
+.pb-glow1{width:600px;height:400px;background:#255CB4;opacity:.07;top:0;left:50%;transform:translateX(-50%)}
 .phones-inner{
   position:relative;z-index:1;
   display:grid;grid-template-columns:1fr 1fr;
@@ -465,22 +465,22 @@ nav{
   position:relative;height:520px;
 }
 
-/* ══════════════════════════════
-   HOW IT WORKS — dark with orange
-══════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HOW IT WORKS â€” dark with orange
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .how-section{
   background:var(--page);padding:100px 5%;
   position:relative;overflow:hidden;
 }
 .how-section::before{
   content:'';position:absolute;inset:0;z-index:0;opacity:.03;
-  background-image:radial-gradient(circle,rgba(255,107,0,.8) 1px,transparent 1px);
+  background-image:radial-gradient(circle,rgba(37,92,180,.8) 1px,transparent 1px);
   background-size:28px 28px;
 }
 .how-inner{position:relative;z-index:1}
 .how-tag{
   display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,107,0,.1);color:var(--o3);
+  background:rgba(37,92,180,.1);color:var(--o3);
   font-size:12px;font-weight:500;padding:5px 14px;
   border-radius:20px;margin-bottom:16px;
   border:0.5px solid var(--border-o);
@@ -497,7 +497,7 @@ nav{
   transition:opacity .6s ease,transform .6s ease,border-color .3s,background .3s;
 }
 .step-card.visible{opacity:1;transform:translateY(0)}
-.step-card:hover{background:rgba(255,107,0,.04);border-color:rgba(255,107,0,.22)}
+.step-card:hover{background:rgba(37,92,180,.04);border-color:rgba(37,92,180,.22)}
 .step-num{
   font-family:var(--font-display);font-size:11px;font-weight:800;
   color:var(--o3);letter-spacing:.1em;margin-bottom:18px;
@@ -506,21 +506,21 @@ nav{
 .step-num::after{content:'';flex:1;height:0.5px;background:var(--border)}
 .step-icon{
   width:48px;height:48px;border-radius:14px;
-  background:rgba(255,107,0,.12);border:0.5px solid rgba(255,107,0,.2);
+  background:rgba(37,92,180,.12);border:0.5px solid rgba(37,92,180,.2);
   display:flex;align-items:center;justify-content:center;
   font-size:22px;color:var(--o3);margin-bottom:16px;
 }
 .step-title{font-family:var(--font-display);font-size:19px;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:8px}
 .step-desc{font-size:14px;color:var(--ink3);line-height:1.65}
 
-/* ══════════════════════════════
-   FEES — dark
-══════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FEES â€” dark
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .fee-section{background:var(--page2);padding:100px 5%}
 .fee-center{text-align:center;max-width:600px;margin:0 auto}
 .section-tag-orange{
   display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,107,0,.1);color:var(--o3);
+  background:rgba(37,92,180,.1);color:var(--o3);
   font-size:12px;font-weight:500;padding:5px 14px;
   border-radius:20px;border:0.5px solid var(--border-o);margin-bottom:16px;
 }
@@ -532,17 +532,17 @@ nav{
 .fee-head span:not(:first-child){text-align:center}
 .fee-row{display:grid;grid-template-columns:2fr 1fr 1fr;padding:15px 24px;border-bottom:0.5px solid var(--border);align-items:center;transition:background .15s}
 .fee-row:last-child{border-bottom:none}
-.fee-row:hover{background:rgba(255,107,0,.04)}
-.fee-row.hi{background:rgba(255,107,0,.06)}
+.fee-row:hover{background:rgba(37,92,180,.04)}
+.fee-row.hi{background:rgba(37,92,180,.06)}
 .fee-method{font-size:14px;color:var(--ink2);display:flex;align-items:center;gap:7px}
 .fee-them{font-size:14px;color:var(--ink3);text-align:center;text-decoration:line-through;opacity:.5}
 .fee-us{font-size:14px;font-weight:500;color:var(--o3);text-align:center;display:flex;align-items:center;justify-content:center;gap:4px}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TESTIMONIALS
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .testi-section{background:var(--page);padding:100px 5%;position:relative;overflow:hidden}
-.testi-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(100px);width:500px;height:300px;background:#FF6B00;opacity:.08;top:50%;left:50%;transform:translate(-50%,-50%)}
+.testi-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(100px);width:500px;height:300px;background:#255CB4;opacity:.08;top:50%;left:50%;transform:translate(-50%,-50%)}
 .testi-inner{position:relative;z-index:1}
 .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
 .testi-card{
@@ -552,7 +552,7 @@ nav{
   transition:opacity .6s ease,transform .6s ease,border-color .3s;
 }
 .testi-card.visible{opacity:1;transform:translateY(0)}
-.testi-card:hover{border-color:rgba(255,107,0,.22)}
+.testi-card:hover{border-color:rgba(37,92,180,.22)}
 .testi-stars{display:flex;gap:3px;margin-bottom:14px}
 .tstar{color:var(--o1);font-size:14px}
 .testi-text{font-size:14px;color:var(--ink3);line-height:1.75;margin-bottom:20px;font-style:italic}
@@ -562,11 +562,11 @@ nav{
 .testi-role{font-size:11px;color:var(--ink3)}
 .testi-flag{margin-left:auto;font-size:20px}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    APP DOWNLOAD
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .app-section{background:var(--page2);padding:100px 5%;position:relative;overflow:hidden}
-.app-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:#FF6B00;filter:blur(120px);opacity:.07;bottom:-200px;right:-100px;pointer-events:none}
+.app-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:#255CB4;filter:blur(120px);opacity:.07;bottom:-200px;right:-100px;pointer-events:none}
 .app-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;max-width:1100px;margin:0 auto}
 .app-eyebrow{font-size:11px;font-weight:500;color:var(--o3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
 .app-h2{font-family:var(--font-display);font-size:clamp(28px,4vw,50px);font-weight:900;color:#fff;letter-spacing:-.05em;line-height:1.05;margin-bottom:14px}
@@ -578,7 +578,7 @@ nav{
   border-radius:14px;padding:14px 22px;cursor:pointer;
   text-decoration:none;transition:all .2s;backdrop-filter:blur(8px);
 }
-.app-btn:hover{background:rgba(255,107,0,.1);border-color:var(--border-o);transform:translateY(-2px)}
+.app-btn:hover{background:rgba(37,92,180,.1);border-color:var(--border-o);transform:translateY(-2px)}
 .app-btn-icon{font-size:26px;color:var(--o3)}
 .app-btn-small{font-size:10px;color:var(--ink3)}
 .app-btn-big{font-family:var(--font-display);font-size:16px;font-weight:800;color:#fff;letter-spacing:-.02em}
@@ -598,13 +598,13 @@ nav{
 .atx-name{font-size:11px;font-weight:500;color:#fff}
 .atx-note{font-size:9px;color:var(--ink3)}
 .atx-amt{margin-left:auto;font-family:var(--font-display);font-size:12px;font-weight:800;color:var(--o3)}
-.app-total{background:rgba(255,107,0,.1);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.app-total{background:rgba(37,92,180,.1);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .atotal-lbl{font-size:9px;color:var(--ink3)}
 .atotal-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--o3)}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TRUST STRIP
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .trust-section{background:var(--page2);padding:56px 5%;text-align:center;border-top:0.5px solid var(--border)}
 .trust-h3{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
 .trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
@@ -618,9 +618,9 @@ nav{
 .trust-pill-logo{width:36px;height:36px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:4px;}
 .trust-pill-name{font-size:13px;font-weight:600;color:var(--ink);flex:1;text-align:left;white-space:nowrap}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FINAL CTA
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .final-section{
   background:var(--page);padding:120px 5%;text-align:center;
   position:relative;overflow:hidden;
@@ -637,9 +637,9 @@ nav{
   padding:16px 32px;border-radius:100px;
   font-family:var(--font-display);font-size:16px;font-weight:800;
   letter-spacing:-.02em;cursor:pointer;border:none;text-decoration:none;
-  transition:all .2s;box-shadow:0 8px 28px rgba(255,107,0,0.4);
+  transition:all .2s;box-shadow:0 8px 28px rgba(37,92,180,0.4);
 }
-.btn-final-fill:hover{background:var(--o2);transform:translateY(-2px);box-shadow:0 14px 36px rgba(255,107,0,0.5)}
+.btn-final-fill:hover{background:var(--o2);transform:translateY(-2px);box-shadow:0 14px 36px rgba(37,92,180,0.5)}
 .btn-final-ghost{
   display:inline-flex;align-items:center;gap:8px;
   background:rgba(255,255,255,.06);color:var(--ink2);
@@ -650,9 +650,9 @@ nav{
 }
 .btn-final-ghost:hover{background:rgba(255,255,255,.1);color:#fff}
 
-/* ══════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FOOTER
-══════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 footer{
   background:#05050A;padding:56px 5% 32px;
   border-top:0.5px solid var(--border);
@@ -670,7 +670,7 @@ footer{
 .footer-arc{font-size:12px;color:rgba(255,255,255,.2);display:flex;align-items:center;gap:5px}
 .footer-arc span{color:var(--o3)}
 
-/* ── SCROLL UTILITY ── */
+/* â”€â”€ SCROLL UTILITY â”€â”€ */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .reveal-delay-1{transition-delay:.1s}
@@ -678,7 +678,7 @@ footer{
 .reveal-delay-3{transition-delay:.3s}
 .reveal-delay-4{transition-delay:.4s}
 
-/* ── RESPONSIVE ── */
+/* â”€â”€ RESPONSIVE â”€â”€ */
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;min-height:auto;padding-top:60px}
   .hero-right{height:400px}
@@ -732,7 +732,7 @@ footer{
         </div>
       </nav>
 
-      {/* ══ HERO ══ */}
+      {/* â•â• HERO â•â• */}
       <section className="hero">
         <canvas id="particle-canvas"></canvas>
 
@@ -740,10 +740,10 @@ footer{
         <div className="hero-left">
           <div className="hero-eyebrow">
             <div className="hero-dot"></div>
-            Built on Arc &nbsp;·&nbsp; Powered by USDC
+            Built on Arc &nbsp;Â·&nbsp; Powered by USDC
           </div>
           <h1 className="hero-h1" id="hero-headline"><span className="cursor-blink" id="cursor"></span></h1>
-          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
+          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally â€” anyone, anywhere, in seconds.</p>
           <div className="hero-ctas">
             {authenticated ? (
               <button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
@@ -786,13 +786,13 @@ footer{
           </div>
         </div>
 
-        {/* RIGHT — floating phones */}
+        {/* RIGHT â€” floating phones */}
         <div className="hero-right">
           <div className="floating-phone fp-main">
             <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
                 <div className="fp-nav">
                   <div className="fp-logo">pay<span>link</span></div>
                   <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
@@ -801,14 +801,14 @@ footer{
                   <div className="fp-card">
                     <div className="fp-card-lbl">Amount to receive</div>
                     <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design — April invoice</div>
+                    <div className="fp-note">Logo design â€” April invoice</div>
                   </div>
                   <div className="fp-tog-row">
                     <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
                     <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
                   </div>
                   <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
-                  <button className="fp-btn">Generate link →</button>
+                  <button className="fp-btn">Generate link â†’</button>
                 </div>
               </div>
             </div>
@@ -817,15 +817,15 @@ footer{
             <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
                 <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice — April</div>
+                  <div className="fp2-note">Freelance invoice â€” April</div>
                   <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now →</button>
-                  <div className="fp2-sub">Secured · Powered by Arc</div>
+                  <button className="fp2-btn">Pay now â†’</button>
+                  <div className="fp2-sub">Secured Â· Powered by Arc</div>
                 </div>
               </div>
             </div>
@@ -841,7 +841,7 @@ footer{
         </div>
       </section>
 
-      {/* ══ STATS BAR ══ */}
+      {/* â•â• STATS BAR â•â• */}
       <div className="stats-bar">
         <div className="sb-item">
           <div className="sb-val">$0.00</div>
@@ -867,7 +867,7 @@ footer{
         </div>
       </div>
 
-      {/* ══ FEATURES ══ */}
+      {/* â•â• FEATURES â•â• */}
       <section className="deep-section">
         <div className="deep-bg-glow glow-1"></div>
         <div className="deep-bg-glow glow-2"></div>
@@ -875,15 +875,15 @@ footer{
           <div className="reveal">
             <div className="deep-label">Why PayLink</div>
             <h2 className="deep-h2">Money should move as fast<br/>as a <em>message</em></h2>
-            <p className="deep-sub">We built the payments layer the world was missing — instant, borderless, and so simple your parents can use it.</p>
+            <p className="deep-sub">We built the payments layer the world was missing â€” instant, borderless, and so simple your parents can use it.</p>
           </div>
           <div className="float-grid">
             {[
               { icon: 'ph:user-plus-bold', title: 'No account to pay', desc: 'Senders click the link and pay. No signup. No wallet. No app download. Works on any browser worldwide.', delay: '.05s' },
               { icon: 'ph:lightning-bold', title: 'Sub-second settlement', desc: 'Arc confirms payments in under one second. No "pending" for 3 business days. The moment they pay, you have it.', delay: '.15s' },
               { icon: 'ph:currency-circle-dollar-bold', title: 'Any currency, any direction', desc: 'Sender pays in NGN, GBP, USD or USDC. Receiver gets local fiat or crypto. Seamlessly, automatically.', delay: '.25s' },
-              { icon: 'ph:globe-bold', title: 'Truly global coverage', desc: 'Ramp Network for 150+ countries. Yellow Card for deep Africa — mobile money, bank transfers, all of it.', delay: '.35s' },
-              { icon: 'ph:shield-check-bold', title: 'Non-custodial', desc: 'We never hold your funds. Every transaction settles directly on Arc — transparent, trustless, verifiable on-chain.', delay: '.45s' },
+              { icon: 'ph:globe-bold', title: 'Truly global coverage', desc: 'Ramp Network for 150+ countries. Yellow Card for deep Africa â€” mobile money, bank transfers, all of it.', delay: '.35s' },
+              { icon: 'ph:shield-check-bold', title: 'Non-custodial', desc: 'We never hold your funds. Every transaction settles directly on Arc â€” transparent, trustless, verifiable on-chain.', delay: '.45s' },
               { icon: 'ph:repeat-bold', title: 'Links that never expire', desc: 'Put your PayLink in your Instagram bio and get paid forever. One link, unlimited payments, zero maintenance.', delay: '.55s' },
             ].map(card => (
               <div key={card.title} className="glass-card" style={{ transitionDelay: card.delay }}>
@@ -896,7 +896,7 @@ footer{
         </div>
       </section>
 
-      {/* ══ EXPERIENCE (phones) ══ */}
+      {/* â•â• EXPERIENCE (phones) â•â• */}
       <section className="phones-section">
         <div className="phones-bg-glow pb-glow1"></div>
         <div className="phones-inner">
@@ -906,7 +906,7 @@ footer{
             <p className="deep-sub" style={{ marginBottom: '32px' }}>One for creating your link. One for paying. Designed so obsessively that our beta users called it "the cleanest payments app they'd ever used."</p>
             <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink — Free
+              Create a PayLink â€” Free
             </button>
           </div>
           <div className="phones-right reveal reveal-delay-2">
@@ -914,7 +914,7 @@ footer{
               <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
                 <div className="fp-nav">
                   <div className="fp-logo">pay<span>link</span></div>
                   <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
@@ -923,14 +923,14 @@ footer{
                   <div className="fp-card">
                     <div className="fp-card-lbl">Amount to receive</div>
                     <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design — April invoice</div>
+                    <div className="fp-note">Logo design â€” April invoice</div>
                   </div>
                   <div className="fp-tog-row">
                     <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
                     <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
                   </div>
                   <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
-                  <button className="fp-btn">Generate link →</button>
+                  <button className="fp-btn">Generate link â†’</button>
                 </div>
               </div>
               </div>
@@ -939,15 +939,15 @@ footer{
               <div className="fp-shell">
               <div className="fp-screen">
                 <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>●●●</span></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
                 <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice — April</div>
+                  <div className="fp2-note">Freelance invoice â€” April</div>
                   <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now →</button>
-                  <div className="fp2-sub">Secured · Powered by Arc</div>
+                  <button className="fp2-btn">Pay now â†’</button>
+                  <div className="fp2-sub">Secured Â· Powered by Arc</div>
                 </div>
               </div>
               </div>
@@ -964,7 +964,7 @@ footer{
         </div>
       </section>
 
-      {/* ══ HOW IT WORKS ══ */}
+      {/* â•â• HOW IT WORKS â•â• */}
       <section id="how" className="how-section">
         <div className="how-inner">
           <div className="reveal">
@@ -974,8 +974,8 @@ footer{
           </div>
           <div className="steps-grid">
             {[
-              { num: 'STEP 01', icon: 'ph:link-bold', title: 'Create your link', desc: 'Enter an amount, add a note, choose how to receive — crypto wallet or bank account. Your link is ready in 30 seconds.', delay: '.05s' },
-              { num: 'STEP 02', icon: 'ph:share-network-bold', title: 'Share it anywhere', desc: 'Send via WhatsApp, Telegram, X, or paste in your bio. Anyone with the link can pay — no app, no account needed.', delay: '.15s' },
+              { num: 'STEP 01', icon: 'ph:link-bold', title: 'Create your link', desc: 'Enter an amount, add a note, choose how to receive â€” crypto wallet or bank account. Your link is ready in 30 seconds.', delay: '.05s' },
+              { num: 'STEP 02', icon: 'ph:share-network-bold', title: 'Share it anywhere', desc: 'Send via WhatsApp, Telegram, X, or paste in your bio. Anyone with the link can pay â€” no app, no account needed.', delay: '.15s' },
               { num: 'STEP 03', icon: 'ph:lightning-bold', title: 'Get paid instantly', desc: 'Settlement in under a second on Arc. Receive USDC in your wallet or local currency straight to your bank or mobile money.', delay: '.25s' },
               { num: 'BONUS', icon: 'ph:repeat-bold', title: 'Reuse forever', desc: 'Your PayLink never expires unless you set it to. One link in your bio, unlimited payments, zero maintenance.', delay: '.35s' },
             ].map(step => (
@@ -990,41 +990,41 @@ footer{
         </div>
       </section>
 
-      {/* ══ FEES ══ */}
+      {/* â•â• FEES â•â• */}
       <section id="fees" className="fee-section">
         <div className="fee-center reveal">
           <div className="section-tag-orange"><iconify-icon icon="ph:percent-bold"></iconify-icon>Transparent fees</div>
-          <h2 className="section-h2">Up to 7× cheaper<br/>than the old way</h2>
-          <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat — always shown upfront. No surprises ever.</p>
+          <h2 className="section-h2">Up to 7Ã— cheaper<br/>than the old way</h2>
+          <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat â€” always shown upfront. No surprises ever.</p>
           <div className="fee-table">
             <div className="fee-head">
               <span>Payment type</span><span>Western Union</span><span>PayLink</span>
             </div>
             <div className="fee-row hi">
               <span className="fee-method"><iconify-icon icon="ph:wallet-bold"></iconify-icon>Crypto to crypto</span>
-              <span className="fee-them">5–8%</span>
+              <span className="fee-them">5â€“8%</span>
               <span className="fee-us"><iconify-icon icon="ph:check-circle-bold"></iconify-icon>$0.00</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:credit-card-bold"></iconify-icon>Card to crypto wallet</span>
-              <span className="fee-them">5–8%</span>
+              <span className="fee-them">5â€“8%</span>
               <span className="fee-us">~1.5%</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:bank-bold"></iconify-icon>Bank to bank (global)</span>
-              <span className="fee-them">5–8%</span>
-              <span className="fee-us">~1–2%</span>
+              <span className="fee-them">5â€“8%</span>
+              <span className="fee-us">~1â€“2%</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:device-mobile-bold"></iconify-icon>Mobile money (Africa)</span>
-              <span className="fee-them">5–8%</span>
-              <span className="fee-us">~0.5–1%</span>
+              <span className="fee-them">5â€“8%</span>
+              <span className="fee-us">~0.5â€“1%</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══ TESTIMONIALS ══ */}
+      {/* â•â• TESTIMONIALS â•â• */}
       <section className="testi-section">
         <div className="testi-glow"></div>
         <div className="testi-inner">
@@ -1039,9 +1039,9 @@ footer{
               </div>
               <p className="testi-text">"Sent my client a PayLink on WhatsApp. They paid from the UK in under 2 minutes. No wallet questions, no fees eating my money. This is what payments should feel like."</p>
               <div className="testi-author">
-                <div className="tav" style={{ background: 'rgba(255,107,0,0.15)', color: 'var(--o3)' }}>AO</div>
+                <div className="tav" style={{ background: 'rgba(37,92,180,0.15)', color: 'var(--o3)' }}>AO</div>
                 <div><div className="testi-name">Adeola O.</div><div className="testi-role">Designer, Lagos</div></div>
-                <div className="testi-flag">🇳🇬</div>
+                <div className="testi-flag">ðŸ‡³ðŸ‡¬</div>
               </div>
             </div>
             <div className="testi-card" style={{ transitionDelay: '.15s' }}>
@@ -1052,7 +1052,7 @@ footer{
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(57,73,171,.2)', color: '#8090FF' }}>JM</div>
                 <div><div className="testi-name">James M.</div><div className="testi-role">Founder, London</div></div>
-                <div className="testi-flag">🇬🇧</div>
+                <div className="testi-flag">ðŸ‡¬ðŸ‡§</div>
               </div>
             </div>
             <div className="testi-card" style={{ transitionDelay: '.25s' }}>
@@ -1063,21 +1063,21 @@ footer{
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(194,24,91,.15)', color: '#FF80AB' }}>FC</div>
                 <div><div className="testi-name">Funke C.</div><div className="testi-role">Business owner, Abuja</div></div>
-                <div className="testi-flag">🇳🇬</div>
+                <div className="testi-flag">ðŸ‡³ðŸ‡¬</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══ APP ══ */}
+      {/* â•â• APP â•â• */}
       <section id="app" className="app-section">
         <div className="app-glow"></div>
         <div className="app-inner">
           <div className="reveal">
             <div className="app-eyebrow">Available on iOS & Android</div>
             <h2 className="app-h2">Your payments.<br/>In your pocket.</h2>
-            <p className="app-sub">Track all your PayLinks, get notified the moment money lands, and manage payouts — all from one clean app.</p>
+            <p className="app-sub">Track all your PayLinks, get notified the moment money lands, and manage payouts â€” all from one clean app.</p>
             <div className="app-btns">
               <a href="#" className="app-btn">
                 <iconify-icon icon="ph:apple-logo-bold" className="app-btn-icon"></iconify-icon>
@@ -1096,7 +1096,7 @@ footer{
                 <div className="app-s-lbl">Payments this month</div>
                 <div className="app-tx">
                   {[
-                    { initials: 'AK', color: 'rgba(255,107,0,.2)', textColor: 'var(--o3)', name: 'Alex K.', note: 'Freelance invoice', amt: '+$500' },
+                    { initials: 'AK', color: 'rgba(37,92,180,.2)', textColor: 'var(--o3)', name: 'Alex K.', note: 'Freelance invoice', amt: '+$500' },
                     { initials: 'SR', color: 'rgba(255,180,0,.15)', textColor: '#FFB400', name: 'Sam R.', note: 'Consulting fee', amt: '+$150' },
                     { initials: 'JO', color: 'rgba(100,130,255,.15)', textColor: '#8090FF', name: 'Jordan O.', note: 'Monthly retainer', amt: '+$800' },
                   ].map(tx => (
@@ -1117,12 +1117,12 @@ footer{
         </div>
       </section>
 
-      {/* ══ TRUST ══ */}
+      {/* â•â• TRUST â•â• */}
       <section className="trust-section reveal">
         <div className="trust-h3">Built on trusted infrastructure</div>
         <div className="trust-pills">
           {([
-            { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#FF6B00', fg: '#fff', href: 'https://arc.network' },
+            { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
             { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
             { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
             { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
@@ -1140,7 +1140,7 @@ footer{
         </div>
       </section>
 
-      {/* ══ FINAL CTA ══ */}
+      {/* â•â• FINAL CTA â•â• */}
       <section className="final-section">
         <div className="final-glow"></div>
         <div className="final-inner reveal">
@@ -1149,14 +1149,14 @@ footer{
           <div className="final-btns">
             <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ cursor: 'pointer', border: 'none' }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink — Free
+              Create a PayLink â€” Free
             </button>
             <a href="#how" className="btn-final-ghost"><iconify-icon icon="ph:question-bold"></iconify-icon>Learn more</a>
           </div>
         </div>
       </section>
 
-      {/* ══ FOOTER ══ */}
+      {/* â•â• FOOTER â•â• */}
       <footer>
         <div className="footer-top">
           <div>
@@ -1183,10 +1183,11 @@ footer{
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="footer-copy">© 2026 PayLink. All rights reserved.</div>
+          <div className="footer-copy">Â© 2026 PayLink. All rights reserved.</div>
           <div className="footer-arc">Powered by <span>Arc Network</span> & Circle USDC</div>
         </div>
       </footer>
     </div>
   )
 }
+

@@ -51,7 +51,7 @@ export default function SendPage() {
     title: { fontSize: 32, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', marginBottom: 6 } as React.CSSProperties,
     sub: { fontSize: 15, color: 'var(--ink3)' } as React.CSSProperties,
     input: { width: '100%', background: 'var(--page)', border: '1.5px solid var(--border)', borderRadius: 14, padding: '14px 18px', fontFamily: 'var(--font)', fontSize: 15, color: 'var(--ink)', outline: 'none' } as React.CSSProperties,
-    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.28)' } as React.CSSProperties,
+    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(37,92,180,.28)' } as React.CSSProperties,
   }
 
   return (
@@ -85,7 +85,7 @@ export default function SendPage() {
                     background: n < step ? 'var(--g1)' : n === step ? 'var(--g1)' : 'var(--white)',
                     color: n <= step ? '#fff' : 'var(--ink3)',
                     border: n > step ? '1.5px solid var(--border)' : 'none',
-                    boxShadow: n === step ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
+                    boxShadow: n === step ? '0 0 0 4px rgba(37,92,180,.18)' : 'none',
                   }}>{n < step ? <Icon icon="ph:check-bold" style={{ fontSize: 13 }} /> : n}</div>
                   <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: n === step ? 'var(--ink)' : n < step ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>
                     {['Identity','Recipient','Amount','Payment'][n-1]}
@@ -218,7 +218,7 @@ export default function SendPage() {
                     <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                       <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
                     </div>
-                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
+                    {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(37,92,180,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
                   </div>
 
                   {/* Numpad */}

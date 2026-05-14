@@ -92,7 +92,7 @@ export default function CreatePage() {
   const s = {
     page: { background: 'var(--page)', minHeight: '100vh' } as React.CSSProperties,
     card: { background: 'var(--white)', borderRadius: 20, border: '1px solid var(--border)', boxShadow: '0 2px 12px rgba(0,0,0,.4)' } as React.CSSProperties,
-    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.28)' } as React.CSSProperties,
+    btn: { width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 14, boxShadow: '0 6px 20px rgba(37,92,180,.28)' } as React.CSSProperties,
   }
 
   const steps = authenticated ? ['Amount', 'Receive', 'Share'] : ['Account', 'Amount', 'Receive', 'Share']
@@ -120,7 +120,7 @@ export default function CreatePage() {
                     background: i < currentStepIndex ? 'var(--g1)' : i === currentStepIndex ? 'var(--g1)' : 'var(--white)',
                     color: i <= currentStepIndex ? '#fff' : 'var(--ink3)',
                     border: i > currentStepIndex ? '1.5px solid var(--border)' : 'none',
-                    boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(255,107,0,.18)' : 'none',
+                    boxShadow: i === currentStepIndex ? '0 0 0 4px rgba(37,92,180,.18)' : 'none',
                   }}>{i < currentStepIndex ? <Icon icon="ph:check-bold" style={{ fontSize: 13 }} /> : i + 1}</div>
                   <div style={{ fontSize: 12, fontWeight: 500, marginLeft: 6, color: i === currentStepIndex ? 'var(--ink)' : i < currentStepIndex ? 'var(--g1)' : 'var(--ink3)', whiteSpace: 'nowrap' }}>{label}</div>
                   {i < steps.length - 1 && <div style={{ flex: 1, height: 1.5, background: i < currentStepIndex ? 'var(--g3)' : 'var(--border)', margin: '0 12px' }} />}
@@ -191,7 +191,7 @@ export default function CreatePage() {
                         <div style={{ fontSize: 64, fontWeight: 700, color: amt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                           <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{amountStr}
                         </div>
-                        {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
+                        {amt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(37,92,180,.12)', padding: '4px 12px', borderRadius: 20 }}>{amt.toFixed(2)} USDC · Arc</span>}
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
                         {['1','2','3','4','5','6','7','8','9','.','0','del'].map(k => (

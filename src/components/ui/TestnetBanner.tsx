@@ -8,7 +8,7 @@ export function TestnetBanner() {
 
   return (
     <div style={{
-      background: '#FF6B00',
+      background: '#255CB4',
       color: '#fff',
       padding: '8px 20px',
       display: 'flex',
@@ -22,7 +22,7 @@ export function TestnetBanner() {
     }}>
       <span style={{
         width: 7, height: 7, borderRadius: '50%',
-        background: '#FFB347',
+        background: '#6a9be4',
         display: 'inline-block',
         animation: 'pulse 2s ease-in-out infinite',
         flexShrink: 0,

@@ -167,7 +167,7 @@ export default function ClaimPage() {
                 <button
                   onClick={handleClaim}
                   disabled={claiming}
-                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: claiming ? 'not-allowed' : 'pointer', opacity: claiming ? .6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(255,107,0,.28)', marginBottom: 12 }}>
+                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: claiming ? 'not-allowed' : 'pointer', opacity: claiming ? .6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(37,92,180,.28)', marginBottom: 12 }}>
                   <Icon icon={claiming ? 'ph:spinner-bold' : 'ph:hand-grabbing-bold'} />
                   {claiming ? 'Verifying…' : `Claim $${claim.amount.toFixed(2)}`}
                 </button>
@@ -180,7 +180,7 @@ export default function ClaimPage() {
             {claimed && (
               <div style={{ padding: '24px 32px', textAlign: 'center' }}>
                 <button onClick={() => router.push('/dashboard')}
-                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginBottom: 10, boxShadow: '0 4px 14px rgba(255,107,0,.28)' }}>
+                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginBottom: 10, boxShadow: '0 4px 14px rgba(37,92,180,.28)' }}>
                   Go to my dashboard →
                 </button>
                 <div style={{ fontSize: 13, color: 'var(--ink3)' }}>Your balance has been updated.</div>

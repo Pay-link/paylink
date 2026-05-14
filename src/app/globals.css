@@ -6,29 +6,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&display=swap');
 
 :root {
-  /* Orange accent palette */
-  --g1: #FF6B00;
-  --g2: #E05C00;
-  --g3: #FF9A3C;
-  --g4: #FFB347;
-  --g-soft: rgba(255, 107, 0, 0.10);
-  --g-mid: rgba(255, 107, 0, 0.20);
-  --g-lime: rgba(255, 107, 0, 0.05);
+  /* Blue accent palette (Primary: #255CB4) */
+  --g1: #255CB4;
+  --g2: #1a4a9a;
+  --g3: #4a7fd4;
+  --g4: #6a9be4;
+  --g-soft: rgba(37, 92, 180, 0.10);
+  --g-mid: rgba(37, 92, 180, 0.20);
+  --g-lime: rgba(37, 92, 180, 0.05);
 
-  /* Text — light for dark backgrounds */
-  --ink: #F0EEE8;
-  --ink2: #C4C2BC;
+  /* Branding gradient: #030300 → #C10801 → #F16501 → #D9C368 */
+  --grad-brand: linear-gradient(135deg, #030300 0%, #C10801 33%, #F16501 66%, #D9C368 100%);
+
+  /* Text */
+  --ink: #F9F9F9;
+  --ink2: #A7A7A7;
   --ink3: #8A8880;
   --ink4: #545250;
 
   /* Backgrounds */
-  --page: #09090E;
-  --page2: #111118;
-  --white: #111118;
+  --page: #121212;
+  --page2: #111520;
+  --white: #111520;
 
   /* Borders */
   --border: rgba(255, 255, 255, 0.09);
-  --border-g: rgba(255, 107, 0, 0.22);
+  --border-g: rgba(37, 92, 180, 0.22);
 
   --font: 'Google Sans', 'sans-serif';
   --font-display: 'Google Sans Flex', 'Google Sans Display', 'Google Sans', sans-serif;
@@ -72,13 +75,13 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 6px 20px rgba(255,107,0,0.28);
+  box-shadow: 0 6px 20px rgba(37,92,180,0.28);
 }
 
 .btn-primary:hover {
   background: var(--g2);
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(255,107,0,0.38);
+  box-shadow: 0 10px 28px rgba(37,92,180,0.38);
 }
 
 .btn-primary:disabled {

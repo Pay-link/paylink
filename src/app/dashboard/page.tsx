@@ -160,7 +160,7 @@ export default function DashboardPage() {
     type: tx.recipient_id === userId ? 'received' : 'sent',
     name: tx.sender_email || tx.recipient_wallet?.slice(0,8) || 'Unknown',
     initials: (tx.sender_email || 'UK').slice(0,2).toUpperCase(),
-    color: tx.recipient_id === userId ? 'rgba(255,107,0,.12)' : 'rgba(220,50,50,.12)',
+    color: tx.recipient_id === userId ? 'rgba(37,92,180,.12)' : 'rgba(220,50,50,.12)',
     tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
   }))
 
@@ -298,7 +298,7 @@ export default function DashboardPage() {
                         No notifications yet
                       </div>
                     ) : notifications.map((n, i) => (
-                      <div key={n.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 18px', borderBottom: i < notifications.length - 1 ? '1px solid var(--border)' : 'none', background: seenIds.has(n.id) ? 'transparent' : 'rgba(255,107,0,.04)' }}>
+                      <div key={n.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 18px', borderBottom: i < notifications.length - 1 ? '1px solid var(--border)' : 'none', background: seenIds.has(n.id) ? 'transparent' : 'rgba(37,92,180,.04)' }}>
                         <div style={{ width: 34, height: 34, borderRadius: '50%', background: n.bg, color: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, flexShrink: 0 }}>
                           <Icon icon={n.icon} />
                         </div>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
 
           {/* Balance card */}
           <div style={{ background: 'var(--g1)', borderRadius: 24, padding: '24px 24px', marginBottom: 20, position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'rgba(255,107,0,.2)', filter: 'blur(60px)', top: -100, right: -60, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'rgba(37,92,180,.2)', filter: 'blur(60px)', top: -100, right: -60, pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }} />
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -374,7 +374,7 @@ export default function DashboardPage() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {[['● Arc Network · Live', true], ['USDC', false], ['$0 gas fee', false]].map(([label, live], i) => (
-                  <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 500, color: live ? 'var(--g3)' : 'rgba(255,255,255,.6)', background: live ? 'rgba(255,107,0,.12)' : 'rgba(255,255,255,.1)', padding: '4px 12px', borderRadius: 20, border: `0.5px solid ${live ? 'rgba(255,107,0,.3)' : 'rgba(255,255,255,.15)'}` }}>
+                  <div key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 500, color: live ? 'var(--g3)' : 'rgba(255,255,255,.6)', background: live ? 'rgba(37,92,180,.12)' : 'rgba(255,255,255,.1)', padding: '4px 12px', borderRadius: 20, border: `0.5px solid ${live ? 'rgba(37,92,180,.3)' : 'rgba(255,255,255,.15)'}` }}>
                     {label as string}
                   </div>
                 ))}
@@ -522,7 +522,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
                 <button onClick={() => setTopUpOpen(true)}
-                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginTop: 14, boxShadow: '0 4px 14px rgba(255,107,0,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '12px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginTop: 14, boxShadow: '0 4px 14px rgba(37,92,180,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                   <Icon icon="ph:arrow-down-bold" /> Top up wallet
                 </button>
               </div>
@@ -628,7 +628,7 @@ export default function DashboardPage() {
                 </button>
               </div>
             ) : (
-              <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(255,107,0,.28)' }}>
+              <button onClick={() => alert('Fiat top up via Yellow Card coming soon!')} style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(37,92,180,.28)' }}>
                 <Icon icon="ph:arrow-down-bold" /> Top up $100
               </button>
             )}

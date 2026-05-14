@@ -137,7 +137,7 @@ function VerifyContent() {
                   const url = await buildSuccessUrl(user?.id || '', userName, userEmail)
                   router.push(url)
                 }}
-                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(255,107,0,.28)' }}>
+                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(37,92,180,.28)' }}>
                 <Icon icon="ph:paper-plane-right-bold" /> Confirm & send{amount ? ` $${amount}` : ''}
               </button>
               <button onClick={() => router.back()}
@@ -185,7 +185,7 @@ function VerifyContent() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 28, fontWeight: 700,
                   color: i < otp.length ? 'var(--g1)' : 'var(--ink)',
-                  boxShadow: i === otp.length ? '0 0 0 3px rgba(255,107,0,.12)' : 'none',
+                  boxShadow: i === otp.length ? '0 0 0 3px rgba(37,92,180,.12)' : 'none',
                   transition: 'all .2s',
                 }}>{otp[i] || ''}</div>
               ))}
@@ -218,7 +218,7 @@ function VerifyContent() {
                 cursor: otp.length < 6 || verifying ? 'not-allowed' : 'pointer',
                 opacity: otp.length < 6 || verifying ? .4 : 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                marginBottom: 14, boxShadow: '0 6px 20px rgba(255,107,0,.25)',
+                marginBottom: 14, boxShadow: '0 6px 20px rgba(37,92,180,.25)',
               }}>
               <Icon icon={verifying ? 'ph:spinner-bold' : 'ph:check-bold'} />
               {verifying ? 'Verifying...' : 'Verify & continue'}

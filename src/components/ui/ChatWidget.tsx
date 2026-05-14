@@ -97,15 +97,15 @@ export function ChatWidget() {
         .chat-bubble-btn {
           position: fixed; bottom: 20px; right: 20px; z-index: 1000;
           width: 56px; height: 56px; border-radius: 50%;
-          background: var(--g1, #FF6B00); border: none; cursor: pointer;
+          background: var(--g1, #255CB4); border: none; cursor: pointer;
           display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 8px 24px rgba(255,107,0,.4);
+          box-shadow: 0 8px 24px rgba(37,92,180,.4);
           transition: transform .2s, box-shadow .2s;
           color: #fff; font-size: 24px;
         }
-        .chat-bubble-btn:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(255,107,0,.5); }
+        .chat-bubble-btn:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(37,92,180,.5); }
         .chat-msg-user {
-          align-self: flex-end; background: var(--g1, #FF6B00); color: #fff;
+          align-self: flex-end; background: var(--g1, #255CB4); color: #fff;
           border-radius: 16px 16px 4px 16px; padding: 10px 14px;
           max-width: 80%; font-size: 13px; line-height: 1.5; word-break: break-word;
         }
@@ -121,7 +121,7 @@ export function ChatWidget() {
           padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap;
           font-family: var(--font, sans-serif); transition: all .15s;
         }
-        .chat-quick-btn:hover { border-color: var(--g1, #FF6B00); color: var(--g1, #FF6B00); }
+        .chat-quick-btn:hover { border-color: var(--g1, #255CB4); color: var(--g1, #255CB4); }
         .chat-input {
           flex: 1; background: transparent; border: none; outline: none;
           font-family: var(--font, sans-serif); font-size: 13px;
@@ -143,12 +143,12 @@ export function ChatWidget() {
         <div className="chat-widget-panel">
           {/* Header */}
           <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--g1, #FF6B00)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20 }}>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--g1, #255CB4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 20 }}>
               <Icon icon="ph:robot-bold" />
             </div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>PayLink Support</div>
-              <div style={{ fontSize: 11, color: 'var(--g1, #FF6B00)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div style={{ fontSize: 11, color: 'var(--g1, #255CB4)', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--g3, #4ADE80)', display: 'inline-block' }} />
                 AI agent · online
               </div>

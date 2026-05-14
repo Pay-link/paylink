@@ -81,7 +81,7 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
             background: 'var(--g1)', border: 'none', cursor: 'pointer',
             padding: '10px 16px', borderRadius: 14, color: '#fff',
-            fontFamily: 'var(--font)', boxShadow: '0 4px 14px rgba(255,107,0,.3)',
+            fontFamily: 'var(--font)', boxShadow: '0 4px 14px rgba(37,92,180,.3)',
           }}
         >
           <Icon icon="ph:plus-bold" style={{ fontSize: 20 }} />

@@ -99,7 +99,7 @@ export default function BankSetupPage() {
         <div style={{ display: 'flex', gap: 10 }}>
           <button
             onClick={() => router.push('/dashboard')}
-            style={{ flex: 1, background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 14px rgba(255,107,0,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+            style={{ flex: 1, background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '15px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,92,180,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
           >
             <Icon icon="ph:squares-four-bold" /> Go to dashboard
           </button>

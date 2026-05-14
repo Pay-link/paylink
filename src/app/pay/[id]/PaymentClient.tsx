@@ -223,7 +223,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
               <div style={{ fontSize: 56, fontWeight: 700, color: openAmt > 0 ? 'var(--ink)' : 'var(--ink3)', letterSpacing: '-.06em', lineHeight: 1, marginBottom: 8 }}>
                 <span style={{ fontSize: '0.42em', verticalAlign: 'super', fontWeight: 500 }}>$</span>{openAmountStr}
               </div>
-              {openAmt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(255,107,0,.12)', padding: '4px 12px', borderRadius: 20 }}>{openAmt.toFixed(2)} USDC · Arc</span>}
+              {openAmt > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--g1)', background: 'rgba(37,92,180,.12)', padding: '4px 12px', borderRadius: 20 }}>{openAmt.toFixed(2)} USDC · Arc</span>}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
@@ -240,7 +240,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
             </div>
 
             <button
-              style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(255,107,0,.28)', opacity: openAmt <= 0 ? .4 : 1 }}
+              style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px 28px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(37,92,180,.28)', opacity: openAmt <= 0 ? .4 : 1 }}
               disabled={openAmt <= 0}
               onClick={() => setState('method')}
             >
@@ -359,7 +359,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                           cursor: 'pointer',
                           background: selectedMethod === method.id ? 'var(--g-soft)' : 'var(--white)',
                           position: 'relative',
-                          boxShadow: selectedMethod === method.id ? '0 0 0 3px rgba(255,107,0,.12)' : 'none',
+                          boxShadow: selectedMethod === method.id ? '0 0 0 3px rgba(37,92,180,.12)' : 'none',
                           transition: 'all .2s',
                         }}
                       >
