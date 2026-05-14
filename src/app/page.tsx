@@ -214,158 +214,141 @@ nav{
 .btn-ghost{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:0.5px solid var(--border)}
 .btn-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
 
-/* ════ HERO — gradient centered ════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO â€” 2-column dark
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .hero{
   min-height:100vh;
-  display:flex;flex-direction:column;align-items:center;
-  padding:0 5% 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:40px;
+  padding:80px 5% 60px;
   position:relative;overflow:hidden;
-  background:linear-gradient(160deg,#4a7fd4 0%,#255CB4 45%,#1a4a9a 100%);
+  background:var(--page);
 }
-/* Subtle grid tile pattern */
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px);
-  background-size:52px 52px;
-  pointer-events:none;z-index:0;
-}
-#particle-canvas{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.3}
-.hero-inner{
-  position:relative;z-index:1;
-  display:flex;flex-direction:column;align-items:center;
-  text-align:center;
-  padding-top:100px;
-  width:100%;max-width:860px;
-}
+#particle-canvas{position:absolute;inset:0;z-index:0;pointer-events:none}
+.hero-left{position:relative;z-index:1}
+.hero-right{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;height:560px}
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:7px;
-  font-size:12px;font-weight:600;color:rgba(255,255,255,0.9);
-  margin-bottom:24px;letter-spacing:.02em;
-  background:rgba(255,255,255,0.15);
-  border:0.5px solid rgba(255,255,255,0.28);
-  padding:6px 16px;border-radius:100px;
-  backdrop-filter:blur(8px);
+  font-size:13px;font-weight:500;color:var(--o3);
+  margin-bottom:28px;letter-spacing:.01em;
+  background:rgba(37,92,180,0.1);border:0.5px solid var(--border-o);
+  padding:5px 14px;border-radius:100px;
 }
-.hero-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--o1);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .hero-h1{
   font-family:var(--font-display);
-  font-size:clamp(36px,5.5vw,70px);
-  font-weight:900;line-height:1.08;
-  letter-spacing:-.04em;color:#fff;
-  margin-bottom:20px;min-height:2.4em;
-  text-align:center;
+  font-size:clamp(44px,6vw,80px);
+  font-weight:900;line-height:1.0;
+  letter-spacing:-.05em;color:#fff;
+  margin-bottom:24px;min-height:2.4em;
 }
-.hero-h1 .accent{color:rgba(255,255,255,0.9)}
+.hero-h1 .accent{color:var(--o1)}
 .cursor-blink{
   display:inline-block;width:4px;
-  background:#fff;border-radius:2px;
+  background:var(--o1);border-radius:2px;
   animation:blink .9s step-end infinite;
   vertical-align:-.05em;margin-left:3px;height:.85em;
 }
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .hero-sub{
-  font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,0.72);
-  max-width:520px;margin-bottom:36px;line-height:1.75;
-  text-align:center;
+  font-size:clamp(15px,1.8vw,18px);color:var(--ink3);
+  max-width:460px;margin-bottom:36px;line-height:1.75;
   opacity:0;animation:fadeUp .8s .2s ease forwards;
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .hero-ctas{
-  display:flex;align-items:center;justify-content:center;gap:12px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   opacity:0;animation:fadeUp .8s .4s ease forwards;
-  margin-bottom:60px;flex-wrap:wrap;
+  margin-bottom:48px;
 }
-/* Primary button: white fill with blue text */
 .btn-hero-orange{
   display:inline-flex;align-items:center;gap:8px;
-  background:#fff;color:#255CB4;
-  padding:14px 28px;border-radius:100px;
+  background:var(--o1);color:#fff;
+  padding:15px 28px;border-radius:100px;
   font-family:var(--font-display);font-size:15px;font-weight:700;
-  letter-spacing:-.02em;cursor:pointer;border:none;
-  transition:all .2s;box-shadow:0 8px 24px rgba(0,0,0,0.2);
+  letter-spacing:-.02em;cursor:pointer;border:none;text-decoration:none;
+  transition:all .2s;box-shadow:0 8px 24px rgba(37,92,180,0.35);
 }
-.btn-hero-orange:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,0.28)}
-/* Ghost/outline button: white border */
+.btn-hero-orange:hover{background:var(--o2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,92,180,0.45)}
 .btn-hero-ghost{
   display:inline-flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,0.1);color:#fff;
-  padding:14px 28px;border-radius:100px;
-  font-family:var(--font-display);font-size:15px;font-weight:600;
-  cursor:pointer;border:1.5px solid rgba(255,255,255,0.45);
+  background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);
+  padding:15px 28px;border-radius:100px;
+  font-family:var(--font-body);font-size:15px;font-weight:500;
+  cursor:pointer;border:0.5px solid var(--border);text-decoration:none;
   transition:all .2s;
 }
-.btn-hero-ghost:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.8)}
+.btn-hero-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
 
-/* ════ 3-PHONE ROW ════ */
-.hero-phones{
-  display:flex;align-items:flex-end;justify-content:center;
-  position:relative;z-index:1;
-  width:100%;max-width:900px;
-  height:500px;
-  gap:0;
+/* Hero stats */
+.hero-stats{
+  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s .65s ease forwards;
 }
-/* Each phone is a positioned container */
-.hp-wrap{position:relative;flex-shrink:0}
-.hp-wrap img.phone-frame{
-  position:absolute;inset:0;width:100%;height:100%;
-  pointer-events:none;z-index:3;
-  /* SVG handles its own shadow */
-}
-/* Screen content sits INSIDE the transparent hole of the SVG frame */
-/* Hole: x=12,y=12,w=276,h=596 inside 300×620 viewBox */
-.hp-screen{
+.h-stat-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em}
+.h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
+.h-stat-div{width:1px;height:28px;background:var(--border)}
+
+/* Hero phone mockup â€” iPhone-style */
+.floating-phone{
   position:absolute;
-  left:4%;top:1.94%;
-  width:92%;height:96.1%;
-  border-radius:13.3%;
-  overflow:hidden;
-  background:#09090E;
-  z-index:1;
+  transition:transform .1s ease;
 }
-.hp-center{
-  width:244px;height:504px;
-  z-index:3;
-  transform:translateY(-24px);
+/* Outer shell â€” thick physical iPhone frame */
+.fp-shell{
+  border-radius:44px;
+  padding:12px;
+  position:relative;
+}
+.fp-main .fp-shell{
+  background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08),
+    0 4px 0 0 rgba(255,255,255,.04),
+    0 50px 100px rgba(0,0,0,.85),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+.fp-secondary .fp-shell{
+  background:linear-gradient(160deg,#1E1010 0%,#0D0707 40%,#080808 100%);
+  box-shadow:
+    0 0 0 1px rgba(37,92,180,.15),
+    0 30px 70px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+/* Side button notch on right edge */
+.fp-shell::before{
+  content:'';position:absolute;right:-3px;top:90px;
+  width:3px;height:28px;border-radius:0 3px 3px 0;
+  background:rgba(255,255,255,.06);
+  box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06);
+}
+.fp-main{
+  width:230px;left:50%;transform:translateX(-50%);top:0;
   animation:phoneFloat 5s ease-in-out infinite;
 }
-.hp-side{
-  width:196px;height:405px;
-  z-index:2;
+.fp-secondary{
+  width:190px;right:-10px;top:130px;
+  animation:phoneFloat2 5s ease-in-out 1.2s infinite;
 }
-.hp-left{
-  transform:rotate(-13deg) translateX(52px) translateY(36px);
-  animation:phoneFloatL 5s ease-in-out 0.9s infinite;
+@keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
+@keyframes phoneFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
+/* Inner screen */
+.fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
+/* Dynamic Island */
+.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
+.fp-pill{
+  width:80px;height:26px;
+  background:#000;border-radius:20px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.hp-right{
-  transform:rotate(13deg) translateX(-52px) translateY(36px);
-  animation:phoneFloatR 5s ease-in-out 1.7s infinite;
-}
-@keyframes phoneFloat{
-  0%,100%{transform:translateY(-24px)}
-  50%{transform:translateY(-38px)}
-}
-@keyframes phoneFloatL{
-  0%,100%{transform:rotate(-13deg) translateX(52px) translateY(36px)}
-  50%{transform:rotate(-13deg) translateX(52px) translateY(22px)}
-}
-@keyframes phoneFloatR{
-  0%,100%{transform:rotate(13deg) translateX(-52px) translateY(36px)}
-  50%{transform:rotate(13deg) translateX(-52px) translateY(22px)}
-}
-/* Status bar area — leaves space for Dynamic Island */
-.fp-status-bar{
-  display:flex;justify-content:space-between;
-  padding:10px 16px 0;font-size:9px;
-  color:rgba(255,255,255,.4);font-weight:600;
-}
-/* DI spacer (the island is IN the SVG frame, so just leave top space) */
-.fp-island-space{height:36px}
-.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:4px 14px 10px}
+.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
+.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
+.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
 .fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
-.fp-logo span{color:var(--o3)}
+.fp-logo span{color:var(--o1)}
 .fp-body{padding:0 12px 18px}
 .fp-card{background:var(--o1);border-radius:18px;padding:16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
 .fp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.08),transparent);border-radius:18px 18px 0 0;pointer-events:none}
@@ -377,7 +360,6 @@ nav{
 .fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
 .fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
 .fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
-/* fp2 = pay screen */
 .fp2-body{padding:14px 12px 16px}
 .fp2-avatar{width:42px;height:42px;border-radius:50%;background:rgba(37,92,180,.2);border:1.5px solid rgba(37,92,180,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--o3);margin:0 auto 8px}
 .fp2-name{text-align:center;font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
@@ -385,40 +367,18 @@ nav{
 .fp2-amount{text-align:center;font-family:var(--font-display);font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:14px}
 .fp2-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:10px;font-weight:800;cursor:pointer;margin-bottom:7px;letter-spacing:-.01em}
 .fp2-sub{text-align:center;font-size:8px;color:rgba(255,255,255,.2)}
-
-/* Dashboard phone (center) */
-.fpc-header{padding:10px 12px 6px;display:flex;justify-content:space-between;align-items:center}
-.fpc-greet{font-size:11px;font-weight:700;color:#fff}
-.fpc-greet span{color:var(--o3)}
-.fpc-balance-card{margin:0 10px 10px;background:linear-gradient(135deg,var(--o1),var(--o2));border-radius:16px;padding:14px;position:relative;overflow:hidden}
-.fpc-balance-card::after{content:'';position:absolute;top:0;left:0;right:0;height:60%;background:linear-gradient(rgba(255,255,255,.08),transparent);pointer-events:none}
-.fpc-bal-lbl{font-size:8px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:4px}
-.fpc-bal-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:2px}
-.fpc-bal-sub{font-size:8px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:3px}
-.fpc-badge{background:rgba(255,255,255,.2);color:#fff;font-size:7px;font-weight:700;padding:2px 6px;border-radius:20px}
-.fpc-tx-hd{display:flex;justify-content:space-between;align-items:center;padding:0 12px 6px}
-.fpc-tx-title{font-size:10px;font-weight:700;color:#fff}
-.fpc-tx-all{font-size:8px;color:var(--o3)}
-.fpc-tx-list{padding:0 10px 10px;display:flex;flex-direction:column;gap:5px}
-.fpc-tx-item{background:rgba(255,255,255,.05);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px}
-.fpc-tx-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:8px;font-weight:900;flex-shrink:0}
-.fpc-tx-name{font-size:9px;font-weight:600;color:#fff;line-height:1.2}
-.fpc-tx-note{font-size:7px;color:rgba(255,255,255,.35)}
-.fpc-tx-amt{margin-left:auto;font-family:var(--font-display);font-size:10px;font-weight:800;color:#4ADE80}
-.fpc-tx-badge{font-size:6px;font-weight:600;padding:2px 5px;border-radius:6px;background:rgba(74,222,128,.15);color:#4ADE80}
-
-/* Responsive */
-@media(max-width:768px){
-  .hero{padding:0 4% 0}
-  .hero-inner{padding-top:80px}
-  .hero-phones{height:360px}
-  .hp-center{width:190px}
-  .hp-side{width:155px}
-  .hp-left{transform:rotate(-10deg) translateX(36px) translateY(20px)}
-  .hp-right{transform:rotate(10deg) translateX(-36px) translateY(20px)}
-  .h-stat-div{display:none}
-  .float-tag{display:none}
+.float-tag{
+  position:absolute;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;
+  animation:tagFloat 4s ease-in-out infinite;
 }
+.ft1{bottom:80px;left:0;animation-delay:0s}
+.ft2{top:60px;right:-20px;animation-delay:1.5s}
+@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.ftag-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--o3);letter-spacing:-.03em}
+.ftag-lbl{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px}
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    STATS BAR (Cryptys-inspired)
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -720,6 +680,9 @@ footer{
 
 /* â”€â”€ RESPONSIVE â”€â”€ */
 @media(max-width:900px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:60px}
+  .hero-right{height:400px}
+  .fp-secondary{display:none}
   .phones-inner,.app-inner{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr 1fr}
   .phones-right{height:400px}
@@ -728,10 +691,15 @@ footer{
   .sb-val{font-size:22px}
 }
 @media(max-width:600px){
+  .hero{padding:40px 5%}
+  .hero-right{display:none}
   .nav-links{display:none}
   .btn-pill{padding:7px 14px!important;font-size:12px!important}
   nav{padding:0 16px!important;grid-template-columns:auto 1fr auto!important}
+  .hero-stats{gap:16px}
+  .h-stat-div{display:none}
   .footer-top{grid-template-columns:1fr}
+  .float-tag{display:none}
   .stats-bar{flex-direction:column;gap:0}
   .sb-item{border-right:none;border-bottom:0.5px solid var(--border);width:100%;padding:16px 0}
   .sb-item:last-child{border-bottom:none}
@@ -764,130 +732,112 @@ footer{
         </div>
       </nav>
 
-      {/* ══ HERO ══ */}
+      {/* â•â• HERO â•â• */}
       <section className="hero">
         <canvas id="particle-canvas"></canvas>
 
-        {/* Centered text content */}
-        <div className="hero-inner">
+        {/* LEFT */}
+        <div className="hero-left">
           <div className="hero-eyebrow">
             <div className="hero-dot"></div>
-            Built on Arc &nbsp;·&nbsp; Powered by USDC
+            Built on Arc &nbsp;Â·&nbsp; Powered by USDC
           </div>
           <h1 className="hero-h1" id="hero-headline"><span className="cursor-blink" id="cursor"></span></h1>
-          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
+          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally â€” anyone, anywhere, in seconds.</p>
           <div className="hero-ctas">
             {authenticated ? (
               <button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
-                <Icon icon="ph:squares-four-bold" />
+                <iconify-icon icon="ph:squares-four-bold"></iconify-icon>
                 Go to Dashboard
               </button>
             ) : (
               <>
                 <button onClick={() => router.push('/send')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
-                  <Icon icon="ph:paper-plane-right-bold" />
+                  <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
                   Send money
                 </button>
                 <button onClick={() => router.push('/create')} className="btn-hero-ghost" style={{ cursor: 'pointer' }}>
-                  <Icon icon="ph:link-bold" />
+                  <iconify-icon icon="ph:link-bold"></iconify-icon>
                   Create link
                 </button>
               </>
             )}
           </div>
+          <div className="hero-stats">
+            <div>
+              <div className="h-stat-val">$0.00</div>
+              <div className="h-stat-label">Gas fee</div>
+            </div>
+            <div className="h-stat-div"></div>
+            <div>
+              <div className="h-stat-val">&lt;1s</div>
+              <div className="h-stat-label">Settlement</div>
+            </div>
+            <div className="h-stat-div"></div>
+            <div>
+              <div className="h-stat-val">150+</div>
+              <div className="h-stat-label">Countries</div>
+            </div>
+            <div className="h-stat-div"></div>
+            <div>
+              <div className="h-stat-val">0</div>
+              <div className="h-stat-label">Account to pay</div>
+            </div>
+          </div>
         </div>
 
-        {/* 3 Phone mockups — real SVG frame overlay */}
-        <div className="hero-phones">
-
-          {/* LEFT phone — Pay screen */}
-          <div className="hp-wrap hp-side hp-left">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
-            <div className="hp-screen">
-              <div className="fp-island-space" />
-              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
-              <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span /></div>
-              <div className="fp2-body">
-                <div className="fp2-avatar">AK</div>
-                <div className="fp2-name">Alex K.</div>
-                <div className="fp2-note">Freelance invoice — April</div>
-                <div className="fp2-amount">$120</div>
-                <button className="fp2-btn">Pay now →</button>
-                <div className="fp2-sub">Secured · Powered by Arc</div>
-              </div>
-            </div>
-          </div>
-
-          {/* CENTER phone — Dashboard */}
-          <div className="hp-wrap hp-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
-            <div className="hp-screen">
-              <div className="fp-island-space" />
-              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
-              <div className="fpc-header">
-                <div className="fpc-greet">Hello, Alex 🔥</div>
-                <Icon icon="ph:bell-bold" style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }} />
-              </div>
-              <div className="fpc-balance-card">
-                <div className="fpc-bal-lbl">Total Balance</div>
-                <div className="fpc-bal-val">$1,250.00</div>
-                <div className="fpc-bal-sub">USDC · Arc Network <span className="fpc-badge">↑ +8.5%</span></div>
-              </div>
-              <div className="fpc-tx-hd">
-                <div className="fpc-tx-title">Transactions</div>
-                <div className="fpc-tx-all">View all</div>
-              </div>
-              <div className="fpc-tx-list">
-                {[
-                  { av: 'SJ', avBg: 'rgba(74,222,128,.2)', avColor: '#4ADE80', name: 'Sarah J.', note: 'Logo design', amt: '+$250' },
-                  { av: 'MR', avBg: 'rgba(96,165,250,.2)', avColor: '#60A5FA', name: 'Mike R.', note: 'Freelance work', amt: '+$120' },
-                  { av: 'JD', avBg: 'rgba(167,139,250,.2)', avColor: '#A78BFA', name: 'John D.', note: 'April invoice', amt: '+$380' },
-                ].map(tx => (
-                  <div key={tx.name} className="fpc-tx-item">
-                    <div className="fpc-tx-av" style={{ background: tx.avBg, color: tx.avColor }}>{tx.av}</div>
-                    <div>
-                      <div className="fpc-tx-name">{tx.name}</div>
-                      <div className="fpc-tx-note">{tx.note}</div>
-                    </div>
-                    <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                      <div className="fpc-tx-amt">{tx.amt}</div>
-                      <div className="fpc-tx-badge">Received</div>
-                    </div>
+        {/* RIGHT â€” floating phones */}
+        <div className="hero-right">
+          <div className="floating-phone fp-main">
+            <div className="fp-shell">
+              <div className="fp-screen">
+                <div className="fp-notch"><div className="fp-pill"></div></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
+                <div className="fp-nav">
+                  <div className="fp-logo">pay<span>link</span></div>
+                  <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
+                </div>
+                <div className="fp-body">
+                  <div className="fp-card">
+                    <div className="fp-card-lbl">Amount to receive</div>
+                    <div className="fp-amount">$250.00</div>
+                    <div className="fp-note">Logo design â€” April invoice</div>
                   </div>
-                ))}
+                  <div className="fp-tog-row">
+                    <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
+                    <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
+                  </div>
+                  <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
+                  <button className="fp-btn">Generate link â†’</button>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* RIGHT phone — Create link */}
-          <div className="hp-wrap hp-side hp-right">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/iphone-frame.svg" className="phone-frame" alt="" />
-            <div className="hp-screen">
-              <div className="fp-island-space" />
-              <div className="fp-status-bar"><span>9:41</span><span>●●●</span></div>
-              <div className="fp-nav">
-                <div className="fp-logo">pay<span>link</span></div>
-                <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
-              </div>
-              <div className="fp-body">
-                <div className="fp-card">
-                  <div className="fp-card-lbl">Amount to receive</div>
-                  <div className="fp-amount">$250.00</div>
-                  <div className="fp-note">Logo design — April invoice</div>
+          <div className="floating-phone fp-secondary">
+            <div className="fp-shell">
+              <div className="fp-screen">
+                <div className="fp-notch"><div className="fp-pill"></div></div>
+                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
+                <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
+                <div className="fp2-body">
+                  <div className="fp2-avatar">AK</div>
+                  <div className="fp2-name">Alex K.</div>
+                  <div className="fp2-note">Freelance invoice â€” April</div>
+                  <div className="fp2-amount">$120</div>
+                  <button className="fp2-btn">Pay now â†’</button>
+                  <div className="fp2-sub">Secured Â· Powered by Arc</div>
                 </div>
-                <div className="fp-tog-row">
-                  <div className="fp-tog on"><Icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Crypto</div>
-                  <div className="fp-tog"><Icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Bank</div>
-                </div>
-                <div className="fp-note-row"><Icon icon="ph:pencil-bold" style={{ fontSize: '10px' }} />Add a note...</div>
-                <button className="fp-btn">Generate link →</button>
               </div>
             </div>
           </div>
-
+          <div className="float-tag ft1">
+            <div className="ftag-val">$0.00</div>
+            <div className="ftag-lbl">Gas fee</div>
+          </div>
+          <div className="float-tag ft2">
+            <div className="ftag-val">0.3s</div>
+            <div className="ftag-lbl">Settled</div>
+          </div>
         </div>
       </section>
 
