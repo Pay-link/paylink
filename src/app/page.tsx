@@ -220,15 +220,15 @@ nav{
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .hero{
   min-height:100vh;
-  display:grid;grid-template-columns:1fr 1fr;
-  align-items:center;gap:40px;
-  padding:80px 5% 60px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:100px 5% 60px;
   position:relative;overflow:hidden;
   background:var(--page);
+  text-align:center;
 }
 #particle-canvas{position:absolute;inset:0;z-index:0;pointer-events:none}
-.hero-left{position:relative;z-index:1}
-.hero-right{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;height:560px}
+.hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%}
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:7px;
   font-size:13px;font-weight:500;color:var(--o3);
@@ -240,7 +240,7 @@ nav{
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .hero-h1{
   font-family:var(--font-display);
-  font-size:clamp(44px,6vw,80px);
+  font-size:clamp(48px,7vw,88px);
   font-weight:900;line-height:1.0;
   letter-spacing:-.05em;color:#fff;
   margin-bottom:24px;min-height:2.4em;
@@ -255,14 +255,14 @@ nav{
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .hero-sub{
   font-size:clamp(15px,1.8vw,18px);color:var(--ink3);
-  max-width:460px;margin-bottom:36px;line-height:1.75;
+  max-width:520px;margin-bottom:36px;line-height:1.75;
   opacity:0;animation:fadeUp .8s .2s ease forwards;
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .hero-ctas{
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
   opacity:0;animation:fadeUp .8s .4s ease forwards;
-  margin-bottom:48px;
+  margin-bottom:36px;
 }
 .btn-hero-orange{
   display:inline-flex;align-items:center;gap:8px;
@@ -285,100 +285,19 @@ nav{
 
 /* Hero stats */
 .hero-stats{
-  display:flex;align-items:center;gap:32px;flex-wrap:wrap;
+  display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;
   opacity:0;animation:fadeUp .8s .65s ease forwards;
+  margin-bottom:56px;
 }
 .h-stat-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em}
 .h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
 .h-stat-div{width:1px;height:28px;background:var(--border)}
 
-/* Hero phone mockup — iPhone-style */
-.floating-phone{
-  position:absolute;
-  transition:transform .1s ease;
+/* Hero illustration */
+.hero-illustration{
+  width:100%;max-width:600px;
+  opacity:0;animation:fadeUp .8s .85s ease forwards;
 }
-/* Outer shell — thick physical iPhone frame */
-.fp-shell{
-  border-radius:44px;
-  padding:12px;
-  position:relative;
-}
-.fp-main .fp-shell{
-  background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.08),
-    0 4px 0 0 rgba(255,255,255,.04),
-    0 50px 100px rgba(0,0,0,.85),
-    inset 0 1px 0 rgba(255,255,255,.06);
-}
-.fp-secondary .fp-shell{
-  background:linear-gradient(160deg,#1E1010 0%,#0D0707 40%,#080808 100%);
-  box-shadow:
-    0 0 0 1px rgba(37,92,180,.15),
-    0 30px 70px rgba(0,0,0,.8),
-    inset 0 1px 0 rgba(255,255,255,.04);
-}
-/* Side button notch on right edge */
-.fp-shell::before{
-  content:'';position:absolute;right:-3px;top:90px;
-  width:3px;height:28px;border-radius:0 3px 3px 0;
-  background:rgba(255,255,255,.06);
-  box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06);
-}
-.fp-main{
-  width:230px;left:50%;transform:translateX(-50%);top:0;
-  animation:phoneFloat 5s ease-in-out infinite;
-}
-.fp-secondary{
-  width:190px;right:-10px;top:130px;
-  animation:phoneFloat2 5s ease-in-out 1.2s infinite;
-}
-@keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
-@keyframes phoneFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
-/* Inner screen */
-.fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
-/* Dynamic Island */
-.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
-.fp-pill{
-  width:80px;height:26px;
-  background:#000;border-radius:20px;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);
-  display:flex;align-items:center;justify-content:center;gap:6px;
-}
-.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
-.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
-.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
-.fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
-.fp-logo span{color:var(--o1)}
-.fp-body{padding:0 12px 18px}
-.fp-card{background:var(--o1);border-radius:18px;padding:16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
-.fp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.08),transparent);border-radius:18px 18px 0 0;pointer-events:none}
-.fp-card-lbl{font-size:8px;color:rgba(255,255,255,.65);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
-.fp-amount{font-family:var(--font-display);font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:4px}
-.fp-note{font-size:9px;color:rgba(255,255,255,.65)}
-.fp-tog-row{display:flex;gap:5px;margin-bottom:9px}
-.fp-tog{flex:1;padding:8px 4px;border-radius:10px;text-align:center;font-size:9px;font-weight:600;border:0.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
-.fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
-.fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
-.fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
-.fp2-body{padding:14px 12px 16px}
-.fp2-avatar{width:42px;height:42px;border-radius:50%;background:rgba(37,92,180,.2);border:1.5px solid rgba(37,92,180,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--o3);margin:0 auto 8px}
-.fp2-name{text-align:center;font-family:var(--font-display);font-size:13px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
-.fp2-note{text-align:center;font-size:9px;color:rgba(255,255,255,.4);margin-bottom:12px}
-.fp2-amount{text-align:center;font-family:var(--font-display);font-size:26px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:14px}
-.fp2-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:10px;font-weight:800;cursor:pointer;margin-bottom:7px;letter-spacing:-.01em}
-.fp2-sub{text-align:center;font-size:8px;color:rgba(255,255,255,.2)}
-.float-tag{
-  position:absolute;
-  background:rgba(255,255,255,.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;
-  animation:tagFloat 4s ease-in-out infinite;
-}
-.ft1{bottom:80px;left:0;animation-delay:0s}
-.ft2{top:60px;right:-20px;animation-delay:1.5s}
-@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.ftag-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--o3);letter-spacing:-.03em}
-.ftag-lbl{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    STATS BAR (Cryptys-inspired)
@@ -450,6 +369,33 @@ nav{
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    EXPERIENCE SECTION — dark 2-col
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Phone mockup shared styles */
+.floating-phone{position:absolute;transition:transform .1s ease}
+.fp-shell{border-radius:44px;padding:12px;position:relative}
+.fp-main .fp-shell{background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 0 0 rgba(255,255,255,.04),0 50px 100px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06)}
+.fp-shell::before{content:'';position:absolute;right:-3px;top:90px;width:3px;height:28px;border-radius:0 3px 3px 0;background:rgba(255,255,255,.06);box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06)}
+.fp-main{width:230px;left:50%;transform:translateX(-50%);top:0;animation:phoneFloat 5s ease-in-out infinite}
+@keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
+.fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
+.fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
+.fp-pill{width:80px;height:26px;background:#000;border-radius:20px;box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;gap:6px}
+.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
+.fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
+.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
+.fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
+.fp-logo span{color:var(--o1)}
+.fp-body{padding:0 12px 18px}
+.fp-card{background:var(--o1);border-radius:18px;padding:16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
+.fp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.08),transparent);border-radius:18px 18px 0 0;pointer-events:none}
+.fp-card-lbl{font-size:8px;color:rgba(255,255,255,.65);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.fp-amount{font-family:var(--font-display);font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:4px}
+.fp-note{font-size:9px;color:rgba(255,255,255,.65)}
+.fp-tog-row{display:flex;gap:5px;margin-bottom:9px}
+.fp-tog{flex:1;padding:8px 4px;border-radius:10px;text-align:center;font-size:9px;font-weight:600;border:0.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
+.fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
+.fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
+.fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
+
 .phones-section{
   background:var(--page2);padding:80px 5% 100px;
   position:relative;overflow:hidden;
@@ -681,9 +627,7 @@ footer{
 
 /* â”€â”€ RESPONSIVE â”€â”€ */
 @media(max-width:900px){
-  .hero{grid-template-columns:1fr;min-height:auto;padding-top:60px}
-  .hero-right{height:400px}
-  .fp-secondary{display:none}
+  .hero{min-height:auto;padding-top:60px}
   .phones-inner,.app-inner{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr 1fr}
   .phones-right{height:400px}
@@ -693,18 +637,15 @@ footer{
 }
 @media(max-width:600px){
   .hero{padding:40px 5%}
-  .hero-right{display:none}
   .nav-links{display:none}
   .btn-pill{padding:7px 14px!important;font-size:12px!important}
   nav{padding:0 16px!important;grid-template-columns:auto 1fr auto!important}
   .hero-stats{gap:16px}
   .h-stat-div{display:none}
   .footer-top{grid-template-columns:1fr}
-  .float-tag{display:none}
   .stats-bar{flex-direction:column;gap:0}
   .sb-item{border-right:none;border-bottom:0.5px solid var(--border);width:100%;padding:16px 0}
   .sb-item:last-child{border-bottom:none}
-  /* Hero CTAs side-by-side on mobile */
   .hero-ctas{flex-wrap:nowrap;gap:8px}
   .btn-hero-orange,.btn-hero-ghost{flex:1;padding:13px 16px!important;font-size:14px!important;justify-content:center}
 }
@@ -737,8 +678,7 @@ footer{
       <section className="hero">
         <canvas id="particle-canvas"></canvas>
 
-        {/* LEFT */}
-        <div className="hero-left">
+        <div className="hero-center">
           <div className="hero-eyebrow">
             <div className="hero-dot"></div>
             Built on Arc &nbsp;·&nbsp; Powered by USDC
@@ -785,59 +725,53 @@ footer{
               <div className="h-stat-label">Account to pay</div>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT — floating phones */}
-        <div className="hero-right">
-          <div className="floating-phone fp-main">
-            <div className="fp-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
-                <div className="fp-nav">
-                  <div className="fp-logo">pay<span>link</span></div>
-                  <iconify-icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
-                </div>
-                <div className="fp-body">
-                  <div className="fp-card">
-                    <div className="fp-card-lbl">Amount to receive</div>
-                    <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design — April invoice</div>
-                  </div>
-                  <div className="fp-tog-row">
-                    <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
-                    <div className="fp-tog"><iconify-icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Bank</div>
-                  </div>
-                  <div className="fp-note-row"><iconify-icon icon="ph:pencil-bold" style={{ fontSize: '10px' }}></iconify-icon>Add a note for sender...</div>
-                  <button className="fp-btn">Generate link â†’</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="floating-phone fp-secondary">
-            <div className="fp-shell">
-              <div className="fp-screen">
-                <div className="fp-notch"><div className="fp-pill"></div></div>
-                <div className="fp-status"><span>9:41</span><span>â—â—â—</span></div>
-                <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
-                <div className="fp2-body">
-                  <div className="fp2-avatar">AK</div>
-                  <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice — April</div>
-                  <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now â†’</button>
-                  <div className="fp2-sub">Secured · Powered by Arc</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="float-tag ft1">
-            <div className="ftag-val">$0.00</div>
-            <div className="ftag-lbl">Gas fee</div>
-          </div>
-          <div className="float-tag ft2">
-            <div className="ftag-val">0.3s</div>
-            <div className="ftag-lbl">Settled</div>
+          <div className="hero-illustration">
+            <svg viewBox="0 0 580 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'auto'}}>
+              <defs>
+                <radialGradient id="cg1" cx="45%" cy="38%" r="58%">
+                  <stop offset="0%" stopColor="#6a9be4"/>
+                  <stop offset="100%" stopColor="#255CB4"/>
+                </radialGradient>
+                <radialGradient id="cg2" cx="45%" cy="38%" r="58%">
+                  <stop offset="0%" stopColor="#4a7fd4"/>
+                  <stop offset="100%" stopColor="#1a4a9a"/>
+                </radialGradient>
+                <radialGradient id="bgGl" cx="50%" cy="55%" r="55%">
+                  <stop offset="0%" stopColor="#255CB4" stopOpacity="0.16"/>
+                  <stop offset="100%" stopColor="#255CB4" stopOpacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="290" cy="190" rx="270" ry="120" fill="url(#bgGl)"/>
+              <path d="M105 215 L105 225 A60 24 0 0 1 225 225 L225 215" fill="#0c2558"/>
+              <ellipse cx="165" cy="215" rx="60" ry="24" fill="#193579"/>
+              <path d="M105 205 L105 215 A60 24 0 0 1 225 215 L225 205" fill="#0f2d6e"/>
+              <ellipse cx="165" cy="205" rx="60" ry="24" fill="#1e4498"/>
+              <path d="M105 195 L105 205 A60 24 0 0 1 225 205 L225 195" fill="#122d6e"/>
+              <ellipse cx="165" cy="195" rx="60" ry="24" fill="url(#cg1)"/>
+              <text x="165" y="199" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.88)" fontSize="13" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
+              <path d="M275 205 L275 219 A72 29 0 0 1 419 219 L419 205" fill="#0f2d6e"/>
+              <ellipse cx="347" cy="205" rx="72" ry="29" fill="url(#cg1)"/>
+              <ellipse cx="347" cy="205" rx="54" ry="21" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+              <text x="347" y="209" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.92)" fontSize="24" fontWeight="800" fontFamily="sans-serif">$</text>
+              <path d="M225 128 L225 138 A32 13 0 0 1 289 138 L289 128" fill="#0c2558"/>
+              <ellipse cx="257" cy="128" rx="32" ry="13" fill="url(#cg2)"/>
+              <text x="257" y="132" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.82)" fontSize="10" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
+              <path d="M430 230 L430 242 A40 16 0 0 1 510 242 L510 230" fill="#0c2558"/>
+              <ellipse cx="470" cy="230" rx="40" ry="16" fill="url(#cg2)"/>
+              <text x="470" y="234" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.78)" fontSize="12" fontWeight="700" fontFamily="sans-serif">$</text>
+              <path d="M456 148 L456 157 A27 11 0 0 1 510 157 L510 148" fill="#0c2558" opacity="0.9"/>
+              <ellipse cx="483" cy="148" rx="27" ry="11" fill="url(#cg2)"/>
+              <text x="483" y="151" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.72)" fontSize="9" fontWeight="600" fontFamily="sans-serif">$</text>
+              <circle cx="195" cy="108" r="3" fill="#4a7fd4" opacity="0.65"/>
+              <circle cx="405" cy="92" r="2.5" fill="#4a7fd4" opacity="0.55"/>
+              <circle cx="520" cy="175" r="2" fill="#4a7fd4" opacity="0.4"/>
+              <circle cx="75" cy="185" r="2.5" fill="#6a9be4" opacity="0.45"/>
+              <circle cx="540" cy="250" r="2" fill="#4a7fd4" opacity="0.35"/>
+              <circle cx="140" cy="255" r="1.5" fill="#6a9be4" opacity="0.4"/>
+              <line x1="225" y1="195" x2="278" y2="205" stroke="rgba(37,92,180,0.35)" strokeWidth="1" strokeDasharray="3 3"/>
+              <line x1="289" y1="128" x2="340" y2="176" stroke="rgba(37,92,180,0.25)" strokeWidth="1" strokeDasharray="3 3"/>
+            </svg>
           </div>
         </div>
       </section>
