@@ -296,14 +296,6 @@ nav{
 .btn-hero-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
 
 /* Hero stats */
-.hero-stats{
-  display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;
-  opacity:0;animation:fadeUp .8s .65s ease forwards;
-  margin-bottom:56px;
-}
-.h-stat-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em}
-.h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
-.h-stat-div{width:1px;height:28px;background:var(--border)}
 
 /* Hero illustration */
 
@@ -732,27 +724,6 @@ footer{
                 </motion.button>
               </>
             )}
-          </div>
-          <div className="hero-stats">
-            <div>
-              <div className="h-stat-val">$0.00</div>
-              <div className="h-stat-label">Gas fee</div>
-            </div>
-            <div className="h-stat-div"></div>
-            <div>
-              <div className="h-stat-val">&lt;1s</div>
-              <div className="h-stat-label">Settlement</div>
-            </div>
-            <div className="h-stat-div"></div>
-            <div>
-              <div className="h-stat-val">150+</div>
-              <div className="h-stat-label">Countries</div>
-            </div>
-            <div className="h-stat-div"></div>
-            <div>
-              <div className="h-stat-val">0</div>
-              <div className="h-stat-label">Account to pay</div>
-            </div>
           </div>
         </div>
       </section>
