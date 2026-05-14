@@ -166,19 +166,6 @@ export default function HomePage() {
           scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' } })
     })
 
-    // Hero coin GSAP animations
-    const coinTL = gsap.timeline({ delay: 0.85 })
-    coinTL
-      .from('#g-stack', { y: 55, opacity: 0, duration: 0.9, ease: 'power3.out' })
-      .from('#g-center', { y: 40, opacity: 0, duration: 0.85, ease: 'power3.out' }, '-=0.5')
-      .from('#g-small-tc', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
-      .from('#g-small-r', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
-      .from('#g-tiny', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
-      .from('.hero-sparkle', { scale: 0, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'back.out(2)' }, '-=0.3')
-    gsap.to('#g-stack', { y: -12, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.8 })
-    gsap.to('#g-center', { y: -10, duration: 3.8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.2 })
-    gsap.to('#g-small-tc', { y: -8, duration: 2.8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.5 })
-    gsap.to('#g-small-r', { y: 10, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.0 })
 
     /* â”€â”€ PARALLAX ON SCROLL â”€â”€ */
     let ticking = false
@@ -319,10 +306,7 @@ nav{
 .h-stat-div{width:1px;height:28px;background:var(--border)}
 
 /* Hero illustration */
-.hero-illustration{
-  width:100%;max-width:600px;
-  opacity:0;animation:fadeUp .8s .85s ease forwards;
-}
+
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    STATS BAR (Cryptys-inspired)
@@ -769,70 +753,6 @@ footer{
               <div className="h-stat-val">0</div>
               <div className="h-stat-label">Account to pay</div>
             </div>
-          </div>
-
-          <div className="hero-illustration">
-            <svg viewBox="0 0 580 300" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'auto'}}>
-              <defs>
-                <radialGradient id="cg1" cx="45%" cy="38%" r="58%">
-                  <stop offset="0%" stopColor="#6a9be4"/>
-                  <stop offset="100%" stopColor="#255CB4"/>
-                </radialGradient>
-                <radialGradient id="cg2" cx="45%" cy="38%" r="58%">
-                  <stop offset="0%" stopColor="#4a7fd4"/>
-                  <stop offset="100%" stopColor="#1a4a9a"/>
-                </radialGradient>
-                <radialGradient id="bgGl" cx="50%" cy="55%" r="55%">
-                  <stop offset="0%" stopColor="#255CB4" stopOpacity="0.16"/>
-                  <stop offset="100%" stopColor="#255CB4" stopOpacity="0"/>
-                </radialGradient>
-              </defs>
-              <ellipse cx="290" cy="190" rx="270" ry="120" fill="url(#bgGl)"/>
-              {/* Coin stack - bottom left */}
-              <g id="g-stack">
-                <path d="M105 215 L105 225 A60 24 0 0 1 225 225 L225 215" fill="#0c2558"/>
-                <ellipse cx="165" cy="215" rx="60" ry="24" fill="#193579"/>
-                <path d="M105 205 L105 215 A60 24 0 0 1 225 215 L225 205" fill="#0f2d6e"/>
-                <ellipse cx="165" cy="205" rx="60" ry="24" fill="#1e4498"/>
-                <path d="M105 195 L105 205 A60 24 0 0 1 225 205 L225 195" fill="#122d6e"/>
-                <ellipse cx="165" cy="195" rx="60" ry="24" fill="url(#cg1)"/>
-                <text x="165" y="199" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.88)" fontSize="13" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
-              </g>
-              {/* Large center coin */}
-              <g id="g-center">
-                <path d="M275 205 L275 219 A72 29 0 0 1 419 219 L419 205" fill="#0f2d6e"/>
-                <ellipse cx="347" cy="205" rx="72" ry="29" fill="url(#cg1)"/>
-                <ellipse cx="347" cy="205" rx="54" ry="21" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-                <text x="347" y="209" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.92)" fontSize="24" fontWeight="800" fontFamily="sans-serif">$</text>
-              </g>
-              {/* Small coin top-center */}
-              <g id="g-small-tc">
-                <path d="M225 128 L225 138 A32 13 0 0 1 289 138 L289 128" fill="#0c2558"/>
-                <ellipse cx="257" cy="128" rx="32" ry="13" fill="url(#cg2)"/>
-                <text x="257" y="132" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.82)" fontSize="10" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
-              </g>
-              {/* Small coin right */}
-              <g id="g-small-r">
-                <path d="M430 230 L430 242 A40 16 0 0 1 510 242 L510 230" fill="#0c2558"/>
-                <ellipse cx="470" cy="230" rx="40" ry="16" fill="url(#cg2)"/>
-                <text x="470" y="234" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.78)" fontSize="12" fontWeight="700" fontFamily="sans-serif">$</text>
-              </g>
-              {/* Tiny coin */}
-              <g id="g-tiny">
-                <path d="M456 148 L456 157 A27 11 0 0 1 510 157 L510 148" fill="#0c2558" opacity="0.9"/>
-                <ellipse cx="483" cy="148" rx="27" ry="11" fill="url(#cg2)"/>
-                <text x="483" y="151" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.72)" fontSize="9" fontWeight="600" fontFamily="sans-serif">$</text>
-              </g>
-              {/* Sparkles */}
-              <circle className="hero-sparkle" cx="195" cy="108" r="3" fill="#4a7fd4" opacity="0.65"/>
-              <circle className="hero-sparkle" cx="405" cy="92" r="2.5" fill="#4a7fd4" opacity="0.55"/>
-              <circle className="hero-sparkle" cx="520" cy="175" r="2" fill="#4a7fd4" opacity="0.4"/>
-              <circle className="hero-sparkle" cx="75" cy="185" r="2.5" fill="#6a9be4" opacity="0.45"/>
-              <circle className="hero-sparkle" cx="540" cy="250" r="2" fill="#4a7fd4" opacity="0.35"/>
-              <circle className="hero-sparkle" cx="140" cy="255" r="1.5" fill="#6a9be4" opacity="0.4"/>
-              <line x1="225" y1="195" x2="278" y2="205" stroke="rgba(37,92,180,0.35)" strokeWidth="1" strokeDasharray="3 3"/>
-              <line x1="289" y1="128" x2="340" y2="176" stroke="rgba(37,92,180,0.25)" strokeWidth="1" strokeDasharray="3 3"/>
-            </svg>
           </div>
         </div>
       </section>
