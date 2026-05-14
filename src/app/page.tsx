@@ -13,6 +13,7 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Icon } from '@iconify/react'
+import { motion } from 'framer-motion'
 
 function TrustLogo({ logoUrl, fallbackDomain, name, icon, bg, fg }: { logoUrl: string; fallbackDomain: string; name: string; icon: string; bg: string; fg: string }) {
   const [src, setSrc] = useState(logoUrl)
@@ -60,7 +61,11 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
+    ;(async () => {
     import('iconify-icon').catch(() => {})
+    const { gsap } = await import('gsap')
+    const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+    gsap.registerPlugin(ScrollTrigger)
 
     /* â”€â”€ PARTICLE FIELD â”€â”€ */
     const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement
@@ -147,14 +152,33 @@ export default function HomePage() {
     setTimeout(typeChar, 600)
 
     /* â”€â”€ SCROLL REVEALS â”€â”€ */
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 40)
-        }
-      })
-    }, { threshold: 0.08 })
-    document.querySelectorAll('.reveal,.glass-card,.step-card,.testi-card').forEach(el => revealObserver.observe(el))
+    // GSAP ScrollTrigger reveals
+    gsap.utils.toArray<Element>('.reveal').forEach((el) => {
+      gsap.fromTo(el,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.85, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none' } })
+    })
+    gsap.utils.toArray<Element>('.glass-card,.step-card,.testi-card').forEach((el, i) => {
+      gsap.fromTo(el,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out', delay: (i % 3) * 0.1,
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' } })
+    })
+
+    // Hero coin GSAP animations
+    const coinTL = gsap.timeline({ delay: 0.85 })
+    coinTL
+      .from('#g-stack', { y: 55, opacity: 0, duration: 0.9, ease: 'power3.out' })
+      .from('#g-center', { y: 40, opacity: 0, duration: 0.85, ease: 'power3.out' }, '-=0.5')
+      .from('#g-small-tc', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+      .from('#g-small-r', { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+      .from('#g-tiny', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+      .from('.hero-sparkle', { scale: 0, opacity: 0, duration: 0.4, stagger: 0.08, ease: 'back.out(2)' }, '-=0.3')
+    gsap.to('#g-stack', { y: -12, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.8 })
+    gsap.to('#g-center', { y: -10, duration: 3.8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.2 })
+    gsap.to('#g-small-tc', { y: -8, duration: 2.8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.5 })
+    gsap.to('#g-small-r', { y: 10, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2.0 })
 
     /* â”€â”€ PARALLAX ON SCROLL â”€â”€ */
     let ticking = false
@@ -171,6 +195,7 @@ export default function HomePage() {
         ticking = true
       }
     })
+  })()
   }, [])
 
   return (
@@ -372,14 +397,14 @@ nav{
 /* Phone mockup shared styles */
 .floating-phone{position:absolute;transition:transform .1s ease}
 .fp-shell{border-radius:44px;padding:12px;position:relative}
-.fp-main .fp-shell{background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 0 0 rgba(255,255,255,.04),0 50px 100px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06)}
+.fp-main .fp-shell{background:linear-gradient(160deg,#2A2A2A 0%,#111 40%,#0A0A0A 100%);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 0 0 rgba(255,255,255,.04),0 50px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06),0 0 60px rgba(37,92,180,.12)}
 .fp-shell::before{content:'';position:absolute;right:-3px;top:90px;width:3px;height:28px;border-radius:0 3px 3px 0;background:rgba(255,255,255,.06);box-shadow:0 36px 0 rgba(255,255,255,.06),0 60px 0 rgba(255,255,255,.06)}
-.fp-main{width:230px;left:50%;transform:translateX(-50%);top:0;animation:phoneFloat 5s ease-in-out infinite}
+.fp-main{width:230px;left:50%;transform:translateX(-50%);top:0;animation:phoneFloat 5s ease-in-out infinite;z-index:2}
 @keyframes phoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
 .fp-screen{background:#09090E;border-radius:32px;overflow:hidden}
 .fp-notch{display:flex;justify-content:center;padding:10px 0 2px}
-.fp-pill{width:80px;height:26px;background:#000;border-radius:20px;box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;gap:6px}
-.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.08)}
+.fp-pill{width:80px;height:24px;background:#000;border-radius:20px;box-shadow:inset 0 1px 3px rgba(0,0,0,.95),0 0 0 1.5px rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden}
+.fp-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(80,80,90,.9);border:0.5px solid rgba(255,255,255,.1)}
 .fp-status{display:flex;justify-content:space-between;padding:2px 16px 6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
 .fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
 .fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
@@ -395,6 +420,25 @@ nav{
 .fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
 .fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
 .fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
+.fp-secondary{width:190px;right:-15px;top:140px;animation:phoneFloat2 6s 0.4s ease-in-out infinite}
+.fp-secondary .fp-shell{background:linear-gradient(160deg,#1e2d50 0%,#0e1a38 40%,#0a1020 100%);box-shadow:0 0 0 1px rgba(37,92,180,.28),0 4px 0 0 rgba(255,255,255,.03),0 40px 80px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05),0 0 50px rgba(37,92,180,.18)}
+@keyframes phoneFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.fp2-body{padding:14px 12px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.fp2-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--o3),var(--o1));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:800;color:#fff;margin:10px auto 8px;box-shadow:0 4px 16px rgba(37,92,180,.4)}
+.fp2-name{font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.fp2-note{font-size:9px;color:rgba(255,255,255,.45);margin-bottom:14px}
+.fp2-amount{font-family:var(--font-display);font-size:32px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:16px}
+.fp2-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 16px rgba(37,92,180,.35)}
+.fp2-sub{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:.05em}
+/* Float tags */
+.float-tag{position:absolute;background:rgba(12,18,38,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(37,92,180,.35);border-radius:12px;padding:8px 14px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.55),0 0 20px rgba(37,92,180,.14);z-index:10;animation:tagFloat 4s ease-in-out infinite}
+.ftag-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1}
+.ftag-lbl{font-size:9px;color:rgba(255,255,255,.4);font-weight:500;letter-spacing:.03em}
+.ft1{bottom:80px;left:-20px;animation-delay:.8s}
+.ft2{top:80px;right:-24px}
+@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* Volume buttons (left side) via pseudo-element on fp-shell */
+.fp-shell::after{content:'';position:absolute;left:-3px;top:110px;width:3px;height:22px;border-radius:3px 0 0 3px;background:rgba(255,255,255,.07);box-shadow:0 -32px 0 rgba(255,255,255,.07),0 -56px 0 rgba(255,255,255,.07)}
 
 .phones-section{
   background:var(--page2);padding:80px 5% 100px;
@@ -410,6 +454,7 @@ nav{
 .phones-right{
   display:flex;justify-content:center;align-items:center;
   position:relative;height:520px;
+  perspective:1200px;transform-style:preserve-3d;
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -687,20 +732,20 @@ footer{
           <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
           <div className="hero-ctas">
             {authenticated ? (
-              <button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
+              <motion.button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
                 <iconify-icon icon="ph:squares-four-bold"></iconify-icon>
                 Go to Dashboard
-              </button>
+              </motion.button>
             ) : (
               <>
-                <button onClick={() => router.push('/send')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
+                <motion.button onClick={() => router.push('/send')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
                   <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
                   Send money
-                </button>
-                <button onClick={() => router.push('/create')} className="btn-hero-ghost" style={{ cursor: 'pointer' }}>
+                </motion.button>
+                <motion.button onClick={() => router.push('/create')} className="btn-hero-ghost" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
                   <iconify-icon icon="ph:link-bold"></iconify-icon>
                   Create link
-                </button>
+                </motion.button>
               </>
             )}
           </div>
@@ -743,32 +788,48 @@ footer{
                 </radialGradient>
               </defs>
               <ellipse cx="290" cy="190" rx="270" ry="120" fill="url(#bgGl)"/>
-              <path d="M105 215 L105 225 A60 24 0 0 1 225 225 L225 215" fill="#0c2558"/>
-              <ellipse cx="165" cy="215" rx="60" ry="24" fill="#193579"/>
-              <path d="M105 205 L105 215 A60 24 0 0 1 225 215 L225 205" fill="#0f2d6e"/>
-              <ellipse cx="165" cy="205" rx="60" ry="24" fill="#1e4498"/>
-              <path d="M105 195 L105 205 A60 24 0 0 1 225 205 L225 195" fill="#122d6e"/>
-              <ellipse cx="165" cy="195" rx="60" ry="24" fill="url(#cg1)"/>
-              <text x="165" y="199" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.88)" fontSize="13" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
-              <path d="M275 205 L275 219 A72 29 0 0 1 419 219 L419 205" fill="#0f2d6e"/>
-              <ellipse cx="347" cy="205" rx="72" ry="29" fill="url(#cg1)"/>
-              <ellipse cx="347" cy="205" rx="54" ry="21" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-              <text x="347" y="209" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.92)" fontSize="24" fontWeight="800" fontFamily="sans-serif">$</text>
-              <path d="M225 128 L225 138 A32 13 0 0 1 289 138 L289 128" fill="#0c2558"/>
-              <ellipse cx="257" cy="128" rx="32" ry="13" fill="url(#cg2)"/>
-              <text x="257" y="132" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.82)" fontSize="10" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
-              <path d="M430 230 L430 242 A40 16 0 0 1 510 242 L510 230" fill="#0c2558"/>
-              <ellipse cx="470" cy="230" rx="40" ry="16" fill="url(#cg2)"/>
-              <text x="470" y="234" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.78)" fontSize="12" fontWeight="700" fontFamily="sans-serif">$</text>
-              <path d="M456 148 L456 157 A27 11 0 0 1 510 157 L510 148" fill="#0c2558" opacity="0.9"/>
-              <ellipse cx="483" cy="148" rx="27" ry="11" fill="url(#cg2)"/>
-              <text x="483" y="151" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.72)" fontSize="9" fontWeight="600" fontFamily="sans-serif">$</text>
-              <circle cx="195" cy="108" r="3" fill="#4a7fd4" opacity="0.65"/>
-              <circle cx="405" cy="92" r="2.5" fill="#4a7fd4" opacity="0.55"/>
-              <circle cx="520" cy="175" r="2" fill="#4a7fd4" opacity="0.4"/>
-              <circle cx="75" cy="185" r="2.5" fill="#6a9be4" opacity="0.45"/>
-              <circle cx="540" cy="250" r="2" fill="#4a7fd4" opacity="0.35"/>
-              <circle cx="140" cy="255" r="1.5" fill="#6a9be4" opacity="0.4"/>
+              {/* Coin stack - bottom left */}
+              <g id="g-stack">
+                <path d="M105 215 L105 225 A60 24 0 0 1 225 225 L225 215" fill="#0c2558"/>
+                <ellipse cx="165" cy="215" rx="60" ry="24" fill="#193579"/>
+                <path d="M105 205 L105 215 A60 24 0 0 1 225 215 L225 205" fill="#0f2d6e"/>
+                <ellipse cx="165" cy="205" rx="60" ry="24" fill="#1e4498"/>
+                <path d="M105 195 L105 205 A60 24 0 0 1 225 205 L225 195" fill="#122d6e"/>
+                <ellipse cx="165" cy="195" rx="60" ry="24" fill="url(#cg1)"/>
+                <text x="165" y="199" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.88)" fontSize="13" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
+              </g>
+              {/* Large center coin */}
+              <g id="g-center">
+                <path d="M275 205 L275 219 A72 29 0 0 1 419 219 L419 205" fill="#0f2d6e"/>
+                <ellipse cx="347" cy="205" rx="72" ry="29" fill="url(#cg1)"/>
+                <ellipse cx="347" cy="205" rx="54" ry="21" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                <text x="347" y="209" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.92)" fontSize="24" fontWeight="800" fontFamily="sans-serif">$</text>
+              </g>
+              {/* Small coin top-center */}
+              <g id="g-small-tc">
+                <path d="M225 128 L225 138 A32 13 0 0 1 289 138 L289 128" fill="#0c2558"/>
+                <ellipse cx="257" cy="128" rx="32" ry="13" fill="url(#cg2)"/>
+                <text x="257" y="132" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.82)" fontSize="10" fontWeight="700" fontFamily="sans-serif" letterSpacing="1">USDC</text>
+              </g>
+              {/* Small coin right */}
+              <g id="g-small-r">
+                <path d="M430 230 L430 242 A40 16 0 0 1 510 242 L510 230" fill="#0c2558"/>
+                <ellipse cx="470" cy="230" rx="40" ry="16" fill="url(#cg2)"/>
+                <text x="470" y="234" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.78)" fontSize="12" fontWeight="700" fontFamily="sans-serif">$</text>
+              </g>
+              {/* Tiny coin */}
+              <g id="g-tiny">
+                <path d="M456 148 L456 157 A27 11 0 0 1 510 157 L510 148" fill="#0c2558" opacity="0.9"/>
+                <ellipse cx="483" cy="148" rx="27" ry="11" fill="url(#cg2)"/>
+                <text x="483" y="151" textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.72)" fontSize="9" fontWeight="600" fontFamily="sans-serif">$</text>
+              </g>
+              {/* Sparkles */}
+              <circle className="hero-sparkle" cx="195" cy="108" r="3" fill="#4a7fd4" opacity="0.65"/>
+              <circle className="hero-sparkle" cx="405" cy="92" r="2.5" fill="#4a7fd4" opacity="0.55"/>
+              <circle className="hero-sparkle" cx="520" cy="175" r="2" fill="#4a7fd4" opacity="0.4"/>
+              <circle className="hero-sparkle" cx="75" cy="185" r="2.5" fill="#6a9be4" opacity="0.45"/>
+              <circle className="hero-sparkle" cx="540" cy="250" r="2" fill="#4a7fd4" opacity="0.35"/>
+              <circle className="hero-sparkle" cx="140" cy="255" r="1.5" fill="#6a9be4" opacity="0.4"/>
               <line x1="225" y1="195" x2="278" y2="205" stroke="rgba(37,92,180,0.35)" strokeWidth="1" strokeDasharray="3 3"/>
               <line x1="289" y1="128" x2="340" y2="176" stroke="rgba(37,92,180,0.25)" strokeWidth="1" strokeDasharray="3 3"/>
             </svg>
@@ -839,10 +900,10 @@ footer{
             <div className="deep-label">The experience</div>
             <h2 className="deep-h2" style={{ fontSize: 'clamp(28px,4vw,52px)' }}>Two screens.<br/>That's the<br/><em>whole app.</em></h2>
             <p className="deep-sub" style={{ marginBottom: '32px' }}>One for creating your link. One for paying. Designed so obsessively that our beta users called it "the cleanest payments app they'd ever used."</p>
-            <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }}>
+            <motion.button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
               Create a PayLink — Free
-            </button>
+            </motion.button>
           </div>
           <div className="phones-right reveal reveal-delay-2">
             <div className="floating-phone fp-main" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 0 }}>
@@ -1082,10 +1143,10 @@ footer{
           <h2 className="final-h2">Ready to get paid<br/>the <em>right way</em>?</h2>
           <p className="final-sub">Create your first PayLink in 30 seconds. Free forever for crypto-to-crypto.</p>
           <div className="final-btns">
-            <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ cursor: 'pointer', border: 'none' }}>
+            <motion.button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ cursor: 'pointer', border: 'none' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
               Create a PayLink — Free
-            </button>
+            </motion.button>
             <a href="#how" className="btn-final-ghost"><iconify-icon icon="ph:question-bold"></iconify-icon>Learn more</a>
           </div>
         </div>
