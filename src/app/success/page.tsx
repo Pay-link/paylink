@@ -7,7 +7,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { formatDateTime } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
 
 function SuccessContent() {
   const router = useRouter()
@@ -127,7 +127,7 @@ function SuccessContent() {
                     <button onClick={copyClaimLink} style={{ flex: 1, background: copied ? 'var(--g-soft)' : 'var(--page)', color: copied ? 'var(--g1)' : 'var(--ink)', border: `1.5px solid ${copied ? 'var(--border-g)' : 'var(--border)'}`, borderRadius: 100, padding: '11px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all .2s' }}>
                       <Icon icon={copied ? 'ph:check-bold' : 'ph:copy-bold'} /> {copied ? 'Copied!' : 'Copy link'}
                     </button>
-                    <a href={`https://wa.me/?text=${encodeURIComponent(`Hey! I sent you $${amount} on PayLink. Tap this link to claim it: ${claimUrl}`)}`} target="_blank" rel="noopener noreferrer"
+                    <a href={`https://wa.me/?text=${encodeURIComponent(`Hey! I sent you $${amount} on ZaPay. Tap this link to claim it: ${claimUrl}`)}`} target="_blank" rel="noopener noreferrer"
                       style={{ flex: 1, background: '#25D366', color: '#fff', border: 'none', borderRadius: 100, padding: '11px', fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}>
                       <Icon icon="ph:whatsapp-logo-bold" /> Share on WhatsApp
                     </a>
@@ -174,7 +174,7 @@ function SuccessContent() {
             {[
               { label: 'Send another payment', desc: 'Pay someone else instantly', icon: 'ph:paper-plane-right-bold', href: '/send' },
               { label: 'Create a payment link', desc: 'Request money from anyone', icon: 'ph:link-bold', href: '/create' },
-              { label: 'Go home', desc: 'Back to PayLink homepage', icon: 'ph:house-bold', href: '/' },
+              { label: 'Go home', desc: 'Back to ZaPay homepage', icon: 'ph:house-bold', href: '/' },
             ].map(item => (
               <div key={item.label} onClick={() => router.push(item.href)}
                 style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 14, background: 'var(--page)', border: '1px solid var(--border)', cursor: 'pointer', marginBottom: 8 }}>

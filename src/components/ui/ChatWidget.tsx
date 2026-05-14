@@ -147,7 +147,7 @@ export function ChatWidget() {
               <Icon icon="ph:robot-bold" />
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>PayLink Support</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>ZaPay Support</div>
               <div style={{ fontSize: 11, color: 'var(--g1, #255CB4)', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--g3, #4ADE80)', display: 'inline-block' }} />
                 AI agent · online
@@ -163,7 +163,7 @@ export function ChatWidget() {
             {/* Welcome */}
             {messages.length === 0 && (
               <div className="chat-msg-ai">
-                Hey! I'm the PayLink support agent. Ask me anything about sending money, creating links, your wallet, or getting test USDC. I'm here to help!
+                Hey! I'm the ZaPay support agent. Ask me anything about sending money, creating links, your wallet, or getting test USDC. I'm here to help!
               </div>
             )}
 

@@ -103,7 +103,7 @@ export default function ClaimPage() {
             <Icon icon="ph:warning-circle-bold" style={{ fontSize: 48, color: '#E53935', marginBottom: 16 }} />
             <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>Link unavailable</div>
             <div style={{ fontSize: 14, color: 'var(--ink3)', lineHeight: 1.6, marginBottom: 24 }}>{error}</div>
-            <a href="/" style={{ color: 'var(--g1)', fontWeight: 500, fontSize: 14 }}>Go to PayLink →</a>
+            <a href="/" style={{ color: 'var(--g1)', fontWeight: 500, fontSize: 14 }}>Go to ZaPay →</a>
           </div>
         )}
 
@@ -172,7 +172,7 @@ export default function ClaimPage() {
                   {claiming ? 'Verifying…' : `Claim $${claim.amount.toFixed(2)}`}
                 </button>
                 <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink4)' }}>
-                  By claiming you agree to PayLink's terms. Your wallet is powered by Privy.
+                  By claiming you agree to ZaPay's terms. Your wallet is powered by Privy.
                 </div>
               </div>
             )}

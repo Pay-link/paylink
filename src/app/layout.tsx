@@ -35,6 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <title>ZaPay — Send money to anyone with just a link</title>
+        <meta name="description" content="Send or receive USDC instantly across borders. No middlemen, no delays. Powered by Arc." />
+        <meta name="theme-color" content="#09090E" />
+        <meta property="og:title" content="ZaPay — Send money to anyone with just a link" />
+        <meta property="og:description" content="Send or receive USDC instantly across borders. No middlemen, no delays. Powered by Arc." />
+        <meta property="og:site_name" content="ZaPay" />
         <link
           href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&display=swap"
           rel="stylesheet"

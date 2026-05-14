@@ -12,7 +12,7 @@ const COMING_FEATURES = [
     desc: 'Connect your local bank account and withdraw USDC directly as your home currency. Supported globally — including Barclays, HSBC, Lloyds (UK), Chase, Bank of America, Wells Fargo (US), Deutsche Bank, BNP Paribas (Europe), DBS, OCBC, Maybank (Asia), GTBank, Access, Zenith, Equity, Standard Bank (Africa), and hundreds more.',
   },
   { icon: 'ph:currency-dollar-bold', title: 'Fiat withdrawals', desc: 'Convert your USDC balance to your local currency — NGN, GBP, USD, EUR, KES, GHS and more — and send it straight to your bank account.' },
-  { icon: 'ph:arrows-left-right-bold', title: 'Auto-conversion', desc: 'Set a rate threshold and PayLink will convert and withdraw automatically when the rate is right.' },
+  { icon: 'ph:arrows-left-right-bold', title: 'Auto-conversion', desc: 'Set a rate threshold and ZaPay will convert and withdraw automatically when the rate is right.' },
 ]
 
 export default function BankSetupPage() {
@@ -36,7 +36,7 @@ export default function BankSetupPage() {
             Bank & withdrawal settings
           </h1>
           <p style={{ fontSize: 15, color: 'var(--ink3)', lineHeight: 1.7, maxWidth: 440 }}>
-            PayLink is currently running on <strong style={{ color: 'var(--ink2)' }}>Arc Testnet</strong> with test funds only — no real money is involved yet. Bank linking and fiat withdrawals will go live when we launch on mainnet.
+            ZaPay is currently running on <strong style={{ color: 'var(--ink2)' }}>Arc Testnet</strong> with test funds only — no real money is involved yet. Bank linking and fiat withdrawals will go live when we launch on mainnet.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function BankSetupPage() {
                 <div style={{ fontSize: 12, color: 'var(--ink3)', lineHeight: 1.5 }}>
                   Get free testnet USDC from the{' '}
                   <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--g1)', fontWeight: 500, textDecoration: 'none' }}>Circle faucet ↗</a>
-                  {' '}and send it to your PayLink wallet address on the dashboard.
+                  {' '}and send it to your ZaPay wallet address on the dashboard.
                 </div>
               </div>
             </div>

@@ -485,7 +485,7 @@ export default function DashboardPage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: link.status === 'expired' ? 'var(--ink3)' : 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{link.note || 'Payment link'}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
-                        paylink-1.netlify.app/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
+                        zapay-1.netlify.app/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -585,7 +585,7 @@ export default function DashboardPage() {
               <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>Top up wallet</div>
               <button onClick={() => setTopUpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--ink3)' }}>×</button>
             </div>
-            <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 20, lineHeight: 1.6 }}>Add USDC to your PayLink wallet. Send to anyone instantly with $0 gas.</div>
+            <div style={{ fontSize: 14, color: 'var(--ink3)', marginBottom: 20, lineHeight: 1.6 }}>Add USDC to your ZaPay wallet. Send to anyone instantly with $0 gas.</div>
             {topUpMethod !== 3 && (
               <>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>

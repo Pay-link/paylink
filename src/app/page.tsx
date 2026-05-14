@@ -677,7 +677,7 @@ footer{
 
       {/* NAV */}
       <nav>
-        <a href="#" className="nav-logo">pay<span>link</span></a>
+        <a href="#" className="nav-logo">za<span>pay</span></a>
         <div className="nav-links">
           <a href="#how">How it works</a>
           <a href="#fees">Fees</a>
@@ -763,7 +763,7 @@ footer{
         <div className="deep-bg-glow glow-2"></div>
         <div className="deep-inner">
           <div className="reveal">
-            <div className="deep-label">Why PayLink</div>
+            <div className="deep-label">Why ZaPay</div>
             <h2 className="deep-h2">Money should move as fast<br/>as a <em>message</em></h2>
             <p className="deep-sub">We built the payments layer the world was missing — instant, borderless, and so simple your parents can use it.</p>
           </div>
@@ -773,7 +773,7 @@ footer{
               { icon: 'ph:lightning-bold', title: 'Sub-second settlement', desc: 'Arc settles payments in under one second. No "pending" for 3 business days. The moment they pay, you have it — confirmed on-chain.', delay: '.15s' },
               { icon: 'ph:currency-circle-dollar-bold', title: 'Send and receive USDC', desc: 'Send or receive USDC instantly across borders. No middlemen, no conversion delays, no bank holding your money for days.', delay: '.25s' },
               { icon: 'ph:cube-bold', title: 'Built on Arc', desc: 'Every payment settles on Arc — a fast, low-cost blockchain built for real-world transactions. Transparent, verifiable, and always on.', delay: '.35s' },
-              { icon: 'ph:lock-key-bold', title: 'Your funds, protected', desc: 'Your balance lives in your PayLink dashboard, always accessible. When you send to someone new, funds are held securely in escrow for 7 days — giving them time to claim before you can recover them.', delay: '.45s' },
+              { icon: 'ph:lock-key-bold', title: 'Your funds, protected', desc: 'Your balance lives in your ZaPay dashboard, always accessible. When you send to someone new, funds are held securely in escrow for 7 days — giving them time to claim before you can recover them.', delay: '.45s' },
               { icon: 'ph:link-bold', title: 'Two ways to get paid', desc: 'Create a fixed link for a specific amount and note, or a reusable open link for your bio. Share either on WhatsApp, Telegram, or anywhere — one click and they pay.', delay: '.55s' },
             ].map(card => (
               <div key={card.title} className="glass-card" style={{ transitionDelay: card.delay }}>
@@ -796,7 +796,7 @@ footer{
             <p className="deep-sub" style={{ marginBottom: '32px' }}>One for creating your link. One for paying. Designed so obsessively that our beta users called it "the cleanest payments app they'd ever used."</p>
             <motion.button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink — Free
+              Create a ZaPay link — Free
             </motion.button>
           </div>
           <div className="phones-right reveal reveal-delay-2">
@@ -806,7 +806,7 @@ footer{
               <div className="pf-screen">
                 <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
                 <div className="fp-nav">
-                  <div className="fp-logo">pay<span>link</span></div>
+                  <div className="fp-logo">za<span>pay</span></div>
                   <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
                 </div>
                 <div className="fp-body">
@@ -829,7 +829,7 @@ footer{
               <img src="/phone-frame.svg" alt="" className="pf-img" draggable={false} />
               <div className="pf-screen">
                 <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
-                <div className="fp-nav"><div className="fp-logo">pay<span>link</span></div><span></span></div>
+                <div className="fp-nav"><div className="fp-logo">za<span>pay</span></div><span></span></div>
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
@@ -856,14 +856,14 @@ footer{
           <div className="reveal">
             <div className="how-tag"><iconify-icon icon="ph:steps-bold"></iconify-icon>How it works</div>
             <h2 className="how-h2">Three steps.<br/>Anyone can do it.</h2>
-            <p className="how-sub">If you can send a WhatsApp message, you can use PayLink.</p>
+            <p className="how-sub">If you can send a WhatsApp message, you can use ZaPay.</p>
           </div>
           <div className="steps-grid">
             {[
               { num: 'STEP 01', icon: 'ph:link-bold', title: 'Create your link', desc: 'Enter an amount, add a note, choose how to receive — crypto wallet or bank account. Your link is ready in 30 seconds.', delay: '.05s' },
               { num: 'STEP 02', icon: 'ph:share-network-bold', title: 'Share it anywhere', desc: 'Send via WhatsApp, Telegram, X, or paste in your bio. Anyone with the link can pay — no app, no account needed.', delay: '.15s' },
               { num: 'STEP 03', icon: 'ph:lightning-bold', title: 'Get paid instantly', desc: 'Settlement in under a second on Arc. Receive USDC in your wallet or local currency straight to your bank or mobile money.', delay: '.25s' },
-              { num: 'BONUS', icon: 'ph:repeat-bold', title: 'Reuse forever', desc: 'Your PayLink never expires unless you set it to. One link in your bio, unlimited payments, zero maintenance.', delay: '.35s' },
+              { num: 'BONUS', icon: 'ph:repeat-bold', title: 'Reuse forever', desc: 'Your ZaPay never expires unless you set it to. One link in your bio, unlimited payments, zero maintenance.', delay: '.35s' },
             ].map(step => (
               <div key={step.title} className="step-card" style={{ transitionDelay: step.delay }}>
                 <div className="step-num">{step.num}</div>
@@ -884,7 +884,7 @@ footer{
           <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat — always shown upfront. No surprises ever.</p>
           <div className="fee-table">
             <div className="fee-head">
-              <span>Payment type</span><span>Western Union</span><span>PayLink</span>
+              <span>Payment type</span><span>Western Union</span><span>ZaPay</span>
             </div>
             <div className="fee-row hi">
               <span className="fee-method"><iconify-icon icon="ph:wallet-bold"></iconify-icon>Crypto to crypto</span>
@@ -923,7 +923,7 @@ footer{
               <div className="testi-stars">
                 {[1,2,3,4,5].map(s => <iconify-icon key={s} icon="ph:star-fill" className="tstar"></iconify-icon>)}
               </div>
-              <p className="testi-text">"Sent my client a PayLink on WhatsApp. They paid from the UK in under 2 minutes. No wallet questions, no fees eating my money. This is what payments should feel like."</p>
+              <p className="testi-text">"Sent my client a ZaPay on WhatsApp. They paid from the UK in under 2 minutes. No wallet questions, no fees eating my money. This is what payments should feel like."</p>
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(37,92,180,0.15)', color: 'var(--o3)' }}>AO</div>
                 <div><div className="testi-name">Adeola O.</div><div className="testi-role">Designer, Lagos</div></div>
@@ -934,7 +934,7 @@ footer{
               <div className="testi-stars">
                 {[1,2,3,4,5].map(s => <iconify-icon key={s} icon="ph:star-fill" className="tstar"></iconify-icon>)}
               </div>
-              <p className="testi-text">"I used to dread paying freelancers abroad. PayLink just works. I click, I pay, they receive in their local currency. Under a minute start to finish."</p>
+              <p className="testi-text">"I used to dread paying freelancers abroad. ZaPay just works. I click, I pay, they receive in their local currency. Under a minute start to finish."</p>
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(57,73,171,.2)', color: '#8090FF' }}>JM</div>
                 <div><div className="testi-name">James M.</div><div className="testi-role">Founder, London</div></div>
@@ -945,7 +945,7 @@ footer{
               <div className="testi-stars">
                 {[1,2,3,4,5].map(s => <iconify-icon key={s} icon="ph:star-fill" className="tstar"></iconify-icon>)}
               </div>
-              <p className="testi-text">"I don't know anything about crypto. My daughter told me to use PayLink. I paid from my GTBank app and she got it instantly. I was shocked how easy it was."</p>
+              <p className="testi-text">"I don't know anything about crypto. My daughter told me to use ZaPay. I paid from my GTBank app and she got it instantly. I was shocked how easy it was."</p>
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(194,24,91,.15)', color: '#FF80AB' }}>FC</div>
                 <div><div className="testi-name">Funke C.</div><div className="testi-role">Business owner, Abuja</div></div>
@@ -963,7 +963,7 @@ footer{
           <div className="reveal">
             <div className="app-eyebrow">Available on iOS & Android</div>
             <h2 className="app-h2">Your payments.<br/>In your pocket.</h2>
-            <p className="app-sub">Track all your PayLinks, get notified the moment money lands, and manage payouts — all from one clean app.</p>
+            <p className="app-sub">Track all your ZaPays, get notified the moment money lands, and manage payouts — all from one clean app.</p>
             <div className="app-btns">
               <a href="#" className="app-btn">
                 <iconify-icon icon="ph:apple-logo-bold" className="app-btn-icon"></iconify-icon>
@@ -978,7 +978,7 @@ footer{
           <div className="reveal reveal-delay-2">
             <div className="app-phone">
               <div className="app-screen">
-                <div className="app-s-header">pay<span>link</span><iconify-icon icon="ph:bell-bold" style={{ fontSize: '13px', color: 'rgba(255,255,255,.25)' }}></iconify-icon></div>
+                <div className="app-s-header">za<span>pay</span><iconify-icon icon="ph:bell-bold" style={{ fontSize: '13px', color: 'rgba(255,255,255,.25)' }}></iconify-icon></div>
                 <div className="app-s-lbl">Payments this month</div>
                 <div className="app-tx">
                   {[
@@ -1031,11 +1031,11 @@ footer{
         <div className="final-glow"></div>
         <div className="final-inner reveal">
           <h2 className="final-h2">Ready to get paid<br/>the <em>right way</em>?</h2>
-          <p className="final-sub">Create your first PayLink in 30 seconds. Free forever for crypto-to-crypto.</p>
+          <p className="final-sub">Create your first ZaPay in 30 seconds. Free forever for crypto-to-crypto.</p>
           <div className="final-btns">
             <motion.button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ cursor: 'pointer', border: 'none' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink — Free
+              Create a ZaPay link — Free
             </motion.button>
             <a href="#how" className="btn-final-ghost"><iconify-icon icon="ph:question-bold"></iconify-icon>Learn more</a>
           </div>
@@ -1046,7 +1046,7 @@ footer{
       <footer>
         <div className="footer-top">
           <div>
-            <div className="footer-logo">pay<span>link</span></div>
+            <div className="footer-logo">za<span>pay</span></div>
             <p className="footer-desc">Send and receive money globally with just a link. Powered by Arc, settled in under a second.</p>
           </div>
           <div>
@@ -1069,7 +1069,7 @@ footer{
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="footer-copy">© 2026 PayLink. All rights reserved.</div>
+          <div className="footer-copy">© 2026 ZaPay. All rights reserved.</div>
           <div className="footer-arc">Powered by <span>Arc Network</span> & Circle USDC</div>
         </div>
       </footer>

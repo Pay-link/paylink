@@ -85,7 +85,7 @@ export default function CreatePage() {
     }
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
   const linkUrl = `${appUrl}/pay/${generatedSlug}`
   const shareUrls = generatedSlug ? getShareUrls(linkUrl, amt, note) : null
 
@@ -152,7 +152,7 @@ export default function CreatePage() {
                     <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 12 }}>Sign in to continue</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 20 }}>
                       <Icon icon="ph:info-bold" style={{ fontSize: 18, color: 'var(--g1)', flexShrink: 0 }} />
-                      <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every PayLink you create pays out to your account automatically.</div>
+                      <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.6 }}><strong>One-time setup.</strong> Once verified, every ZaPay you create pays out to your account automatically.</div>
                     </div>
                     <button style={s.btn} onClick={() => login()}>
                       <Icon icon="ph:envelope-bold" /> Sign in with email or phone
@@ -300,7 +300,7 @@ export default function CreatePage() {
 
                   {/* Copy box — prominent for open links */}
                   <div style={{ background: 'var(--page)', borderRadius: 14, padding: '18px 20px', marginBottom: 16, border: '1.5px solid var(--border-g)' }}>
-                    <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.07em', textTransform: 'uppercase', marginBottom: 8 }}>Your PayLink</div>
+                    <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ink3)', letterSpacing: '.07em', textTransform: 'uppercase', marginBottom: 8 }}>Your ZaPay</div>
                     <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--g1)', wordBreak: 'break-all', marginBottom: 12, fontFamily: 'monospace' }}>{linkUrl}</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
@@ -359,9 +359,9 @@ export default function CreatePage() {
           <div style={{ ...s.card, padding: '22px 24px' }}>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 18 }}>Link preview</div>
             <div style={{ background: 'var(--page)', borderRadius: 14, padding: 16, marginBottom: 16, border: '1.5px dashed var(--border)', textAlign: 'center' }}>
-              <div style={{ fontSize: 11, color: 'var(--ink3)', fontWeight: 500, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 8 }}>Your PayLink URL</div>
+              <div style={{ fontSize: 11, color: 'var(--ink3)', fontWeight: 500, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 8 }}>Your ZaPay URL</div>
               <div style={{ fontSize: 12, color: generatedSlug ? 'var(--g1)' : 'var(--ink3)', fontFamily: 'monospace', wordBreak: 'break-all', fontWeight: generatedSlug ? 500 : 400 }}>
-                {generatedSlug ? `paylink-1.netlify.app/pay/${generatedSlug}` : 'paylink-1.netlify.app/pay/——————'}
+                {generatedSlug ? `zapay-1.netlify.app/pay/${generatedSlug}` : 'zapay-1.netlify.app/pay/——————'}
               </div>
             </div>
             {[
@@ -381,7 +381,7 @@ export default function CreatePage() {
           <div style={{ ...s.card, padding: '20px 22px' }}>
             <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 14 }}>Tips for sharing</div>
             {[
-              { icon: 'ph:camera-bold', title: 'Instagram bio', desc: 'Put your PayLink in your bio so followers can pay you directly.' },
+              { icon: 'ph:camera-bold', title: 'Instagram bio', desc: 'Put your ZaPay in your bio so followers can pay you directly.' },
               { icon: 'simple-icons:whatsapp', title: 'WhatsApp', desc: 'Send the link in a chat. They pay with one click, no app needed.' },
               { icon: 'ph:infinity-bold', title: 'Reuse forever', desc: 'Set expiry to "Never" and the link collects payments forever.' },
             ].map(tip => (

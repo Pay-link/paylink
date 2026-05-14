@@ -137,7 +137,7 @@ export default function SendPage() {
                     <div style={{ background: 'rgba(245,158,11,.08)', border: '1.5px solid rgba(245,158,11,.3)', borderRadius: 16, padding: '16px 18px', marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                         <Icon icon="ph:warning-bold" style={{ fontSize: 18, color: '#FDB64E', flexShrink: 0 }} />
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#FDB64E' }}>This contact isn't on PayLink yet</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#FDB64E' }}>This contact isn't on ZaPay yet</div>
                       </div>
                       <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.6, marginBottom: 14 }}>
                         No problem — you can still send. The funds will be <strong style={{ color: 'var(--ink2)' }}>held safely for 7 days</strong>. You'll get a personal claim link to share with them directly via WhatsApp, iMessage, or any app. They just tap the link and verify their identity to receive the money.

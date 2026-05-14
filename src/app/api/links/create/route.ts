@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       try {
         await supabase.from('users').upsert({
           id: owner_id,
-          display_name: sanitizeText(owner_name, 100) || 'PayLink User',
+          display_name: sanitizeText(owner_name, 100) || 'ZaPay User',
           email: owner_email || null,
           wallet_address: owner_wallet,
           updated_at: new Date().toISOString(),
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       .insert({
         slug,
         owner_id: owner_id.slice(0, 255),
-        owner_name: sanitizeText(owner_name, 100) || 'PayLink User',
+        owner_name: sanitizeText(owner_name, 100) || 'ZaPay User',
         owner_email: sanitizeText(owner_email, 255),
         owner_wallet,
         amount: parsedAmount,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create link' }, { status: 500 })
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
     return NextResponse.json({ data: { link, url: `${appUrl}/pay/${slug}` }, error: null })
   } catch (err) {
     console.error('Create link error:', err)

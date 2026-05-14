@@ -110,7 +110,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
             background: 'var(--g1)', color: '#fff', padding: '14px 28px',
             borderRadius: 100, textDecoration: 'none', fontWeight: 700,
           }}>
-            Create your own PayLink
+            Create your own ZaPay
           </a>
         </div>
       </div>
@@ -290,7 +290,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   {link.owner_name}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--ink3)' }}>
-                  {link.owner_email || `paylink-1.netlify.app/pay/${slug}`}
+                  {link.owner_email || `zapay-1.netlify.app/pay/${slug}`}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>

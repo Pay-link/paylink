@@ -27,7 +27,7 @@ export function TestnetBanner() {
         animation: 'pulse 2s ease-in-out infinite',
         flexShrink: 0,
       }} />
-      PayLink is live on Arc Testnet — all transactions use test funds.&nbsp;
+      ZaPay is live on Arc Testnet — all transactions use test funds.&nbsp;
       <a
         href="https://testnet.arcscan.app"
         target="_blank"
