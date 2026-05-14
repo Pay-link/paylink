@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
@@ -41,6 +41,7 @@ export default function HomePage() {
   const { authenticated, login, logout } = usePrivy()
   const router = useRouter()
   const [liveStats, setLiveStats] = useState({ links: 0, txs: 0 })
+  const didMountRef = useRef(false)
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -215,7 +216,7 @@ nav{
 .btn-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   HERO â€” 2-column dark
+   HERO — 2-column dark
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .hero{
   min-height:100vh;
@@ -291,12 +292,12 @@ nav{
 .h-stat-label{font-size:11px;color:var(--ink3);margin-top:2px}
 .h-stat-div{width:1px;height:28px;background:var(--border)}
 
-/* Hero phone mockup â€” iPhone-style */
+/* Hero phone mockup — iPhone-style */
 .floating-phone{
   position:absolute;
   transition:transform .1s ease;
 }
-/* Outer shell â€” thick physical iPhone frame */
+/* Outer shell — thick physical iPhone frame */
 .fp-shell{
   border-radius:44px;
   padding:12px;
@@ -399,7 +400,7 @@ nav{
 .sb-label{font-size:12px;color:var(--ink3);margin-top:3px;text-align:center}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   FEATURES â€” glass cards on dark
+   FEATURES — glass cards on dark
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .deep-section{
   background:var(--page);padding:100px 5%;
@@ -447,7 +448,7 @@ nav{
 .gc-desc{font-size:14px;color:var(--ink3);line-height:1.65}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   EXPERIENCE SECTION â€” dark 2-col
+   EXPERIENCE SECTION — dark 2-col
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .phones-section{
   background:var(--page2);padding:80px 5% 100px;
@@ -466,7 +467,7 @@ nav{
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   HOW IT WORKS â€” dark with orange
+   HOW IT WORKS — dark with orange
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .how-section{
   background:var(--page);padding:100px 5%;
@@ -514,7 +515,7 @@ nav{
 .step-desc{font-size:14px;color:var(--ink3);line-height:1.65}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   FEES â€” dark
+   FEES — dark
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .fee-section{background:var(--page2);padding:100px 5%}
 .fee-center{text-align:center;max-width:600px;margin:0 auto}
@@ -740,10 +741,10 @@ footer{
         <div className="hero-left">
           <div className="hero-eyebrow">
             <div className="hero-dot"></div>
-            Built on Arc &nbsp;Â·&nbsp; Powered by USDC
+            Built on Arc &nbsp;·&nbsp; Powered by USDC
           </div>
           <h1 className="hero-h1" id="hero-headline"><span className="cursor-blink" id="cursor"></span></h1>
-          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally â€” anyone, anywhere, in seconds.</p>
+          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
           <div className="hero-ctas">
             {authenticated ? (
               <button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }}>
@@ -786,7 +787,7 @@ footer{
           </div>
         </div>
 
-        {/* RIGHT â€” floating phones */}
+        {/* RIGHT — floating phones */}
         <div className="hero-right">
           <div className="floating-phone fp-main">
             <div className="fp-shell">
@@ -801,7 +802,7 @@ footer{
                   <div className="fp-card">
                     <div className="fp-card-lbl">Amount to receive</div>
                     <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design â€” April invoice</div>
+                    <div className="fp-note">Logo design — April invoice</div>
                   </div>
                   <div className="fp-tog-row">
                     <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
@@ -822,10 +823,10 @@ footer{
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice â€” April</div>
+                  <div className="fp2-note">Freelance invoice — April</div>
                   <div className="fp2-amount">$120</div>
                   <button className="fp2-btn">Pay now â†’</button>
-                  <div className="fp2-sub">Secured Â· Powered by Arc</div>
+                  <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
               </div>
             </div>
@@ -875,15 +876,15 @@ footer{
           <div className="reveal">
             <div className="deep-label">Why PayLink</div>
             <h2 className="deep-h2">Money should move as fast<br/>as a <em>message</em></h2>
-            <p className="deep-sub">We built the payments layer the world was missing â€” instant, borderless, and so simple your parents can use it.</p>
+            <p className="deep-sub">We built the payments layer the world was missing — instant, borderless, and so simple your parents can use it.</p>
           </div>
           <div className="float-grid">
             {[
               { icon: 'ph:user-plus-bold', title: 'No account to pay', desc: 'Senders click the link and pay. No signup. No wallet. No app download. Works on any browser worldwide.', delay: '.05s' },
               { icon: 'ph:lightning-bold', title: 'Sub-second settlement', desc: 'Arc confirms payments in under one second. No "pending" for 3 business days. The moment they pay, you have it.', delay: '.15s' },
               { icon: 'ph:currency-circle-dollar-bold', title: 'Any currency, any direction', desc: 'Sender pays in NGN, GBP, USD or USDC. Receiver gets local fiat or crypto. Seamlessly, automatically.', delay: '.25s' },
-              { icon: 'ph:globe-bold', title: 'Truly global coverage', desc: 'Ramp Network for 150+ countries. Yellow Card for deep Africa â€” mobile money, bank transfers, all of it.', delay: '.35s' },
-              { icon: 'ph:shield-check-bold', title: 'Non-custodial', desc: 'We never hold your funds. Every transaction settles directly on Arc â€” transparent, trustless, verifiable on-chain.', delay: '.45s' },
+              { icon: 'ph:globe-bold', title: 'Truly global coverage', desc: 'Ramp Network for 150+ countries. Yellow Card for deep Africa — mobile money, bank transfers, all of it.', delay: '.35s' },
+              { icon: 'ph:shield-check-bold', title: 'Non-custodial', desc: 'We never hold your funds. Every transaction settles directly on Arc — transparent, trustless, verifiable on-chain.', delay: '.45s' },
               { icon: 'ph:repeat-bold', title: 'Links that never expire', desc: 'Put your PayLink in your Instagram bio and get paid forever. One link, unlimited payments, zero maintenance.', delay: '.55s' },
             ].map(card => (
               <div key={card.title} className="glass-card" style={{ transitionDelay: card.delay }}>
@@ -906,7 +907,7 @@ footer{
             <p className="deep-sub" style={{ marginBottom: '32px' }}>One for creating your link. One for paying. Designed so obsessively that our beta users called it "the cleanest payments app they'd ever used."</p>
             <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink â€” Free
+              Create a PayLink — Free
             </button>
           </div>
           <div className="phones-right reveal reveal-delay-2">
@@ -923,7 +924,7 @@ footer{
                   <div className="fp-card">
                     <div className="fp-card-lbl">Amount to receive</div>
                     <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design â€” April invoice</div>
+                    <div className="fp-note">Logo design — April invoice</div>
                   </div>
                   <div className="fp-tog-row">
                     <div className="fp-tog on"><iconify-icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></iconify-icon>Crypto</div>
@@ -944,10 +945,10 @@ footer{
                 <div className="fp2-body">
                   <div className="fp2-avatar">AK</div>
                   <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice â€” April</div>
+                  <div className="fp2-note">Freelance invoice — April</div>
                   <div className="fp2-amount">$120</div>
                   <button className="fp2-btn">Pay now â†’</button>
-                  <div className="fp2-sub">Secured Â· Powered by Arc</div>
+                  <div className="fp2-sub">Secured · Powered by Arc</div>
                 </div>
               </div>
               </div>
@@ -974,8 +975,8 @@ footer{
           </div>
           <div className="steps-grid">
             {[
-              { num: 'STEP 01', icon: 'ph:link-bold', title: 'Create your link', desc: 'Enter an amount, add a note, choose how to receive â€” crypto wallet or bank account. Your link is ready in 30 seconds.', delay: '.05s' },
-              { num: 'STEP 02', icon: 'ph:share-network-bold', title: 'Share it anywhere', desc: 'Send via WhatsApp, Telegram, X, or paste in your bio. Anyone with the link can pay â€” no app, no account needed.', delay: '.15s' },
+              { num: 'STEP 01', icon: 'ph:link-bold', title: 'Create your link', desc: 'Enter an amount, add a note, choose how to receive — crypto wallet or bank account. Your link is ready in 30 seconds.', delay: '.05s' },
+              { num: 'STEP 02', icon: 'ph:share-network-bold', title: 'Share it anywhere', desc: 'Send via WhatsApp, Telegram, X, or paste in your bio. Anyone with the link can pay — no app, no account needed.', delay: '.15s' },
               { num: 'STEP 03', icon: 'ph:lightning-bold', title: 'Get paid instantly', desc: 'Settlement in under a second on Arc. Receive USDC in your wallet or local currency straight to your bank or mobile money.', delay: '.25s' },
               { num: 'BONUS', icon: 'ph:repeat-bold', title: 'Reuse forever', desc: 'Your PayLink never expires unless you set it to. One link in your bio, unlimited payments, zero maintenance.', delay: '.35s' },
             ].map(step => (
@@ -995,30 +996,30 @@ footer{
         <div className="fee-center reveal">
           <div className="section-tag-orange"><iconify-icon icon="ph:percent-bold"></iconify-icon>Transparent fees</div>
           <h2 className="section-h2">Up to 7Ã— cheaper<br/>than the old way</h2>
-          <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat â€” always shown upfront. No surprises ever.</p>
+          <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat — always shown upfront. No surprises ever.</p>
           <div className="fee-table">
             <div className="fee-head">
               <span>Payment type</span><span>Western Union</span><span>PayLink</span>
             </div>
             <div className="fee-row hi">
               <span className="fee-method"><iconify-icon icon="ph:wallet-bold"></iconify-icon>Crypto to crypto</span>
-              <span className="fee-them">5â€“8%</span>
+              <span className="fee-them">5—8%</span>
               <span className="fee-us"><iconify-icon icon="ph:check-circle-bold"></iconify-icon>$0.00</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:credit-card-bold"></iconify-icon>Card to crypto wallet</span>
-              <span className="fee-them">5â€“8%</span>
+              <span className="fee-them">5—8%</span>
               <span className="fee-us">~1.5%</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:bank-bold"></iconify-icon>Bank to bank (global)</span>
-              <span className="fee-them">5â€“8%</span>
-              <span className="fee-us">~1â€“2%</span>
+              <span className="fee-them">5—8%</span>
+              <span className="fee-us">~1—2%</span>
             </div>
             <div className="fee-row">
               <span className="fee-method"><iconify-icon icon="ph:device-mobile-bold"></iconify-icon>Mobile money (Africa)</span>
-              <span className="fee-them">5â€“8%</span>
-              <span className="fee-us">~0.5â€“1%</span>
+              <span className="fee-them">5—8%</span>
+              <span className="fee-us">~0.5—1%</span>
             </div>
           </div>
         </div>
@@ -1077,7 +1078,7 @@ footer{
           <div className="reveal">
             <div className="app-eyebrow">Available on iOS & Android</div>
             <h2 className="app-h2">Your payments.<br/>In your pocket.</h2>
-            <p className="app-sub">Track all your PayLinks, get notified the moment money lands, and manage payouts â€” all from one clean app.</p>
+            <p className="app-sub">Track all your PayLinks, get notified the moment money lands, and manage payouts — all from one clean app.</p>
             <div className="app-btns">
               <a href="#" className="app-btn">
                 <iconify-icon icon="ph:apple-logo-bold" className="app-btn-icon"></iconify-icon>
@@ -1149,7 +1150,7 @@ footer{
           <div className="final-btns">
             <button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ cursor: 'pointer', border: 'none' }}>
               <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a PayLink â€” Free
+              Create a PayLink — Free
             </button>
             <a href="#how" className="btn-final-ghost"><iconify-icon icon="ph:question-bold"></iconify-icon>Learn more</a>
           </div>
@@ -1183,7 +1184,7 @@ footer{
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="footer-copy">Â© 2026 PayLink. All rights reserved.</div>
+          <div className="footer-copy">© 2026 PayLink. All rights reserved.</div>
           <div className="footer-arc">Powered by <span>Arc Network</span> & Circle USDC</div>
         </div>
       </footer>
