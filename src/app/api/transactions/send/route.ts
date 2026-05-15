@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     // Fetch sender balance
     const { data: sender } = await supabase
       .from('users')
-      .select('id, balance_usdc, display_name')
+      .select('id, balance_usdc, display_name, wallet_address')
       .eq('id', senderId)
       .maybeSingle()
 
