@@ -59,9 +59,11 @@ export function Nav({ variant = 'app' }: NavProps) {
           .nav-center-links { display: none !important; }
           .nav-arc-badge { display: none !important; }
           .nav-send-link { display: none !important; }
-          .nav-tab-dashboard { display: none !important; }
-          .nav-tab { font-size: 13px; padding: 5px 8px; }
-          .nav-tabs { padding-left: 8px; gap: 0; }
+          .nav-tabs { display: none !important; }
+        }
+        @media(max-width: 480px) {
+          .nav-create-link { font-size: 12px !important; padding: 6px 10px !important; }
+          .nav-logout { padding: 5px 10px; font-size: 11px; }
         }
         @media(max-width: 480px) {
           .nav-logout { padding: 5px 10px; font-size: 11px; }
