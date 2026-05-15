@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
+import { Nav } from '@/components/layout/Nav'
 import Link from 'next/link'
 import { createPublicClient, http, parseAbiItem } from 'viem'
 import { supabase } from '@/lib/supabase'
@@ -283,6 +284,11 @@ export default function DashboardPage() {
 
       {/* Main content */}
       <div className="desktop-main" style={{ flex: 1, marginLeft: sidebarOpen ? 240 : 0, minWidth: 0, transition: 'margin-left .2s ease' }}>
+
+        {/* Mobile nav — replaces fixed mobile-topbar; hidden on desktop */}
+        <div className="dash-mobile-nav-wrapper">
+          <Nav variant="app" />
+        </div>
 
         {/* Top bar */}
         <div className="desktop-topbar zp-dash-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
@@ -661,18 +667,17 @@ export default function DashboardPage() {
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        /* Mobile nav wrapper — only shown on mobile */
+        .dash-mobile-nav-wrapper { display: none; }
         @media(max-width:768px){
+          .dash-mobile-nav-wrapper { display: block; }
           .desktop-sidebar{display:none!important}
           .desktop-main{margin-left:0!important}
           .desktop-topbar{display:none!important}
           .desktop-right-sidebar{display:none!important}
           .desktop-grid{grid-template-columns:1fr!important}
           .quick-actions{grid-template-columns:repeat(2,1fr)!important}
-          .mobile-topbar{display:flex!important}
-          .dash-content{padding-top:72px!important;padding-bottom:90px!important;padding-left:16px!important;padding-right:16px!important}
-        }
-        @media(min-width:769px){
-          .mobile-topbar{display:none!important}
+          .dash-content{padding-top:16px!important;padding-bottom:90px!important;padding-left:16px!important;padding-right:16px!important}
         }
         [data-theme="light"] .zp-dash-topbar {
           background: rgba(242,244,250,0.95) !important;
@@ -683,18 +688,6 @@ export default function DashboardPage() {
           border-right-color: rgba(0,0,0,0.08) !important;
         }
       `}</style>
-
-      {/* Mobile top bar */}
-      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 16px' }}>
-        <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>za<span style={{color:'var(--g1)'}}>pay</span></div>
-        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-          <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="ph:plus-bold" /></button>
-          <button onClick={toggleTheme} style={{ width:34, height:34, borderRadius:8, border:'1px solid var(--border)', background:'transparent', color:'var(--ink3)', fontSize:16, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-            <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
-          </button>
-          <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>
-        </div>
-      </div>
 
       <MobileBottomNav activeTab={mobileTab} onTabChange={tab => setMobileTab(tab as any)} />
     </div>
