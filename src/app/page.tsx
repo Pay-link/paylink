@@ -686,6 +686,7 @@ footer{
   .footer-bottom{flex-direction:column;align-items:flex-start;gap:6px}
 }
 .lp-hamburger{display:none}
+.lp-mobile-cta{display:none}
 .lp-overlay{display:none}
 .lp-drawer{display:none}
 @media(max-width:600px){
@@ -694,6 +695,10 @@ footer{
     width:38px;height:38px;border-radius:10px;
     border:1px solid var(--border);background:transparent;
     color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;
+  }
+  .lp-mobile-cta{
+    display:inline-flex;align-items:center;
+    padding:8px 16px;font-size:13px;flex-shrink:0;
   }
   .lp-overlay{
     display:block;position:fixed;inset:0;
@@ -828,55 +833,50 @@ footer{
             </span>
           )}
         </div>
-        {/* Hamburger — mobile only */}
-        <button
-          className="lp-hamburger"
-          onClick={() => setMenuOpen(o => !o)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        >
-          <Icon icon={menuOpen ? 'ph:x-bold' : 'ph:list-bold'} />
-        </button>
+        {/* Mobile right corner: hamburger for auth users, Create link CTA for guests */}
+        {authenticated ? (
+          <button
+            className="lp-hamburger"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <Icon icon={menuOpen ? 'ph:x-bold' : 'ph:list-bold'} />
+          </button>
+        ) : (
+          <button
+            onClick={() => router.push('/create')}
+            className="btn-pill btn-orange lp-mobile-cta"
+            style={{ cursor: 'pointer' }}
+          >
+            Create link
+          </button>
+        )}
       </nav>
 
-      {/* Mobile slide-down drawer */}
-      <div className={`lp-drawer${menuOpen ? ' open' : ''}`}>
-        {/* Section links */}
-        {[
-          { label: 'How it works', href: '#how', icon: 'ph:info-bold' },
-          { label: 'Fees', href: '#fees', icon: 'ph:percent-bold' },
-          { label: 'App', href: '#app', icon: 'ph:device-mobile-bold' },
-        ].map(item => (
-          <a key={item.label} href={item.href} className="lp-drawer-item" onClick={() => setMenuOpen(false)}>
-            <span className="lp-drawer-icon"><Icon icon={item.icon} /></span>
-            {item.label}
-          </a>
-        ))}
-        <div className="lp-drawer-divider" />
-        {/* Auth CTAs */}
-        {authenticated ? (
-          <>
-            <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/dashboard'); setMenuOpen(false) }}>
-              <span className="lp-drawer-icon"><Icon icon="ph:squares-four-bold" /></span>
-              Dashboard
-            </button>
-            <button className="lp-drawer-logout" onClick={() => { logout(); setMenuOpen(false) }}>
-              <span className="lp-drawer-icon"><Icon icon="ph:sign-out-bold" /></span>
-              Log out
-            </button>
-          </>
-        ) : (
-          <>
-            <button className="lp-drawer-cta lp-drawer-ghost" onClick={() => { login(); setMenuOpen(false) }}>
-              <span className="lp-drawer-icon"><Icon icon="ph:user-bold" /></span>
-              Sign in
-            </button>
-            <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/create'); setMenuOpen(false) }}>
-              <span className="lp-drawer-icon"><Icon icon="ph:link-bold" /></span>
-              Create link
-            </button>
-          </>
-        )}
-      </div>
+      {/* Mobile slide-down drawer — authenticated users only */}
+      {authenticated && (
+        <div className={`lp-drawer${menuOpen ? ' open' : ''}`}>
+          {[
+            { label: 'How it works', href: '#how', icon: 'ph:info-bold' },
+            { label: 'Fees', href: '#fees', icon: 'ph:percent-bold' },
+            { label: 'App', href: '#app', icon: 'ph:device-mobile-bold' },
+          ].map(item => (
+            <a key={item.label} href={item.href} className="lp-drawer-item" onClick={() => setMenuOpen(false)}>
+              <span className="lp-drawer-icon"><Icon icon={item.icon} /></span>
+              {item.label}
+            </a>
+          ))}
+          <div className="lp-drawer-divider" />
+          <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/dashboard'); setMenuOpen(false) }}>
+            <span className="lp-drawer-icon"><Icon icon="ph:squares-four-bold" /></span>
+            Dashboard
+          </button>
+          <button className="lp-drawer-logout" onClick={() => { logout(); setMenuOpen(false) }}>
+            <span className="lp-drawer-icon"><Icon icon="ph:sign-out-bold" /></span>
+            Log out
+          </button>
+        </div>
+      )}
 
       {/* â•â• HERO â•â• */}
       <section className="hero">
