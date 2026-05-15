@@ -677,19 +677,46 @@ footer{
   .sb-val{font-size:22px}
 }
 @media(max-width:600px){
+  /* Nav */
   .hero{padding:40px 5%}
   .nav-links{display:none}
   .nav-right{display:none!important}
   .btn-pill{padding:7px 14px!important;font-size:12px!important}
   nav{padding:0 16px!important;grid-template-columns:auto 1fr auto!important}
+
+  /* Hero CTAs — side by side, no wrapping */
   .hero-stats{gap:16px}
   .h-stat-div{display:none}
-  .footer-top{grid-template-columns:1fr}
-  .stats-bar{flex-direction:column;gap:0}
-  .sb-item{border-right:none;border-bottom:0.5px solid var(--border);width:100%;padding:16px 0}
-  .sb-item:last-child{border-bottom:none}
-  .hero-ctas{flex-wrap:nowrap;gap:8px}
-  .btn-hero-orange,.btn-hero-ghost{flex:1;padding:13px 16px!important;font-size:14px!important;justify-content:center}
+  .hero-ctas{flex-wrap:nowrap;gap:10px;width:100%}
+  .btn-hero-orange,.btn-hero-ghost{
+    flex:1;padding:14px 10px!important;font-size:14px!important;
+    justify-content:center;white-space:nowrap;min-width:0;
+  }
+  .btn-hero-orange iconify-icon,.btn-hero-ghost iconify-icon{display:none}
+
+  /* Stats — 2×2 grid instead of vertical stack */
+  .stats-bar{display:grid;grid-template-columns:1fr 1fr;flex-direction:unset}
+  .sb-item{
+    border-right:none;border-bottom:0.5px solid var(--border);
+    padding:20px 16px;width:auto;text-align:center;
+  }
+  .sb-item:nth-child(odd){border-right:0.5px solid var(--border)}
+  .sb-item:nth-last-child(-n+2){border-bottom:none}
+
+  /* Trust logos — 2-column grid instead of vertical list */
+  .trust-section{padding:36px 16px}
+  .trust-pills{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .trust-pill{min-width:0;padding:12px 12px}
+  .trust-pill-name{font-size:12px}
+
+  /* Footer — brand full-width, link cols in 2-col grid */
+  .footer-top{grid-template-columns:1fr 1fr}
+  .footer-top>div:first-child{
+    grid-column:1/-1;
+    border-bottom:0.5px solid var(--border);
+    padding-bottom:24px;margin-bottom:4px;
+  }
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:6px}
 }
 .lp-hamburger{display:none}
 .lp-overlay{display:none}
