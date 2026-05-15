@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { usePrivy } from '@privy-io/react-auth'
 import { Icon } from '@iconify/react'
+import { Nav } from '@/components/layout/Nav'
 
 interface Claim {
   id: string
@@ -87,19 +88,10 @@ export default function ClaimPage() {
     : 0
 
   return (
-    <div style={{ background: 'var(--page)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-      {/* Nav */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', zIndex: 100 }}>
-        <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-          za<span style={{ color: 'var(--g1)' }}>pay</span>
-        </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
-          Arc Testnet
-        </div>
-      </nav>
-
-      <div style={{ width: '100%', maxWidth: 460, marginTop: 60 }}>
+    <>
+      <Nav variant="minimal" />
+      <div style={{ background: 'var(--page)', minHeight: 'calc(100vh - 56px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <div style={{ width: '100%', maxWidth: 460 }}>
 
         {loading && (
           <div style={{ textAlign: 'center', color: 'var(--ink3)', fontSize: 15, padding: 40 }}>
@@ -202,5 +194,6 @@ export default function ClaimPage() {
 
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
+    </>
   )
 }

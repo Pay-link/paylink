@@ -481,6 +481,38 @@ export function Nav({ variant = 'app' }: NavProps) {
             </>
           )}
 
+          {variant === 'minimal' && (
+            <>
+              <a href="/" className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
+                <span className="nav-drawer-icon"><Icon icon="ph:house-bold" /></span>
+                Home
+              </a>
+              {authenticated ? (
+                <>
+                  <Link href="/dashboard" className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
+                    <span className="nav-drawer-icon"><Icon icon="ph:squares-four-bold" /></span>
+                    Dashboard
+                  </Link>
+                  <div className="nav-drawer-divider" />
+                  <button className="nav-drawer-logout" onClick={() => { logout(); setMenuOpen(false) }}>
+                    <span className="nav-drawer-icon" style={{ color: '#E57373', borderColor: 'rgba(229,115,115,.3)', background: 'rgba(229,115,115,.08)' }}>
+                      <Icon icon="ph:sign-out-bold" />
+                    </span>
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <Link href="/create" className="nav-drawer-item" onClick={() => setMenuOpen(false)}
+                  style={{ background: 'var(--g-soft)', border: '1px solid var(--border-g)' }}>
+                  <span className="nav-drawer-icon" style={{ background: 'var(--g1)', border: 'none', color: '#fff' }}>
+                    <Icon icon="ph:link-bold" />
+                  </span>
+                  <span style={{ color: 'var(--g1)', fontWeight: 700 }}>Create a payment link</span>
+                </Link>
+              )}
+            </>
+          )}
+
         </div>
       </div>
     </>

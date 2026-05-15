@@ -42,6 +42,19 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [notifOpen, setNotifOpen] = useState(false)
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('zp-theme') as 'dark' | 'light' | null
+    if (saved) setTheme(saved)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('zp-theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
 
   useEffect(() => {
     if (ready && !authenticated) router.push('/')
@@ -272,7 +285,7 @@ export default function DashboardPage() {
       <div className="desktop-main" style={{ flex: 1, marginLeft: sidebarOpen ? 240 : 0, minWidth: 0, transition: 'margin-left .2s ease' }}>
 
         {/* Top bar */}
-        <div className="desktop-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
+        <div className="desktop-topbar zp-dash-topbar" style={{ position: 'sticky', top: 0, zIndex: 40, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {!sidebarOpen && (
               <button onClick={() => setSidebarOpen(true)} style={{ width: 34, height: 34, borderRadius: '50%', border: '1px solid var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--ink3)', flexShrink: 0 }}>
@@ -323,6 +336,9 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+            <button onClick={toggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 16, color: 'var(--ink3)', flexShrink: 0, transition: 'all .15s' }}>
+              <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+            </button>
             <button onClick={logout} style={{ padding: '7px 16px', borderRadius: 100, border: '1px solid var(--border)', color: 'var(--ink3)', fontSize: 13, fontWeight: 500, cursor: 'pointer', background: 'transparent', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}>Log out</button>
           </div>
         </div>
@@ -658,15 +674,25 @@ export default function DashboardPage() {
         @media(min-width:769px){
           .mobile-topbar{display:none!important}
         }
+        [data-theme="light"] .zp-dash-topbar {
+          background: rgba(242,244,250,0.95) !important;
+          border-bottom-color: rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] .desktop-sidebar {
+          background: var(--white) !important;
+          border-right-color: rgba(0,0,0,0.08) !important;
+        }
       `}</style>
 
       {/* Mobile top bar */}
-      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
+      <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 16px' }}>
         <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>za<span style={{color:'var(--g1)'}}>pay</span></div>
-        <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
           <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="ph:plus-bold" /></button>
+          <button onClick={toggleTheme} style={{ width:34, height:34, borderRadius:8, border:'1px solid var(--border)', background:'transparent', color:'var(--ink3)', fontSize:16, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+          </button>
           <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>
-          <button onClick={logout} style={{ padding:'6px 14px', borderRadius:100, border:'1px solid var(--border)', color:'var(--ink3)', fontSize:12, fontWeight:500, cursor:'pointer', background:'transparent', fontFamily:'var(--font)', whiteSpace:'nowrap' }}>Log out</button>
         </div>
       </div>
 
