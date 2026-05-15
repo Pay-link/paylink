@@ -338,11 +338,11 @@ export default function CreatePage() {
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: 1 }} onClick={() => router.push('/dashboard')}>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: '1 1 140px', minWidth: 0, whiteSpace: 'nowrap', fontSize: 14, padding: '13px 16px' }} onClick={() => router.push('/dashboard')}>
                       <Icon icon="ph:squares-four-bold" /> Go to dashboard
                     </button>
-                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: 1, background: 'var(--page)', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
+                    <button style={{ ...s.btn, marginTop: 0, width: 'auto', flex: '1 1 120px', minWidth: 0, whiteSpace: 'nowrap', fontSize: 14, padding: '13px 16px', background: 'var(--page)', color: 'var(--ink2)', border: '1.5px solid var(--border)', boxShadow: 'none' }}
                       onClick={() => { setStep(2); setAmountStr('0'); setNote(''); setGeneratedSlug('') }}>
                       <Icon icon="ph:plus-bold" /> Create another
                     </button>

@@ -244,6 +244,31 @@ export function Nav({ variant = 'app' }: NavProps) {
         @media(min-width: 769px) {
           .nav-overlay { display: none !important; }
         }
+        /* Light theme overrides for nav */
+        [data-theme="light"] .zp-nav {
+          background: rgba(242,244,250,0.95) !important;
+          border-bottom-color: rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] .nav-tab { color: var(--ink3); }
+        [data-theme="light"] .nav-tab:hover { color: var(--ink); background: rgba(0,0,0,0.05); }
+        [data-theme="light"] .nav-tab.active { color: var(--ink); background: rgba(0,0,0,0.07); }
+        [data-theme="light"] .nav-arc-badge { color: var(--ink3); }
+        [data-theme="light"] .nav-logout { color: var(--ink3); border-color: var(--border); }
+        [data-theme="light"] .nav-logout:hover { color: var(--ink); }
+        [data-theme="light"] .nav-theme-btn { color: var(--ink3); border-color: var(--border); }
+        [data-theme="light"] .nav-hamburger { color: var(--ink); border-color: var(--border); }
+        [data-theme="light"] .nav-drawer {
+          background: rgba(242,244,250,0.98);
+          border-bottom-color: rgba(0,0,0,0.08);
+        }
+        [data-theme="light"] .nav-drawer-item { color: var(--ink3); }
+        [data-theme="light"] .nav-drawer-item:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+        [data-theme="light"] .nav-drawer-item.active { background: var(--g-soft); color: var(--g1); }
+        [data-theme="light"] .nav-drawer-icon { background: var(--page2); border-color: var(--border); color: var(--ink3); }
+        [data-theme="light"] .nav-drawer-section-lbl { color: var(--ink4); }
+        [data-theme="light"] .nav-drawer-divider { background: var(--border); }
+        [data-theme="light"] .nav-drawer-badge { color: var(--g1); background: var(--g-soft); border-color: var(--border-g); }
+        [data-theme="light"] .nav-overlay { background: rgba(0,0,0,0.3); }
       `}</style>
 
       {/* Backdrop overlay */}
@@ -253,7 +278,7 @@ export function Nav({ variant = 'app' }: NavProps) {
       />
 
       <div ref={menuRef}>
-        <nav style={{
+        <nav className="zp-nav" style={{
           position: 'sticky',
           top: hidden ? '-80px' : '0',
           zIndex: 100,
@@ -265,7 +290,7 @@ export function Nav({ variant = 'app' }: NavProps) {
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid var(--border)',
-          transition: 'top 0.3s ease',
+          transition: 'top 0.3s ease, background 0.25s ease',
           gap: 0,
         }}>
 

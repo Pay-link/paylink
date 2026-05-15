@@ -697,8 +697,9 @@ footer{
     color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;
   }
   .lp-mobile-cta{
-    display:inline-flex;align-items:center;
-    padding:8px 16px;font-size:13px;flex-shrink:0;
+    display:inline-flex!important;align-items:center;justify-content:center;
+    padding:7px 14px!important;font-size:12px!important;
+    flex-shrink:0;white-space:nowrap;
   }
   .lp-overlay{
     display:block;position:fixed;inset:0;
