@@ -1,13 +1,25 @@
 'use client'
 
 import { useState, useEffect, useRef, Suspense } from 'react'
-import { usePrivy } from '@privy-io/react-auth'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
+import { createWalletClient, custom, parseUnits } from 'viem'
+
+const usdcAddress = '0x3600000000000000000000000000000000000000' as const
+const usdcTransferAbi = [
+  {
+    type: 'function', name: 'transfer',
+    inputs: [{ name: 'to', type: 'address' }, { name: 'value', type: 'uint256' }],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+] as const
 
 function VerifyContent() {
   const { authenticated, login, ready, user } = usePrivy()
+  const { wallets } = useWallets()
   const router = useRouter()
   const params = useSearchParams()
   const flow = params.get('flow') || 'pay'
@@ -21,20 +33,97 @@ function VerifyContent() {
   const [canResend, setCanResend] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const buildSuccessUrl = async (userId: string, displayName: string, userEmail: string | null) => {
-    if (!userId) return '/dashboard'
-    const base = new URLSearchParams({ flow, amount, to, contact, note })
+  // Execute the send: on-chain transfer for registered recipients, escrow for unregistered
+  const handleConfirmSend = async () => {
+    if (!user?.id) return
+    setSending(true)
+    setSendError('')
 
-    if (flow === 'claim') {
-      // Recipient NOT registered — deduct balance first, then create the escrow claim record
-      try {
+    try {
+      const userEmail = user.email?.address || null
+      const userName = userEmail?.split('@')[0] || user.phone?.number || 'Someone'
+      const base = new URLSearchParams({ flow, amount, to, contact, note })
+
+      if (flow === 'send') {
+        // ── Registered recipient: real on-chain USDC transfer ──────────────────
+
+        // 1. Look up recipient's wallet address
+        const lookupRes = await fetch(`/api/users/lookup?contact=${encodeURIComponent(contact || to)}`)
+        const lookupJson = await lookupRes.json()
+
+        if (!lookupJson.registered) {
+          setSendError('Recipient not found. Please check the email or phone number.')
+          setSending(false)
+          return
+        }
+        if (!lookupJson.wallet_address) {
+          setSendError("Recipient hasn't set up their wallet yet. Ask them to log into ZaPay first.")
+          setSending(false)
+          return
+        }
+
+        // 2. Get sender's embedded Privy wallet
+        const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
+        if (!activeWallet) {
+          setSendError('Wallet not found. Please refresh and try again.')
+          setSending(false)
+          return
+        }
+
+        // 3. Switch to Arc Testnet
+        const provider = await activeWallet.getEthereumProvider()
+        try {
+          await provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x4CEF52' }], // Arc Testnet: 5042002
+          })
+        } catch (_) { /* already on correct chain */ }
+
+        // 4. Execute on-chain USDC transfer
+        const walletClient = createWalletClient({
+          account: activeWallet.address as `0x${string}`,
+          transport: custom(provider),
+        })
+        const amountRaw = parseUnits(amount, 6) // USDC has 6 decimals
+        const txHash = await walletClient.writeContract({
+          address: usdcAddress,
+          abi: usdcTransferAbi,
+          functionName: 'transfer',
+          args: [lookupJson.wallet_address as `0x${string}`, amountRaw],
+          chain: null, // skip viem chain assertion — Privy handles chain ID
+        })
+
+        // 5. Record in DB
+        await fetch('/api/transactions/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sender_id: user.id,
+            sender_email: userEmail,
+            sender_wallet: activeWallet.address,
+            recipient_id: lookupJson.id,
+            recipient_wallet: lookupJson.wallet_address,
+            amount: parseFloat(amount),
+            note,
+            tx_hash: txHash,
+            payment_method: 'wallet',
+          }),
+        })
+
+        // 6. Go to success
+        router.push(`/success?${base.toString()}`)
+
+      } else {
+        // ── Unregistered recipient: escrow / pending claim ─────────────────────
         const sendRes = await fetch('/api/transactions/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            senderId: userId,
+            senderId: user.id,
             senderEmail: userEmail,
             recipientContact: contact || to,
             amount: parseFloat(amount),
@@ -43,18 +132,20 @@ function VerifyContent() {
         })
         const sendJson = await sendRes.json()
         if (!sendRes.ok) {
-          if (sendJson.error === 'Insufficient balance') {
-            base.set('error', `Insufficient balance. You have $${sendJson.balance?.toFixed(2) || '0.00'} USDC.`)
-            return `/success?${base.toString()}`
-          }
+          setSendError(sendJson.error === 'Insufficient balance'
+            ? `Insufficient balance. You have $${sendJson.balance?.toFixed(2) || '0.00'} USDC.`
+            : sendJson.error || 'Failed to process payment. Please try again.')
+          setSending(false)
+          return
         }
-        // Only create the claim record after balance is successfully deducted
+
+        // Create the claim record for the recipient to redeem
         const claimRes = await fetch('/api/claim', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            senderId: userId,
-            senderName: displayName,
+            senderId: user.id,
+            senderName: userName,
             senderEmail: userEmail,
             recipientEmail: contact || to,
             amount: parseFloat(amount),
@@ -63,33 +154,15 @@ function VerifyContent() {
         })
         const claimJson = await claimRes.json()
         if (claimJson.token) base.set('claim_token', claimJson.token)
-      } catch (err) {
-        console.error('Failed to create claim:', err)
-      }
-    } else {
-      // Recipient IS registered — direct transfer
-      try {
-        const res = await fetch('/api/transactions/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderId: userId,
-            senderEmail: userEmail,
-            recipientContact: contact || to,
-            amount: parseFloat(amount),
-            note,
-          }),
-        })
-        const json = await res.json()
-        if (!res.ok && json.error === 'Insufficient balance') {
-          base.set('error', `Insufficient balance. You have $${json.balance?.toFixed(2) || '0.00'} USDC.`)
-        }
-      } catch (err) {
-        console.error('Failed to execute send:', err)
-      }
-    }
 
-    return `/success?${base.toString()}`
+        router.push(`/success?${base.toString()}`)
+      }
+    } catch (err: any) {
+      console.error('Send error:', err)
+      setSendError(err.message || 'Transaction failed. Please try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   useEffect(() => {
@@ -108,13 +181,12 @@ function VerifyContent() {
     return () => clearInterval(interval)
   }, [ready, authenticated])
 
-  // After login completes via OTP
+  // After OTP login completes, trigger the send
   useEffect(() => {
     if (ready && authenticated && verifying && user) {
-      const userEmail = user.email?.address || null
-      const userName = userEmail?.split('@')[0] || user.phone?.number || 'Someone'
-      buildSuccessUrl(user.id, userName, userEmail).then(url => router.push(url))
+      handleConfirmSend()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, authenticated, verifying, user])
 
   const handleVerify = async () => {
@@ -174,19 +246,21 @@ function VerifyContent() {
                   <span style={{ fontSize: 14, fontWeight: 500, color: (row as any).green ? 'var(--g1)' : 'var(--ink)' }}>{row.val}</span>
                 </div>
               ))}
+              {sendError && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'rgba(229,57,53,.08)', border: '1.5px solid rgba(229,57,53,.25)', borderRadius: 14, padding: '14px 16px', marginTop: 16, marginBottom: 4 }}>
+                  <Icon icon="ph:warning-circle-bold" style={{ fontSize: 18, color: '#E53935', flexShrink: 0, marginTop: 1 }} />
+                  <div style={{ fontSize: 13, color: '#E53935', lineHeight: 1.5 }}>{sendError}</div>
+                </div>
+              )}
               <button
-                onClick={async () => {
-                  if (!user?.id) return
-                  const userEmail = user.email?.address || null
-                  const userName = userEmail?.split('@')[0] || user.phone?.number || 'Someone'
-                  const url = await buildSuccessUrl(user.id, userName, userEmail)
-                  router.push(url)
-                }}
-                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(37,92,180,.28)' }}>
-                <Icon icon="ph:paper-plane-right-bold" /> Confirm & send{amount ? ` $${amount}` : ''}
+                onClick={handleConfirmSend}
+                disabled={sending}
+                style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(37,92,180,.28)' }}>
+                <Icon icon={sending ? 'ph:spinner-bold' : 'ph:paper-plane-right-bold'} style={sending ? { animation: 'spin 1s linear infinite' } : {}} />
+                {sending ? 'Processing…' : `Confirm & send${amount ? ` $${amount}` : ''}`}
               </button>
-              <button onClick={() => router.back()}
-                style={{ width: '100%', background: 'transparent', color: 'var(--ink3)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '13px', fontFamily: 'var(--font)', fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => router.back()} disabled={sending}
+                style={{ width: '100%', background: 'transparent', color: 'var(--ink3)', border: '1.5px solid var(--border)', borderRadius: 100, padding: '13px', fontFamily: 'var(--font)', fontSize: 14, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.5 : 1 }}>
                 Cancel
               </button>
             </div>
@@ -287,6 +361,7 @@ function VerifyContent() {
         </div>
       </div>
       <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
         @media(max-width:768px){
           .verify-card{padding:20px 18px!important}
           .verify-wrap{padding:24px 16px 90px!important}

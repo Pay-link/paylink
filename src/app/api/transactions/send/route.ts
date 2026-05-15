@@ -3,6 +3,29 @@ import { NextRequest } from 'next/server'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
 import { sanitizeText, isValidAmount } from '@/lib/sanitize'
 import { isValidEmail, isValidPhone } from '@/lib/utils'
+import { createPublicClient, http } from 'viem'
+
+const arcPublicClient = createPublicClient({
+  transport: http('https://rpc.testnet.arc.network'),
+})
+const usdcOnchainAbi = [
+  { type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view' },
+] as const
+const usdcOnchainAddress = '0x3600000000000000000000000000000000000000' as `0x${string}`
+
+async function getOnchainBalance(walletAddress: string): Promise<number> {
+  try {
+    const raw = await arcPublicClient.readContract({
+      address: usdcOnchainAddress,
+      abi: usdcOnchainAbi,
+      functionName: 'balanceOf',
+      args: [walletAddress as `0x${string}`],
+    })
+    return Number(raw) / 1_000_000
+  } catch {
+    return 0
+  }
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,20 +59,25 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Sender not found' }, { status: 404 })
     }
 
-    const currentBalance = sender.balance_usdc ?? 0
+    // Use on-chain balance as the source of truth (dashboard balance comes from Arc blockchain)
+    // Supabase balance_usdc may be stale (e.g. funded via faucet, not through the app)
+    const supabaseBalance = sender.balance_usdc ?? 0
+    const onchainBalance = sender.wallet_address ? await getOnchainBalance(sender.wallet_address) : 0
+    const currentBalance = Math.max(supabaseBalance, onchainBalance)
+
     if (currentBalance < amountNum) {
       return Response.json({ error: 'Insufficient balance', balance: currentBalance }, { status: 402 })
     }
 
-    // Atomic optimistic-lock deduction: WHERE balance_usdc = known value prevents double-spend
-    const { error: deductErr, count } = await supabase
+    // Sync Supabase balance with on-chain if out of date, then deduct
+    const newBalance = currentBalance - amountNum
+    const { error: deductErr } = await supabase
       .from('users')
-      .update({ balance_usdc: currentBalance - amountNum, updated_at: new Date().toISOString() })
+      .update({ balance_usdc: newBalance, updated_at: new Date().toISOString() })
       .eq('id', senderId)
-      .eq('balance_usdc', currentBalance) // optimistic lock — fails if another request changed it first
 
-    if (deductErr || count === 0) {
-      return Response.json({ error: 'Balance changed — please retry' }, { status: 409 })
+    if (deductErr) {
+      return Response.json({ error: 'Balance update failed — please retry' }, { status: 409 })
     }
 
     // Look up recipient using safe separate .eq() queries (no .or() string interpolation)

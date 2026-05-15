@@ -25,14 +25,19 @@ export async function GET(req: NextRequest) {
   try {
     // Use separate .eq() calls to avoid interpolating user input into .or() string
     const [emailRes, phoneRes] = await Promise.all([
-      supabase.from('users').select('id, display_name').eq('email', contact).maybeSingle(),
-      supabase.from('users').select('id, display_name').eq('phone', contact).maybeSingle(),
+      supabase.from('users').select('id, display_name, wallet_address').eq('email', contact).maybeSingle(),
+      supabase.from('users').select('id, display_name, wallet_address').eq('phone', contact).maybeSingle(),
     ])
 
     const found = emailRes.data || phoneRes.data
-    return Response.json({ registered: !!found, name: found?.display_name || null })
+    return Response.json({
+      registered: !!found,
+      name: found?.display_name || null,
+      id: found?.id || null,
+      wallet_address: found?.wallet_address || null,
+    })
   } catch (err) {
     console.error('User lookup error:', err)
-    return Response.json({ registered: false, name: null })
+    return Response.json({ registered: false, name: null, id: null, wallet_address: null })
   }
 }
