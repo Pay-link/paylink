@@ -42,7 +42,14 @@ export default function HomePage() {
   const { authenticated, login, logout } = usePrivy()
   const router = useRouter()
   const [liveStats, setLiveStats] = useState({ links: 0, txs: 0 })
+  const [menuOpen, setMenuOpen] = useState(false)
   const didMountRef = useRef(false)
+
+  // Close menu on outside tap & scroll lock
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -672,6 +679,7 @@ footer{
 @media(max-width:600px){
   .hero{padding:40px 5%}
   .nav-links{display:none}
+  .nav-right{display:none!important}
   .btn-pill{padding:7px 14px!important;font-size:12px!important}
   nav{padding:0 16px!important;grid-template-columns:auto 1fr auto!important}
   .hero-stats{gap:16px}
@@ -683,7 +691,75 @@ footer{
   .hero-ctas{flex-wrap:nowrap;gap:8px}
   .btn-hero-orange,.btn-hero-ghost{flex:1;padding:13px 16px!important;font-size:14px!important;justify-content:center}
 }
+.lp-hamburger{display:none}
+.lp-overlay{display:none}
+.lp-drawer{display:none}
+@media(max-width:600px){
+  .lp-hamburger{
+    display:flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;
+    border:1px solid var(--border);background:transparent;
+    color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;
+  }
+  .lp-overlay{
+    display:block;position:fixed;inset:0;
+    background:rgba(0,0,0,0.5);z-index:199;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .lp-overlay.open{opacity:1;pointer-events:all}
+  .lp-drawer{
+    display:block;position:fixed;
+    top:64px;left:0;right:0;
+    background:rgba(9,9,14,0.98);
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--border);
+    z-index:200;padding:12px 16px 20px;
+    transform:translateY(-110%);opacity:0;
+    transition:transform 0.25s cubic-bezier(.4,0,.2,1),opacity 0.2s ease;
+    pointer-events:none;
+  }
+  .lp-drawer.open{transform:translateY(0);opacity:1;pointer-events:all}
+  .lp-drawer-item{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;border-radius:14px;
+    text-decoration:none;color:rgba(255,255,255,0.6);
+    font-size:15px;font-weight:500;
+    transition:background .15s,color .15s;margin-bottom:4px;
+  }
+  .lp-drawer-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+  .lp-drawer-icon{
+    width:34px;height:34px;border-radius:10px;
+    background:rgba(255,255,255,0.06);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;color:rgba(255,255,255,0.5);flex-shrink:0;
+  }
+  .lp-drawer-divider{height:1px;background:var(--border);margin:8px 0 12px}
+  .lp-drawer-cta{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;border-radius:14px;
+    font-size:15px;font-weight:600;cursor:pointer;
+    border:none;font-family:var(--font-body);width:100%;
+    text-align:left;transition:background .15s;margin-bottom:4px;
+  }
+  .lp-drawer-primary{background:var(--o1);color:#fff}
+  .lp-drawer-primary:hover{background:var(--o2)}
+  .lp-drawer-primary .lp-drawer-icon{background:rgba(255,255,255,0.2);border-color:transparent;color:#fff}
+  .lp-drawer-ghost{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);border:none}
+  .lp-drawer-ghost:hover{background:rgba(255,255,255,0.1);color:#fff}
+  .lp-drawer-logout{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;border-radius:14px;
+    color:#E57373;font-size:15px;font-weight:500;cursor:pointer;
+    background:transparent;border:none;font-family:var(--font-body);
+    width:100%;text-align:left;transition:background .15s;margin-top:4px;
+  }
+  .lp-drawer-logout:hover{background:rgba(229,115,115,0.08)}
+  .lp-drawer-logout .lp-drawer-icon{color:#E57373;border-color:rgba(229,115,115,.3);background:rgba(229,115,115,.08)}
+}
 ` }} />
+
+      {/* NAV overlay (mobile) */}
+      <div className={`lp-overlay${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} />
 
       {/* NAV */}
       <nav>
@@ -706,7 +782,55 @@ footer{
             </span>
           )}
         </div>
+        {/* Hamburger — mobile only */}
+        <button
+          className="lp-hamburger"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        >
+          <Icon icon={menuOpen ? 'ph:x-bold' : 'ph:list-bold'} />
+        </button>
       </nav>
+
+      {/* Mobile slide-down drawer */}
+      <div className={`lp-drawer${menuOpen ? ' open' : ''}`}>
+        {/* Section links */}
+        {[
+          { label: 'How it works', href: '#how', icon: 'ph:info-bold' },
+          { label: 'Fees', href: '#fees', icon: 'ph:percent-bold' },
+          { label: 'App', href: '#app', icon: 'ph:device-mobile-bold' },
+        ].map(item => (
+          <a key={item.label} href={item.href} className="lp-drawer-item" onClick={() => setMenuOpen(false)}>
+            <span className="lp-drawer-icon"><Icon icon={item.icon} /></span>
+            {item.label}
+          </a>
+        ))}
+        <div className="lp-drawer-divider" />
+        {/* Auth CTAs */}
+        {authenticated ? (
+          <>
+            <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/dashboard'); setMenuOpen(false) }}>
+              <span className="lp-drawer-icon"><Icon icon="ph:squares-four-bold" /></span>
+              Dashboard
+            </button>
+            <button className="lp-drawer-logout" onClick={() => { logout(); setMenuOpen(false) }}>
+              <span className="lp-drawer-icon"><Icon icon="ph:sign-out-bold" /></span>
+              Log out
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="lp-drawer-cta lp-drawer-ghost" onClick={() => { login(); setMenuOpen(false) }}>
+              <span className="lp-drawer-icon"><Icon icon="ph:user-bold" /></span>
+              Sign in
+            </button>
+            <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/create'); setMenuOpen(false) }}>
+              <span className="lp-drawer-icon"><Icon icon="ph:link-bold" /></span>
+              Create link
+            </button>
+          </>
+        )}
+      </div>
 
       {/* â•â• HERO â•â• */}
       <section className="hero">
