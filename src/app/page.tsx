@@ -695,11 +695,13 @@ footer{
     width:38px;height:38px;border-radius:10px;
     border:1px solid var(--border);background:transparent;
     color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;
+    grid-column:3;justify-self:end;
   }
   .lp-mobile-cta{
     display:inline-flex!important;align-items:center;justify-content:center;
     padding:7px 14px!important;font-size:12px!important;
     flex-shrink:0;white-space:nowrap;
+    grid-column:3;justify-self:end;
   }
   .lp-overlay{
     display:block;position:fixed;inset:0;
