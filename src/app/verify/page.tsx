@@ -25,7 +25,9 @@ function VerifyContent() {
 
   const buildSuccessUrl = async (userId: string, displayName: string, userEmail: string | null) => {
     const base = new URLSearchParams({ flow, amount, to, contact, note })
+
     if (flow === 'claim') {
+      // Recipient is NOT registered — hold funds in escrow and create claim link
       try {
         const res = await fetch('/api/claim', {
           method: 'POST',
@@ -41,10 +43,46 @@ function VerifyContent() {
         })
         const json = await res.json()
         if (json.token) base.set('claim_token', json.token)
+        // Deduct sender balance even for escrow holds
+        await fetch('/api/transactions/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId: userId,
+            senderEmail: userEmail,
+            recipientContact: contact || to,
+            amount: parseFloat(amount),
+            note: note || 'Escrow hold',
+          }),
+        })
       } catch (err) {
         console.error('Failed to create claim:', err)
       }
+    } else {
+      // Recipient IS registered — direct transfer, deduct sender balance immediately
+      try {
+        const res = await fetch('/api/transactions/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId: userId,
+            senderEmail: userEmail,
+            recipientContact: contact || to,
+            amount: parseFloat(amount),
+            note,
+          }),
+        })
+        const json = await res.json()
+        if (!res.ok) {
+          if (json.error === 'Insufficient balance') {
+            base.set('error', `Insufficient balance. You have $${json.balance?.toFixed(2) || '0.00'} USDC.`)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to execute send:', err)
+      }
     }
+
     return `/success?${base.toString()}`
   }
 
@@ -95,7 +133,7 @@ function VerifyContent() {
       <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
         <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
           <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-            pay<span style={{ color: 'var(--g1)' }}>link</span>
+            za<span style={{ color: 'var(--g1)' }}>pay</span>
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
@@ -155,7 +193,7 @@ function VerifyContent() {
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
       <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
         <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-          pay<span style={{ color: 'var(--g1)' }}>link</span>
+          za<span style={{ color: 'var(--g1)' }}>pay</span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />

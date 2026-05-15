@@ -130,6 +130,23 @@ export async function PATCH(req: NextRequest) {
       return Response.json({ error: 'Claim unavailable' }, { status: 409 })
     }
 
+    // Credit the claimer's balance
+    const { data: claimer } = await supabase
+      .from('users')
+      .select('id, balance_usdc')
+      .eq('id', claimedBy)
+      .single()
+
+    if (claimer) {
+      await supabase
+        .from('users')
+        .update({
+          balance_usdc: (claimer.balance_usdc || 0) + data.amount,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', claimedBy)
+    }
+
     return Response.json({ claim: data })
   } catch (err: any) {
     return Response.json({ error: 'Failed to process claim' }, { status: 500 })

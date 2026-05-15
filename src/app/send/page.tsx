@@ -171,13 +171,11 @@ export default function SendPage() {
                         onClick={async () => {
                           setRecipientChecking(true)
                           try {
-                            const { supabase } = await import('@/lib/supabase')
-                            const { data } = await supabase
-                              .from('users')
-                              .select('id')
-                              .or(`email.eq.${recipient.contact},phone.eq.${recipient.contact}`)
-                              .maybeSingle()
-                            if (data) {
+                            const res = await fetch(`/api/users/lookup?contact=${encodeURIComponent(recipient.contact)}`)
+                            const json = await res.json()
+                            if (json.registered) {
+                              // Update display name if the server knows it
+                              if (json.name) setRecipient(r => ({ ...r, name: json.name, initials: json.name.slice(0,2).toUpperCase() }))
                               nextStep()
                             } else {
                               setRecipientUnregistered(true)

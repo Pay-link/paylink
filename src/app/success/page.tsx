@@ -7,7 +7,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { formatDateTime } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'
 
 function SuccessContent() {
   const router = useRouter()
