@@ -23,7 +23,7 @@ interface LocalCurrency {
   loading: boolean
 }
 
-const CACHE_KEY = 'paylink_currency_v1'
+const CACHE_KEY = 'zapay_currency_v1'
 const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
 
 export function useLocalCurrency(): LocalCurrency {

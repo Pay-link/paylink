@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
-    if (ready && !authenticated) router.push('/login')
+    if (ready && !authenticated) router.push('/')
   }, [ready, authenticated])
 
   useEffect(() => {
@@ -64,8 +64,11 @@ export default function DashboardPage() {
         supabase.from('payment_links').select('*').eq('owner_id', userId).order('created_at', { ascending: false }).limit(10),
         supabase.from('transactions').select('*').or(`sender_id.eq.${userId},recipient_id.eq.${userId}`).order('created_at', { ascending: false }).limit(10),
       ])
-      if (linksData.data?.length) setLinks(linksData.data)
-      if (txData.data?.length) setTransactions(txData.data)
+      if (linksData.error) console.error('Links fetch error:', linksData.error)
+      else if (linksData.data?.length) setLinks(linksData.data)
+
+      if (txData.error) console.error('Transactions fetch error:', txData.error)
+      else if (txData.data?.length) setTransactions(txData.data)
     } catch (err) {
       console.error('Dashboard data error:', err)
     } finally {
@@ -124,14 +127,18 @@ export default function DashboardPage() {
         filter: `recipient_id=eq.${userId}`,
       }, (payload) => {
         fetchBalance()
-        setTransactions(prev => [payload.new as any, ...prev])
+        setTransactions(prev =>
+          prev.some(t => t.id === (payload.new as any).id) ? prev : [payload.new as any, ...prev]
+        )
       })
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'transactions',
         filter: `sender_id=eq.${userId}`,
       }, (payload) => {
         fetchBalance()
-        setTransactions(prev => [payload.new as any, ...prev])
+        setTransactions(prev =>
+          prev.some(t => t.id === (payload.new as any).id) ? prev : [payload.new as any, ...prev]
+        )
       })
       .subscribe()
 
@@ -216,7 +223,7 @@ export default function DashboardPage() {
         <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 208 }}>
           <div>
             <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
-              pay<span style={{ color: 'var(--g1)' }}>link</span>
+              za<span style={{ color: 'var(--g1)' }}>pay</span>
             </Link>
             <div style={{ fontSize: 12, color: 'var(--ink4)', marginTop: 3 }}>Your global wallet</div>
           </div>
@@ -485,7 +492,7 @@ export default function DashboardPage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: link.status === 'expired' ? 'var(--ink3)' : 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{link.note || 'Payment link'}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
-                        zapay-1.netlify.app/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
+                        {(process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz').replace(/^https?:\/\//, '')}/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -655,7 +662,7 @@ export default function DashboardPage() {
 
       {/* Mobile top bar */}
       <div className="mobile-topbar" style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:56, background:'var(--white)', borderBottom:'1px solid var(--border)', alignItems:'center', justifyContent:'space-between', padding:'0 20px' }}>
-        <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>pay<span style={{color:'var(--g1)'}}>link</span></div>
+        <div style={{ fontSize:20, fontWeight:700, color:'var(--ink)', letterSpacing:'-.04em' }}>za<span style={{color:'var(--g1)'}}>pay</span></div>
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
           <button onClick={() => setTopUpOpen(true)} style={{ width:34, height:34, borderRadius:'50%', background:'var(--g-soft)', border:'none', color:'var(--g1)', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}><Icon icon="ph:plus-bold" /></button>
           <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--g1)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700 }}>{displayName.slice(0,2).toUpperCase()}</div>

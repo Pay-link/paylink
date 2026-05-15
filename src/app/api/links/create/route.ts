@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
     }
 
     const parsedAmount = parseFloat(String(amount))
-    // Allow 0 for open links, but validate the format
-    if (!isValidAmount(amount) || parsedAmount < 0) {
+    // Allow 0 for open links (isValidAmount in sanitize.ts allows >= 0), but reject negatives
+    if (isNaN(parsedAmount) || parsedAmount < 0 || parsedAmount > 1_000_000) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Generate unique slug
     let slug = generateLinkSlug()
     for (let i = 0; i < 5; i++) {
-      const { data: existing } = await supabase.from('payment_links').select('id').eq('slug', slug).single()
+      const { data: existing } = await supabase.from('payment_links').select('id').eq('slug', slug).maybeSingle()
       if (!existing) break
       slug = generateLinkSlug()
     }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create link' }, { status: 500 })
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'
     return NextResponse.json({ data: { link, url: `${appUrl}/pay/${slug}` }, error: null })
   } catch (err) {
     console.error('Create link error:', err)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { usePrivy } from '@privy-io/react-auth'
 import { Icon } from '@iconify/react'
@@ -27,9 +27,10 @@ export default function ClaimPage() {
   const [claiming, setClaiming] = useState(false)
   const [claimed, setClaimed] = useState(false)
   const [error, setError] = useState('')
+  const claimInProgress = useRef(false)
 
   useEffect(() => {
-    fetch(`/api/claim?token=${token}`)
+    fetch(`/api/claim?token=${encodeURIComponent(String(token))}`)
       .then(r => r.json())
       .then(({ claim, error }) => {
         if (error || !claim) setError('This claim link is invalid or has expired.')
@@ -39,36 +40,45 @@ export default function ClaimPage() {
       .finally(() => setLoading(false))
   }, [token])
 
-  // After login, auto-claim
+  // After login completes, auto-claim — guard against double-fire
   useEffect(() => {
-    if (ready && authenticated && user && claiming && claim) {
+    if (ready && authenticated && user && claiming && claim && !claimInProgress.current) {
+      claimInProgress.current = true
       completeClaim()
     }
-  }, [ready, authenticated, user, claiming])
+  }, [ready, authenticated, user, claiming, claim])
 
   const completeClaim = async () => {
+    if (!user?.id) { setClaiming(false); return }
     try {
       const res = await fetch('/api/claim', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, claimedBy: user!.id }),
+        body: JSON.stringify({ token, claimedBy: user.id }),
       })
       const json = await res.json()
-      if (json.error) { setError(json.error); setClaiming(false); return }
+      if (json.error) {
+        setError(json.error === 'Already claimed' ? 'These funds have already been claimed.' : json.error)
+        setClaiming(false)
+        claimInProgress.current = false
+        return
+      }
       setClaimed(true)
     } catch {
-      setError('Something went wrong. Please contact support.')
+      setError('Something went wrong. Please try again.')
       setClaiming(false)
+      claimInProgress.current = false
     }
   }
 
-  const handleClaim = async () => {
+  const handleClaim = () => {
+    if (claimInProgress.current) return
     setClaiming(true)
     if (!authenticated) {
-      await login()
-      // completeClaim fires via useEffect after auth
+      login() // completeClaim fires via useEffect after auth completes
     } else {
-      await completeClaim()
+      claimInProgress.current = true
+      completeClaim()
     }
   }
 
@@ -81,7 +91,7 @@ export default function ClaimPage() {
       {/* Nav */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', zIndex: 100 }}>
         <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-          pay<span style={{ color: 'var(--g1)' }}>link</span>
+          za<span style={{ color: 'var(--g1)' }}>pay</span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink3)' }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />

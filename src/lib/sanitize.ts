@@ -3,7 +3,7 @@ export function sanitizeText(input: unknown, maxLength = 500): string {
   if (typeof input !== 'string') return ''
   return input
     .replace(/<[^>]*>/g, '')          // strip HTML tags
-    .replace(/[<>'"]/g, '')           // strip remaining dangerous chars
+    .replace(/[<>\0]/g, '')           // strip remaining dangerous chars (keep quotes — they're safe in JSON/DB)
     .trim()
     .slice(0, maxLength)
 }

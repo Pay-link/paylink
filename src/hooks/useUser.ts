@@ -36,14 +36,14 @@ export function useUser() {
       const walletAddress = embeddedWallet?.address || ''
       const email = user?.email?.address || null
       const phone = user?.phone?.number || null
-      const displayName = email?.split('@')[0] || phone || 'PayLink User'
+      const displayName = email?.split('@')[0] || phone || 'ZaPay User'
 
       // Check if user exists
       const { data: existing } = await supabase
         .from('users')
         .select('*')
         .eq('id', user!.id)
-        .single()
+        .maybeSingle()
 
       if (existing) {
         // Update wallet address if changed
@@ -85,7 +85,7 @@ export function useUser() {
   const walletAddress = wallets.find(w => w.walletClientType === 'privy')?.address || ''
   const email = user?.email?.address || null
   const phone = user?.phone?.number || null
-  const displayName = profile?.display_name || email?.split('@')[0] || phone || 'PayLink User'
+  const displayName = profile?.display_name || email?.split('@')[0] || phone || 'ZaPay User'
 
   return {
     profile,

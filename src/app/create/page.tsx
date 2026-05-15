@@ -13,7 +13,7 @@ type Step = 1 | 2 | 3 | 4
 
 export default function CreatePage() {
   const { authenticated, login, ready } = usePrivy()
-  const { walletAddress, email, phone, displayName, userId } = useUser()
+  const { walletAddress, email, phone, displayName, userId, profile } = useUser()
   const router = useRouter()
   const [step, setStep] = useState<Step>(1)
   const [linkType, setLinkType] = useState<'fixed'|'open'>('fixed')
@@ -25,8 +25,7 @@ export default function CreatePage() {
   const [creating, setCreating] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   
-  // Mock bank setup for now
-  const hasBankSetup = false
+  const hasBankSetup = profile?.bank_setup ?? false
 
   useEffect(() => {
     if (ready && !authenticated) login()
@@ -35,7 +34,7 @@ export default function CreatePage() {
   // Skip step 1 if already authenticated
   useEffect(() => {
     if (authenticated && step === 1) setStep(2)
-  }, [authenticated])
+  }, [authenticated, step])
 
   const amt = parseFloat(amountStr) || 0
 
@@ -85,7 +84,7 @@ export default function CreatePage() {
     }
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay-1.netlify.app'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'
   const linkUrl = `${appUrl}/pay/${generatedSlug}`
   const shareUrls = generatedSlug ? getShareUrls(linkUrl, amt, note) : null
 
@@ -361,7 +360,7 @@ export default function CreatePage() {
             <div style={{ background: 'var(--page)', borderRadius: 14, padding: 16, marginBottom: 16, border: '1.5px dashed var(--border)', textAlign: 'center' }}>
               <div style={{ fontSize: 11, color: 'var(--ink3)', fontWeight: 500, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 8 }}>Your ZaPay URL</div>
               <div style={{ fontSize: 12, color: generatedSlug ? 'var(--g1)' : 'var(--ink3)', fontFamily: 'monospace', wordBreak: 'break-all', fontWeight: generatedSlug ? 500 : 400 }}>
-                {generatedSlug ? `zapay-1.netlify.app/pay/${generatedSlug}` : 'zapay-1.netlify.app/pay/——————'}
+                {generatedSlug ? `${appUrl.replace(/^https?:\/\//, '')}/pay/${generatedSlug}` : `${appUrl.replace(/^https?:\/\//, '')}/pay/——————`}
               </div>
             </div>
             {[

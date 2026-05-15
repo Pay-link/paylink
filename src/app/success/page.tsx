@@ -20,7 +20,7 @@ function SuccessContent() {
   const note = params.get('note') || 'Payment'
   const claimToken = params.get('claim_token') || ''
   const claimUrl = claimToken ? `${APP_URL}/claim/${claimToken}` : ''
-  const txId = '#PL' + Date.now().toString().slice(-8)
+  const txId = '#ZP' + Date.now().toString().slice(-8)
   const [copied, setCopied] = useState(false)
 
   const copyClaimLink = () => {

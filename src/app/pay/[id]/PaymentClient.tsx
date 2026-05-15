@@ -180,8 +180,8 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
           sender_wallet: activeWallet.address,
           recipient_id: link.owner_id,
           recipient_wallet: link.owner_wallet,
-          amount: link.amount,
-          note: link.note,
+          amount: effectiveAmount, // use effectiveAmount so open links record the actual amount paid
+          note: isOpen ? openNote : link.note,
           tx_hash: realTxHash,
           payment_method: selectedMethod,
         }),
@@ -191,8 +191,8 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
     } catch (err: any) {
       console.error('Payment Error:', err)
       alert(err.message || 'Payment failed')
-      setState('email')
-      setStep('Step 2 of 2')
+      setState('method') // always return to method selection on failure
+      setStep('Step 1 of 2')
     }
   }
 
@@ -290,7 +290,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   {link.owner_name}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--ink3)' }}>
-                  {link.owner_email || `zapay-1.netlify.app/pay/${slug}`}
+                  {link.owner_email || `zapay.xyz/pay/${slug}`}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -304,7 +304,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20,
                   marginTop: 4,
                 }}>
-                  {link.amount.toFixed(2)} USDC · Arc
+                  {(link.amount ?? 0).toFixed(2)} USDC · Arc
                 </div>
               </div>
             </div>

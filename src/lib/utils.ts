@@ -11,12 +11,12 @@ export function generateLinkSlug(): string {
 }
 
 export function getLinkUrl(slug: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://paylink-1.netlify.app'
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'
   return `${base}/pay/${slug}`
 }
 
 export function getShortLinkUrl(slug: string): string {
-  const domain = (process.env.NEXT_PUBLIC_APP_URL || 'paylink-1.netlify.app').replace(/^https?:\/\//, '')
+  const domain = (process.env.NEXT_PUBLIC_APP_URL || 'zapay.xyz').replace(/^https?:\/\//, '')
   return `${domain}/pay/${slug}`
 }
 
@@ -123,6 +123,11 @@ export function isValidContact(value: string): boolean {
 
 export function isValidAmount(value: string): boolean {
   const num = parseFloat(value)
+  return !isNaN(num) && num >= 0 && num <= 100000
+}
+
+export function isValidPositiveAmount(value: string): boolean {
+  const num = parseFloat(value)
   return !isNaN(num) && num > 0 && num <= 100000
 }
 
@@ -139,8 +144,8 @@ export function getInitials(name: string): string {
 // ── SHARE ──────────────────────────────────────────────────────
 export function getShareUrls(linkUrl: string, amount: number, note?: string) {
   const msg = note
-    ? `Pay me ${formatUSD(amount)} for "${note}" via PayLink: ${linkUrl}`
-    : `Pay me ${formatUSD(amount)} via PayLink: ${linkUrl}`
+    ? `Pay me ${formatUSD(amount)} for "${note}" via ZaPay: ${linkUrl}`
+    : `Pay me ${formatUSD(amount)} via ZaPay: ${linkUrl}`
 
   return {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(msg)}`,

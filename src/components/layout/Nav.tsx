@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePrivy } from '@privy-io/react-auth'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 interface NavProps {
@@ -20,18 +20,18 @@ export function Nav({ variant = 'app' }: NavProps) {
   const { authenticated, logout } = usePrivy()
   const pathname = usePathname()
   const [hidden, setHidden] = useState(false)
-  const [lastY, setLastY] = useState(0)
+  const lastYRef = useRef(0)
 
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY
-      if (y > lastY && y > 80) setHidden(true)
+      if (y > lastYRef.current && y > 80) setHidden(true)
       else setHidden(false)
-      setLastY(y)
+      lastYRef.current = y
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastY])
+  }, [])
 
   return (
     <>
@@ -89,7 +89,7 @@ export function Nav({ variant = 'app' }: NavProps) {
           fontSize: 20, fontWeight: 700, color: 'var(--ink)',
           letterSpacing: '-.04em', textDecoration: 'none', flexShrink: 0,
         }}>
-          pay<span style={{ color: 'var(--g1)' }}>link</span>
+          za<span style={{ color: 'var(--g1)' }}>pay</span>
         </Link>
 
         {/* Landing: centered section links */}

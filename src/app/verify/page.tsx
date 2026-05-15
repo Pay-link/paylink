@@ -24,12 +24,32 @@ function VerifyContent() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const buildSuccessUrl = async (userId: string, displayName: string, userEmail: string | null) => {
+    if (!userId) return '/dashboard'
     const base = new URLSearchParams({ flow, amount, to, contact, note })
 
     if (flow === 'claim') {
-      // Recipient is NOT registered — hold funds in escrow and create claim link
+      // Recipient NOT registered — deduct balance first, then create the escrow claim record
       try {
-        const res = await fetch('/api/claim', {
+        const sendRes = await fetch('/api/transactions/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId: userId,
+            senderEmail: userEmail,
+            recipientContact: contact || to,
+            amount: parseFloat(amount),
+            note: note || 'Escrow hold',
+          }),
+        })
+        const sendJson = await sendRes.json()
+        if (!sendRes.ok) {
+          if (sendJson.error === 'Insufficient balance') {
+            base.set('error', `Insufficient balance. You have $${sendJson.balance?.toFixed(2) || '0.00'} USDC.`)
+            return `/success?${base.toString()}`
+          }
+        }
+        // Only create the claim record after balance is successfully deducted
+        const claimRes = await fetch('/api/claim', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -41,25 +61,13 @@ function VerifyContent() {
             note,
           }),
         })
-        const json = await res.json()
-        if (json.token) base.set('claim_token', json.token)
-        // Deduct sender balance even for escrow holds
-        await fetch('/api/transactions/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderId: userId,
-            senderEmail: userEmail,
-            recipientContact: contact || to,
-            amount: parseFloat(amount),
-            note: note || 'Escrow hold',
-          }),
-        })
+        const claimJson = await claimRes.json()
+        if (claimJson.token) base.set('claim_token', claimJson.token)
       } catch (err) {
         console.error('Failed to create claim:', err)
       }
     } else {
-      // Recipient IS registered — direct transfer, deduct sender balance immediately
+      // Recipient IS registered — direct transfer
       try {
         const res = await fetch('/api/transactions/send', {
           method: 'POST',
@@ -73,10 +81,8 @@ function VerifyContent() {
           }),
         })
         const json = await res.json()
-        if (!res.ok) {
-          if (json.error === 'Insufficient balance') {
-            base.set('error', `Insufficient balance. You have $${json.balance?.toFixed(2) || '0.00'} USDC.`)
-          }
+        if (!res.ok && json.error === 'Insufficient balance') {
+          base.set('error', `Insufficient balance. You have $${json.balance?.toFixed(2) || '0.00'} USDC.`)
         }
       } catch (err) {
         console.error('Failed to execute send:', err)
@@ -170,9 +176,10 @@ function VerifyContent() {
               ))}
               <button
                 onClick={async () => {
-                  const userEmail = user?.email?.address || null
-                  const userName = userEmail?.split('@')[0] || user?.phone?.number || 'Someone'
-                  const url = await buildSuccessUrl(user?.id || '', userName, userEmail)
+                  if (!user?.id) return
+                  const userEmail = user.email?.address || null
+                  const userName = userEmail?.split('@')[0] || user.phone?.number || 'Someone'
+                  const url = await buildSuccessUrl(user.id, userName, userEmail)
                   router.push(url)
                 }}
                 style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 20, marginBottom: 12, boxShadow: '0 6px 20px rgba(37,92,180,.28)' }}>

@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { usePrivy } from '@privy-io/react-auth'
 import { Icon } from '@iconify/react'
 import { Nav } from '@/components/layout/Nav'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
@@ -17,6 +19,13 @@ const COMING_FEATURES = [
 
 export default function BankSetupPage() {
   const router = useRouter()
+  const { authenticated, ready } = usePrivy()
+
+  useEffect(() => {
+    if (ready && !authenticated) router.push('/')
+  }, [ready, authenticated, router])
+
+  if (!ready || !authenticated) return null
 
   return (
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>

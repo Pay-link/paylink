@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
+import { isValidEmail, isValidPhone } from '@/lib/utils'
 
-// Uses service role to bypass RLS — safe because we only return a boolean (exists or not)
+// Uses service role to bypass RLS — safe because we only return { registered, name }
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -16,14 +17,20 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: 'Invalid contact' }, { status: 400 })
   }
 
-  try {
-    const { data } = await supabase
-      .from('users')
-      .select('id, display_name')
-      .or(`email.eq.${contact},phone.eq.${contact}`)
-      .maybeSingle()
+  // Only allow valid email or phone — prevents query injection
+  if (!isValidEmail(contact) && !isValidPhone(contact)) {
+    return Response.json({ registered: false, name: null })
+  }
 
-    return Response.json({ registered: !!data, name: data?.display_name || null })
+  try {
+    // Use separate .eq() calls to avoid interpolating user input into .or() string
+    const [emailRes, phoneRes] = await Promise.all([
+      supabase.from('users').select('id, display_name').eq('email', contact).maybeSingle(),
+      supabase.from('users').select('id, display_name').eq('phone', contact).maybeSingle(),
+    ])
+
+    const found = emailRes.data || phoneRes.data
+    return Response.json({ registered: !!found, name: found?.display_name || null })
   } catch (err) {
     console.error('User lookup error:', err)
     return Response.json({ registered: false, name: null })
