@@ -28,8 +28,22 @@ export function Nav({ variant = 'app' }: NavProps) {
   const pathname = usePathname()
   const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const lastYRef = useRef(0)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Load saved theme on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('zp-theme') as 'dark' | 'light' | null
+    if (saved) setTheme(saved)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('zp-theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
 
   // Hide nav on scroll down, show on scroll up
   useEffect(() => {
@@ -82,6 +96,9 @@ export function Nav({ variant = 'app' }: NavProps) {
         /* Logout button */
         .nav-logout { padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); color: var(--ink3); font-size: 12px; font-weight: 500; cursor: pointer; background: transparent; font-family: var(--font); white-space: nowrap; }
         .nav-logout:hover { color: var(--ink); border-color: var(--ink3); }
+        /* Theme toggle */
+        .nav-theme-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--ink3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all .15s; flex-shrink: 0; }
+        .nav-theme-btn:hover { color: var(--ink); border-color: var(--ink3); background: var(--g-soft); }
         /* Arc badge */
         .nav-arc-badge { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink3); white-space: nowrap; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
@@ -304,6 +321,15 @@ export function Nav({ variant = 'app' }: NavProps) {
                 )}
               </>
             )}
+
+            {/* Theme toggle — always visible */}
+            <button
+              className="nav-theme-btn"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+            </button>
 
             {/* Hamburger button — mobile only */}
             <button

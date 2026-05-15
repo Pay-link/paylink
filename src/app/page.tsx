@@ -387,75 +387,42 @@ nav{
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    EXPERIENCE SECTION — dark 2-col
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-/* Phone mockup shared styles */
-.fp-nav{display:flex;justify-content:space-between;align-items:center;padding:2px 14px 10px}
-.fp-logo{font-family:var(--font-display);font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
-.fp-logo span{color:var(--o1)}
-.fp-body{padding:0 12px 18px}
-.fp-card{background:var(--o1);border-radius:18px;padding:16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
-.fp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,.08),transparent);border-radius:18px 18px 0 0;pointer-events:none}
-.fp-card-lbl{font-size:8px;color:rgba(255,255,255,.65);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
-.fp-amount{font-family:var(--font-display);font-size:30px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:4px}
-.fp-note{font-size:9px;color:rgba(255,255,255,.65)}
-.fp-tog-row{display:flex;gap:5px;margin-bottom:9px}
-.fp-tog{flex:1;padding:8px 4px;border-radius:10px;text-align:center;font-size:9px;font-weight:600;border:0.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);color:rgba(255,255,255,.3)}
-.fp-tog.on{background:rgba(37,92,180,.18);border-color:rgba(37,92,180,.4);color:var(--o3)}
-.fp-note-row{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.07);border-radius:10px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.35)}
-.fp-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:-.01em}
-.fp2-body{padding:14px 12px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
-.fp2-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--o3),var(--o1));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:800;color:#fff;margin:10px auto 8px;box-shadow:0 4px 16px rgba(37,92,180,.4)}
-.fp2-name{font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
-.fp2-note{font-size:9px;color:rgba(255,255,255,.45);margin-bottom:14px}
-.fp2-amount{font-family:var(--font-display);font-size:32px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:16px}
-.fp2-btn{width:100%;background:linear-gradient(135deg,var(--o3),var(--o1));color:#fff;border:none;border-radius:10px;padding:11px;font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 16px rgba(37,92,180,.35)}
-.fp2-sub{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:.05em}
-/* Float tags */
-.float-tag{position:absolute;background:rgba(12,18,38,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:0.5px solid rgba(37,92,180,.35);border-radius:12px;padding:8px 14px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.55),0 0 20px rgba(37,92,180,.14);z-index:10;animation:tagFloat 4s ease-in-out infinite}
-.ftag-val{font-family:var(--font-display);font-size:16px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1}
-.ftag-lbl{font-size:9px;color:rgba(255,255,255,.4);font-weight:500;letter-spacing:.03em}
-.ft1{bottom:80px;left:-20px;animation-delay:.8s}
-.ft2{top:80px;right:-24px}
-@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-/* Volume buttons (left side) via pseudo-element on fp-shell */
+/* Dashboard preview section */
+.preview-section{background:var(--page2);padding:80px 5% 100px;position:relative;overflow:hidden}
+.preview-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(120px);width:700px;height:500px;top:-80px;right:-100px;background:conic-gradient(from 180deg,#255CB4,#4a7fd4,#6a9be4,#255CB4);opacity:.14}
+.preview-glow2{position:absolute;pointer-events:none;border-radius:50%;filter:blur(100px);width:400px;height:300px;bottom:-40px;left:5%;background:#255CB4;opacity:.08}
+.preview-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;max-width:1100px;margin:0 auto}
+.dash-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:24px;overflow:hidden;box-shadow:0 0 0 1px rgba(37,92,180,.12),0 32px 80px rgba(0,0,0,.6),0 0 120px rgba(37,92,180,.12);animation:dashFloat 6s ease-in-out infinite}
+[data-theme=light] .dash-card{background:rgba(255,255,255,0.95);border-color:rgba(0,0,0,0.08);box-shadow:0 0 0 1px rgba(37,92,180,.10),0 24px 60px rgba(0,0,0,.12),0 0 80px rgba(37,92,180,.08)}
+@keyframes dashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.dash-header{background:linear-gradient(135deg,#1a3d8f 0%,#255CB4 50%,#3a72cc 100%);padding:22px 24px 20px;position:relative;overflow:hidden}
+.dash-header::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.12),transparent 60%);pointer-events:none}
+.dash-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.dash-logo{font-size:16px;font-weight:900;color:#fff;letter-spacing:-.04em}
+.dash-logo span{color:rgba(255,255,255,.55)}
+.dash-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.14);border-radius:20px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,.85);font-weight:500}
+.dash-bal-lbl{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.dash-bal{font-size:34px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1}
+.dash-bal-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px}
+.dash-section-lbl{font-size:10px;font-weight:700;color:var(--ink4);letter-spacing:.07em;text-transform:uppercase;padding:16px 20px 10px}
+.dash-tx{display:flex;align-items:center;gap:12px;padding:11px 20px;transition:background .15s;border-bottom:1px solid var(--border)}
+.dash-tx:last-of-type{border-bottom:none}
+.dash-tx-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.dash-tx-icon.in{background:rgba(34,197,94,.12);color:#22C55E}
+.dash-tx-icon.out{background:rgba(37,92,180,.10);color:var(--o1)}
+.dash-tx-name{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.dash-tx-sub{font-size:11px;color:var(--ink4);margin-top:1px}
+.dash-tx-amt{font-size:13px;font-weight:700;white-space:nowrap}
+.dash-tx-amt.in{color:#22C55E}
+.dash-tx-amt.out{color:var(--ink2)}
+.dash-footer{padding:14px 20px;display:flex;gap:8px}
+.dash-action-btn{flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.dash-action-btn.primary{background:var(--o1);color:#fff}
+.dash-action-btn.ghost{background:rgba(255,255,255,.07);color:var(--ink2);border:1px solid var(--border)}
+[data-theme=light] .dash-action-btn.ghost{background:var(--page2);color:var(--ink2)}
+@media(max-width:900px){.preview-inner{grid-template-columns:1fr}}
+@media(max-width:600px){.preview-section{padding:48px 16px 64px}}
 
-/* ── Phone frame (SVG asset) ── */
-/* SVG 722×1282 — screen rect at x=119.246 y=71.675 w=484.683 h=1020.64 */
-.pf-main,.pf-secondary{position:absolute;display:block}
-.pf-main{width:250px;left:50%;transform:translateX(-50%);top:0;z-index:2;animation:pfFloat 5s ease-in-out infinite}
-.pf-secondary{width:180px;right:-10px;top:120px;z-index:1;animation:pfFloat2 6s 0.5s ease-in-out infinite}
-@keyframes pfFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
-@keyframes pfFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.pf-img{width:100%;display:block;pointer-events:none;user-select:none}
-.pf-screen{
-  position:absolute;
-  left:16.52%;top:5.59%;
-  width:67.13%;height:79.61%;
-  overflow:hidden;
-  border-radius:10.12%;
-  background:#09090E;
-  display:flex;flex-direction:column;
-}
-.pf-status{display:flex;justify-content:space-between;padding:8px 12px 4px;font-size:8px;color:rgba(255,255,255,.35);font-weight:600;margin-top:6%}
-.phones-section{
-  background:var(--page2);padding:80px 5% 100px;
-  position:relative;overflow:hidden;
-}
-.phones-bg-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(100px)}
-.pb-glow1{width:600px;height:400px;background:#255CB4;opacity:.07;top:0;left:50%;transform:translateX(-50%)}
-.phones-inner{
-  position:relative;z-index:1;
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:64px;align-items:center;max-width:1100px;margin:0 auto;
-}
-.phones-right{
-  display:flex;justify-content:center;align-items:center;
-  position:relative;height:520px;
-  perspective:1200px;transform-style:preserve-3d;
-}
-
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   HOW IT WORKS — dark with orange
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .how-section{
   background:var(--page);padding:100px 5%;
   position:relative;overflow:hidden;
@@ -783,6 +750,58 @@ footer{
   .lp-drawer-logout:hover{background:rgba(229,115,115,0.08)}
   .lp-drawer-logout .lp-drawer-icon{color:#E57373;border-color:rgba(229,115,115,.3);background:rgba(229,115,115,.08)}
 }
+
+/* ── LIGHT THEME overrides for landing page ── */
+[data-theme="light"]{
+  --o1:#255CB4;--o2:#1a4a9a;--o3:#1e4fa0;--o4:#2a5fba;
+  --ink:#0A0A14;--ink2:#2C2C3A;--ink3:#5A5A72;--ink4:#9898B0;
+  --page:#F2F4FA;--page2:#E8ECF5;--white:#FFFFFF;
+  --border:rgba(0,0,0,0.08);--border-o:rgba(37,92,180,0.22);
+  --o-soft:rgba(37,92,180,0.06);--o-mid:rgba(37,92,180,0.12);
+}
+[data-theme="light"] nav{background:rgba(242,244,250,0.92);border-bottom-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .nav-logo{color:var(--ink)}
+[data-theme="light"] .nav-links a{color:var(--ink3)}
+[data-theme="light"] .btn-ghost{background:rgba(0,0,0,0.05);color:var(--ink2);border-color:rgba(0,0,0,0.12)}
+[data-theme="light"] .btn-ghost:hover{background:rgba(0,0,0,0.08);color:var(--ink)}
+[data-theme="light"] .hero{background:var(--page)}
+[data-theme="light"] .hero-h1{color:var(--ink)}
+[data-theme="light"] .hero-sub{color:var(--ink3)}
+[data-theme="light"] .btn-hero-ghost{background:rgba(0,0,0,0.06);color:var(--ink2);border-color:rgba(0,0,0,0.12)}
+[data-theme="light"] .stats-bar{background:var(--page2);border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .sb-label{color:var(--ink3)}
+[data-theme="light"] .deep-section{background:var(--page)}
+[data-theme="light"] .glass-card{background:rgba(255,255,255,0.8);border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .glass-card:hover{background:#fff;border-color:rgba(37,92,180,0.2)}
+[data-theme="light"] .gc-title{color:var(--ink)}
+[data-theme="light"] .gc-desc{color:var(--ink3)}
+[data-theme="light"] .deep-h2{color:var(--ink)}
+[data-theme="light"] .deep-sub{color:var(--ink3)}
+[data-theme="light"] .how-section{background:var(--page2)}
+[data-theme="light"] .step-card{background:rgba(255,255,255,0.7);border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .step-card:hover{background:#fff;border-color:rgba(37,92,180,0.2)}
+[data-theme="light"] .step-title{color:var(--ink)}
+[data-theme="light"] .step-desc{color:var(--ink3)}
+[data-theme="light"] .how-h2{color:var(--ink)}
+[data-theme="light"] .how-sub{color:var(--ink3)}
+[data-theme="light"] .trust-section{background:var(--page)}
+[data-theme="light"] .trust-pill{background:rgba(255,255,255,0.8);border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .trust-pill:hover{background:#fff}
+[data-theme="light"] .trust-pill-name{color:var(--ink)}
+[data-theme="light"] .final-section{background:var(--page2)}
+[data-theme="light"] .final-h2{color:var(--ink)}
+[data-theme="light"] .final-sub{color:var(--ink3)}
+[data-theme="light"] footer{background:var(--page);border-top-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .footer-logo{color:var(--ink)}
+[data-theme="light"] .footer-desc{color:var(--ink3)}
+[data-theme="light"] .footer-links a{color:var(--ink3)}
+[data-theme="light"] .footer-links a:hover{color:var(--ink)}
+[data-theme="light"] .footer-copy,[data-theme="light"] .footer-arc{color:var(--ink4)}
+[data-theme="light"] .lp-drawer{background:rgba(242,244,250,0.98);border-bottom-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .lp-drawer-item{color:var(--ink3)}
+[data-theme="light"] .lp-drawer-item:hover{background:rgba(0,0,0,0.04);color:var(--ink)}
+[data-theme="light"] .lp-drawer-divider{background:rgba(0,0,0,0.08)}
+[data-theme="light"] .lp-overlay{background:rgba(0,0,0,0.3)}
 ` }} />
 
       {/* NAV overlay (mobile) */}
@@ -947,71 +966,83 @@ footer{
         </div>
       </section>
 
-      {/* â•â• EXPERIENCE (phones) â•â• */}
-      <section className="phones-section">
-        <div className="phones-bg-glow pb-glow1"></div>
-        <div className="phones-inner">
+      {/* DASHBOARD PREVIEW */}
+      <section className="preview-section">
+        <div className="preview-glow" />
+        <div className="preview-glow2" />
+        <div className="preview-inner">
+
+          {/* Left text */}
           <div className="phones-left reveal">
-            <div className="deep-label">The experience</div>
-            <h2 className="deep-h2" style={{ fontSize: 'clamp(28px,4vw,52px)' }}>Two screens.<br/>That's the<br/><em>whole app.</em></h2>
-            <p className="deep-sub" style={{ marginBottom: '32px' }}>One for creating your link. One for paying. Designed so obsessively that our beta users called it "the cleanest payments app they'd ever used."</p>
-            <motion.button onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')} className="btn-final-fill" style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
-              <iconify-icon icon="ph:link-bold"></iconify-icon>
-              Create a ZaPay link — Free
+            <div className="deep-label">Your dashboard</div>
+            <h2 className="deep-h2" style={{ fontSize: 'clamp(28px,4vw,52px)' }}>Every payment,<br/>right<br/><em>in front of you.</em></h2>
+            <p className="deep-sub" style={{ marginBottom: '32px' }}>See your balance, track incoming and outgoing payments, and act in one tap — all from a single clean dashboard that updates in real time.</p>
+            <motion.button
+              onClick={authenticated ? () => router.push('/dashboard') : () => router.push('/create')}
+              className="btn-final-fill"
+              style={{ fontSize: '14px', padding: '13px 26px', cursor: 'pointer', border: 'none' }}
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+            >
+              <iconify-icon icon="ph:arrow-right-bold"></iconify-icon>
+              {authenticated ? 'Open my dashboard' : "Get started — it's free"}
             </motion.button>
           </div>
-          <div className="phones-right reveal reveal-delay-2">
-            {/* Main phone — creator view */}
-            <div className="pf-main">
-              <img src="/phone-frame.svg" alt="" className="pf-img" draggable={false} />
-              <div className="pf-screen">
-                <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
-                <div className="fp-nav">
-                  <div className="fp-logo">za<span>pay</span></div>
-                  <Icon icon="ph:user-circle-bold" style={{ fontSize: '16px', color: 'rgba(255,255,255,.25)' }} />
-                </div>
-                <div className="fp-body">
-                  <div className="fp-card">
-                    <div className="fp-card-lbl">Amount to receive</div>
-                    <div className="fp-amount">$250.00</div>
-                    <div className="fp-note">Logo design — April invoice</div>
+
+          {/* Right — glowing dashboard card */}
+          <div className="reveal reveal-delay-2">
+            <div className="dash-card">
+              <div className="dash-header">
+                <div className="dash-header-row">
+                  <div className="dash-logo">za<span>pay</span></div>
+                  <div className="dash-badge">
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
+                    Arc Testnet
                   </div>
-                  <div className="fp-tog-row">
-                    <div className="fp-tog on"><Icon icon="ph:wallet-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Crypto</div>
-                    <div className="fp-tog"><Icon icon="ph:bank-bold" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }} />Bank</div>
+                </div>
+                <div className="dash-bal-lbl">Total balance</div>
+                <div className="dash-bal">$1,247.50</div>
+                <div className="dash-bal-sub">USDC · Arc Network</div>
+              </div>
+              <div className="dash-section-lbl">Recent activity</div>
+              {([
+                { dir: 'in',  icon: 'ph:arrow-down-left-bold', name: 'Sarah M.',  note: 'Freelance invoice · April',  amt: '+$340.00', time: '2m ago' },
+                { dir: 'out', icon: 'ph:arrow-up-right-bold',  name: 'Alex K.',   note: 'Shared dinner · Saturday',   amt: '-$45.00',  time: '1h ago' },
+                { dir: 'in',  icon: 'ph:arrow-down-left-bold', name: 'Maria L.',  note: 'Design retainer · March',    amt: '+$120.00', time: '3h ago' },
+                { dir: 'out', icon: 'ph:arrow-up-right-bold',  name: 'Tom W.',    note: 'Split utilities',            amt: '-$89.50',  time: 'Yesterday' },
+              ] as const).map(tx => (
+                <div key={tx.name} className="dash-tx">
+                  <div className={'dash-tx-icon ' + tx.dir}>
+                    <Icon icon={tx.icon} />
                   </div>
-                  <div className="fp-note-row"><Icon icon="ph:pencil-bold" style={{ fontSize: '10px' }} />Add a note for sender...</div>
-                  <button className="fp-btn">Generate link →</button>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="dash-tx-name">{tx.name}</div>
+                    <div className="dash-tx-sub">{tx.note}</div>
+                  </div>
+                  <div>
+                    <div className={'dash-tx-amt ' + tx.dir}>{tx.amt}</div>
+                    <div style={{ fontSize: 10, color: 'var(--ink4)', textAlign: 'right', marginTop: 2 }}>{tx.time}</div>
+                  </div>
                 </div>
+              ))}
+              <div className="dash-footer">
+                <button className="dash-action-btn primary">
+                  <Icon icon="ph:paper-plane-right-bold" style={{ fontSize: 14 }} /> Send
+                </button>
+                <button className="dash-action-btn ghost">
+                  <Icon icon="ph:link-bold" style={{ fontSize: 14 }} /> Create link
+                </button>
+                <button className="dash-action-btn ghost">
+                  <Icon icon="ph:arrow-down-bold" style={{ fontSize: 14 }} /> Receive
+                </button>
               </div>
-            </div>
-            {/* Secondary phone — payer view */}
-            <div className="pf-secondary">
-              <img src="/phone-frame.svg" alt="" className="pf-img" draggable={false} />
-              <div className="pf-screen">
-                <div className="pf-status"><span>9:41</span><span style={{display:'flex',gap:3,alignItems:'center'}}><Icon icon="ph:wifi-high-bold" width={9}/><Icon icon="ph:battery-charging-bold" width={9}/></span></div>
-                <div className="fp-nav"><div className="fp-logo">za<span>pay</span></div><span></span></div>
-                <div className="fp2-body">
-                  <div className="fp2-avatar">AK</div>
-                  <div className="fp2-name">Alex K.</div>
-                  <div className="fp2-note">Freelance invoice — April</div>
-                  <div className="fp2-amount">$120</div>
-                  <button className="fp2-btn">Pay now →</button>
-                  <div className="fp2-sub">Secured · Powered by Arc</div>
-                </div>
-              </div>
-            </div>
-            <div className="float-tag ft1">
-              <div className="ftag-val">$0.00</div>
-              <div className="ftag-lbl">Gas fee</div>
-            </div>
-            <div className="float-tag ft2">
-              <div className="ftag-val">0.3s</div>
-              <div className="ftag-lbl">Settled</div>
             </div>
           </div>
+
         </div>
-      </section>{/* â•â• HOW IT WORKS â•â• */}
+      </section>
+{/* â•â• HOW IT WORKS â•â• */}
       <section id="how" className="how-section">
         <div className="how-inner">
           <div className="reveal">

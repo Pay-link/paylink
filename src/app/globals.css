@@ -43,12 +43,32 @@
   --shadow-md: 0 4px 24px rgba(0,0,0,0.55);
 }
 
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --ink: #0A0A14;
+  --ink2: #2C2C3A;
+  --ink3: #5A5A72;
+  --ink4: #9898B0;
+  --page: #F2F4FA;
+  --page2: #E8ECF5;
+  --white: #FFFFFF;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-g: rgba(37, 92, 180, 0.22);
+  --g-soft: rgba(37, 92, 180, 0.08);
+  --g-mid: rgba(37, 92, 180, 0.15);
+  --g-lime: rgba(37, 92, 180, 0.04);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow: 0 2px 12px rgba(0,0,0,0.10);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.14);
+}
+
 html, body {
   font-family: var(--font);
   background: var(--page);
   color: var(--ink);
   scroll-behavior: smooth;
   overflow-x: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 /* ── UTILITY CLASSES ── */
