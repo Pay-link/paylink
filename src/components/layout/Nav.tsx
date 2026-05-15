@@ -185,6 +185,14 @@ export function Nav({ variant = 'app' }: NavProps) {
             border-color: var(--border-g);
             color: var(--g1);
           }
+          .nav-drawer-section-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--ink4);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 4px 14px 6px;
+          }
           .nav-drawer-divider {
             height: 1px;
             background: var(--border);
@@ -394,6 +402,8 @@ export function Nav({ variant = 'app' }: NavProps) {
 
           {variant === 'app' && (
             <>
+              {/* Main nav — mirrors desktop sidebar */}
+              <div className="nav-drawer-section-lbl">Main</div>
               {APP_TABS.map(tab => {
                 const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
                 return (
@@ -410,6 +420,26 @@ export function Nav({ variant = 'app' }: NavProps) {
                   </Link>
                 )
               })}
+              <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer" className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
+                <span className="nav-drawer-icon"><Icon icon="ph:drop-bold" /></span>
+                Faucet
+              </a>
+
+              {/* Account section */}
+              <div className="nav-drawer-section-lbl" style={{ marginTop: 8 }}>Account</div>
+              {[
+                { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#' },
+                { label: 'My links', icon: 'ph:link-simple-bold', href: '#' },
+                { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
+                { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
+                { label: 'Help & support', icon: 'ph:question-bold', href: '#' },
+              ].map(item => (
+                <Link key={item.label} href={item.href} className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
+                  <span className="nav-drawer-icon"><Icon icon={item.icon} /></span>
+                  {item.label}
+                </Link>
+              ))}
+
               <div className="nav-drawer-divider" />
               <div className="nav-drawer-badge">
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
