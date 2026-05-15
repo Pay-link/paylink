@@ -84,7 +84,8 @@ export default function HomePage() {
 
     function createParticles() {
       particles = []
-      const count = Math.min(Math.floor(W * H / 8000), 140)
+      const isMobile = W < 768
+      const count = Math.min(Math.floor(W * H / (isMobile ? 18000 : 8000)), isMobile ? 40 : 120)
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2
         const radius = 80 + Math.random() * Math.max(W, H) * 0.55
@@ -105,6 +106,7 @@ export default function HomePage() {
     createParticles()
     window.addEventListener('resize', createParticles)
 
+    let rafId: number | null = null
     function drawParticles() {
       if (!ctx) return
       ctx.clearRect(0, 0, W, H)
@@ -117,9 +119,17 @@ export default function HomePage() {
         ctx.fillStyle = `rgba(${p.color},${pAlpha})`
         ctx.fill()
       })
-      requestAnimationFrame(drawParticles)
+      rafId = requestAnimationFrame(drawParticles)
     }
     drawParticles()
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null }
+      } else {
+        if (rafId === null) drawParticles()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
 
     /* â”€â”€ TYPEWRITER HEADLINE â”€â”€ */
     const fullText = 'Send money to\nanyone with just\na link.'
@@ -880,7 +890,7 @@ footer{
       <section id="fees" className="fee-section">
         <div className="fee-center reveal">
           <div className="section-tag-orange"><iconify-icon icon="ph:percent-bold"></iconify-icon>Transparent fees</div>
-          <h2 className="section-h2">Up to 7Ã— cheaper<br/>than the old way</h2>
+          <h2 className="section-h2">Up to 7× cheaper<br/>than the old way</h2>
           <p className="section-sub">Zero fees for crypto-to-crypto. Small third-party fees for fiat — always shown upfront. No surprises ever.</p>
           <div className="fee-table">
             <div className="fee-head">
@@ -927,7 +937,7 @@ footer{
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(37,92,180,0.15)', color: 'var(--o3)' }}>AO</div>
                 <div><div className="testi-name">Adeola O.</div><div className="testi-role">Designer, Lagos</div></div>
-                <div className="testi-flag">ðŸ‡³ðŸ‡¬</div>
+                <div className="testi-flag"><Icon icon="flag:ng" style={{ fontSize: 22 }} /></div>
               </div>
             </div>
             <div className="testi-card" style={{ transitionDelay: '.15s' }}>
@@ -938,7 +948,7 @@ footer{
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(57,73,171,.2)', color: '#8090FF' }}>JM</div>
                 <div><div className="testi-name">James M.</div><div className="testi-role">Founder, London</div></div>
-                <div className="testi-flag">ðŸ‡¬ðŸ‡§</div>
+                <div className="testi-flag"><Icon icon="flag:gb" style={{ fontSize: 22 }} /></div>
               </div>
             </div>
             <div className="testi-card" style={{ transitionDelay: '.25s' }}>
@@ -949,7 +959,7 @@ footer{
               <div className="testi-author">
                 <div className="tav" style={{ background: 'rgba(194,24,91,.15)', color: '#FF80AB' }}>FC</div>
                 <div><div className="testi-name">Funke C.</div><div className="testi-role">Business owner, Abuja</div></div>
-                <div className="testi-flag">ðŸ‡³ðŸ‡¬</div>
+                <div className="testi-flag"><Icon icon="flag:ng" style={{ fontSize: 22 }} /></div>
               </div>
             </div>
           </div>
