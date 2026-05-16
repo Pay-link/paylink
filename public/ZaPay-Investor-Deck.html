@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZaPay — Investor Deck 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@700;900&display=swap" rel="stylesheet" />
+<style>
+  /* ───────────────────────────── RESET & BASE ───────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:    #255CB4;
+    --blue2:   #1A4A96;
+    --blue-lt: #4A7FD4;
+    --g1:      #C10801;
+    --g2:      #F16501;
+    --g3:      #D9C368;
+    --dark:    #030300;
+    --card:    rgba(255,255,255,0.04);
+    --border:  rgba(255,255,255,0.10);
+    --text:    #F0F4FF;
+    --muted:   rgba(240,244,255,0.55);
+    --slide-w: 1280px;
+    --slide-h: 720px;
+    --font:    'Google Sans', 'Segoe UI', sans-serif;
+    --font-d:  'Google Sans Display', 'Google Sans', sans-serif;
+  }
+
+  html, body {
+    font-family: var(--font);
+    background: #0a0a0f;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ───────────────────────────── PRINT SETUP ───────────────────────────── */
+  @page {
+    size: 1280px 720px;
+    margin: 0;
+  }
+  @media print {
+    body { background: #000; }
+    .slide {
+      page-break-after: always;
+      break-after: page;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+    .slide-nav, .print-hint { display: none !important; }
+  }
+
+  /* ───────────────────────────── LAYOUT ───────────────────────────── */
+  .deck {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px 24px;
+  }
+
+  .print-hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: -24px;
+    letter-spacing: 0.02em;
+  }
+  .print-hint kbd {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 12px;
+  }
+
+  /* ───────────────────────────── SLIDE SHELL ───────────────────────────── */
+  .slide {
+    position: relative;
+    width: var(--slide-w);
+    min-height: var(--slide-h);
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.07);
+    background: var(--dark);
+  }
+
+  /* slide number badge */
+  .slide::after {
+    content: attr(data-num);
+    position: absolute;
+    bottom: 22px;
+    right: 30px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.08em;
+  }
+
+  /* ───────────────────────────── SHARED HELPERS ───────────────────────────── */
+  .grad-text {
+    background: linear-gradient(90deg, var(--blue-lt), #A8C8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .fire-text {
+    background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(37,92,180,0.22);
+    border: 1px solid rgba(37,92,180,0.5);
+    color: #7EB3FF;
+    margin-bottom: 18px;
+  }
+  .tag.red {
+    background: rgba(193,8,1,0.18);
+    border-color: rgba(193,8,1,0.45);
+    color: #FF7B76;
+  }
+  .tag.gold {
+    background: rgba(217,195,104,0.15);
+    border-color: rgba(217,195,104,0.4);
+    color: #E8D47A;
+  }
+  .tag.green {
+    background: rgba(52,199,89,0.13);
+    border-color: rgba(52,199,89,0.4);
+    color: #5EDB82;
+  }
+
+  .stat-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+  }
+  .stat-card .num {
+    font-family: var(--font-d);
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card .label {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .divider {
+    width: 48px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--blue-lt));
+    margin: 20px 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 1 — COVER
+  ═══════════════════════════════════════════════════════════════════ */
+  .s1 {
+    background: linear-gradient(135deg, #020208 0%, #0a1628 40%, #07132a 70%, #020208 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px;
+  }
+
+  /* animated gradient orbs */
+  .s1-orb1 {
+    position: absolute;
+    width: 520px; height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,92,180,0.25) 0%, transparent 70%);
+    top: -120px; left: -80px;
+    pointer-events: none;
+  }
+  .s1-orb2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(193,8,1,0.15) 0%, transparent 70%);
+    bottom: -80px; right: -60px;
+    pointer-events: none;
+  }
+  .s1-orb3 {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(241,101,1,0.10) 0%, transparent 70%);
+    top: 50%; right: 100px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .s1 .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .s1 .logo-box {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-d);
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+    box-shadow: 0 8px 24px rgba(37,92,180,0.4);
+  }
+  .s1 .logo-text {
+    font-family: var(--font-d);
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .s1 h1 {
+    font-family: var(--font-d);
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .s1 .tagline {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.5;
+    margin-bottom: 48px;
+  }
+  .s1 .meta-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .s1 .meta-row span {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .s1 .meta-row .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--blue-lt);
+  }
+  .s1 .meta-row .dot.live {
+    background: #34C759;
+    box-shadow: 0 0 6px #34C759;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 2 — PROBLEM
+  ═══════════════════════════════════════════════════════════════════ */
+  .s2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: var(--slide-h);
+  }
+  .s2-left {
+    padding: 72px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(160deg, #06050a 0%, #0d0a1a 100%);
+    position: relative;
+  }
+  .s2-left::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+  .s2-left h2 {
+    font-family: var(--font-d);
+    font-size: 50px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .s2-left p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 400px;
+  }
+
+  .pain-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .pain-list li {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 14px; line-height: 1.5;
+  }
+  .pain-list li .icon {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    background: rgba(193,8,1,0.18); border: 1px solid rgba(193,8,1,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-top: 1px;
+  }
+
+  .s2-right {
+    padding: 60px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    background: #060508;
+  }
+  .s2-right .big-stat {
+    background: linear-gradient(135deg, rgba(37,92,180,0.08), rgba(37,92,180,0.03));
+    border: 1px solid rgba(37,92,180,0.2);
+    border-radius: 18px;
+    padding: 28px 32px;
+  }
+  .s2-right .big-stat .num {
+    font-family: var(--font-d);
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .s2-right .big-stat .desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .s2-right .small-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .s2-right .small-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .s2-right .small-stat .num {
+    font-family: var(--font-d);
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .s2-right .small-stat .label {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 3 — WHY NOW
+  ═══════════════════════════════════════════════════════════════════ */
+  .s3 {
+    padding: 64px 72px;
+    background: linear-gradient(160deg, #05070e 0%, #08050f 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s3 h2 {
+    font-family: var(--font-d);
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s3 .sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 44px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .now-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .now-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .now-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--blue-lt));
+  }
+  .now-card.fire::before {
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+  }
+  .now-card.gold::before {
+    background: linear-gradient(90deg, var(--g2), var(--g3));
+  }
+  .now-card .icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .now-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .now-card p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 4 — SOLUTION
+  ═══════════════════════════════════════════════════════════════════ */
+  .s4 {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    min-height: var(--slide-h);
+  }
+  .s4-left {
+    padding: 72px 56px;
+    background: linear-gradient(160deg, #060a14 0%, #080511 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s4-left h2 {
+    font-family: var(--font-d);
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 18px;
+  }
+  .s4-left p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 32px;
+  }
+
+  .flow-steps { display: flex; flex-direction: column; gap: 14px; }
+  .flow-step {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 14px;
+  }
+  .flow-step .step-num {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+    box-shadow: 0 4px 12px rgba(37,92,180,0.35);
+  }
+
+  .s4-right {
+    padding: 56px 52px;
+    background: #040608;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+  }
+  .s4-right::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+
+  .diff-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(37,92,180,0.06);
+    border: 1px solid rgba(37,92,180,0.15);
+  }
+  .diff-item .icon {
+    width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(37,92,180,0.3);
+  }
+  .diff-item .content h4 {
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+  }
+  .diff-item .content p {
+    font-size: 12.5px; color: var(--muted); line-height: 1.45;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 5 — HOW IT WORKS
+  ═══════════════════════════════════════════════════════════════════ */
+  .s5 {
+    padding: 60px 72px;
+    background: linear-gradient(160deg, #040610 0%, #06040e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .s5 h2 {
+    font-family: var(--font-d);
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .s5 .sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 48px;
+    max-width: 620px;
+    line-height: 1.5;
+  }
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+  }
+  .flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+  }
+  .flow-node .bubble {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgba(37,92,180,0.4);
+    background: rgba(37,92,180,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    position: relative;
+  }
+  .flow-node .bubble.active {
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    border-color: var(--blue);
+    box-shadow: 0 8px 24px rgba(37,92,180,0.4);
+  }
+  .flow-node h4 { font-size: 14px; font-weight: 700; }
+  .flow-node p { font-size: 12px; color: var(--muted); max-width: 130px; line-height: 1.4; }
+
+  .flow-arrow {
+    font-size: 22px;
+    color: rgba(37,92,180,0.5);
+    flex-shrink: 0;
+    margin-bottom: 40px;
+    padding: 0 4px;
+  }
+
+  .feature-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .pill {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(37,92,180,0.12);
+    border: 1px solid rgba(37,92,180,0.3);
+    color: #8BBEFF;
+  }
+  .pill.green {
+    background: rgba(52,199,89,0.1);
+    border-color: rgba(52,199,89,0.3);
+    color: #5EDB82;
+  }
+  .pill.gold {
+    background: rgba(217,195,104,0.1);
+    border-color: rgba(217,195,104,0.3);
+    color: #E8D47A;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 6 — MARKET
+  ═══════════════════════════════════════════════════════════════════ */
+  .s6 {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    min-height: var(--slide-h);
+  }
+  .s6-left {
+    padding: 68px 56px;
+    background: linear-gradient(160deg, #050810 0%, #070510 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s6-left h2 {
+    font-family: var(--font-d);
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .s6-left p {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 32px;
+  }
+  .market-circles {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+  }
+  .market-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .market-circle .ring {
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .market-circle .ring-num {
+    font-family: var(--font-d);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .market-circle .ring-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .market-circle .ring-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .s6-right {
+    padding: 60px 52px;
+    background: #040608;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    position: relative;
+  }
+  .s6-right::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+  .insight-card {
+    padding: 18px 22px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .insight-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .insight-card p { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 7 — BUSINESS MODEL
+  ═══════════════════════════════════════════════════════════════════ */
+  .s7 {
+    padding: 64px 72px;
+    background: linear-gradient(160deg, #04060e 0%, #080410 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s7 h2 {
+    font-family: var(--font-d);
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s7 .sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 44px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .revenue-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .rev-card {
+    border-radius: 18px;
+    padding: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .rev-card.primary {
+    background: linear-gradient(135deg, rgba(37,92,180,0.15), rgba(37,92,180,0.06));
+    border-color: rgba(37,92,180,0.35);
+  }
+  .rev-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--blue-lt));
+    opacity: 0.6;
+  }
+  .rev-card.fire::after {
+    background: linear-gradient(90deg, var(--g1), var(--g2));
+  }
+  .rev-card.gold::after {
+    background: linear-gradient(90deg, var(--g2), var(--g3));
+  }
+  .rev-card .phase {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .rev-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .rev-card .rate {
+    font-family: var(--font-d);
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .rev-card p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .unit-econ {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .ue-item {
+    background: rgba(37,92,180,0.06);
+    border: 1px solid rgba(37,92,180,0.18);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .ue-item .val {
+    font-family: var(--font-d);
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .ue-item .lbl { font-size: 11px; color: var(--muted); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 8 — TRACTION
+  ═══════════════════════════════════════════════════════════════════ */
+  .s8 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: var(--slide-h);
+  }
+  .s8-left {
+    padding: 68px 56px;
+    background: linear-gradient(160deg, #060410 0%, #04060d 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s8-left h2 {
+    font-family: var(--font-d);
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .s8-left p {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 32px;
+  }
+  .traction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .tr-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .tr-stat .num {
+    font-family: var(--font-d);
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .tr-stat .lbl { font-size: 12px; color: var(--muted); }
+
+  .s8-right {
+    padding: 60px 48px;
+    background: #04060a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    position: relative;
+  }
+  .s8-right::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+
+  .milestone {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .milestone .line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+  }
+  .milestone .dot-outer {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(37,92,180,0.15);
+    border: 1.5px solid rgba(37,92,180,0.4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .milestone .dot-outer .dot-inner {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--blue-lt);
+    box-shadow: 0 0 8px var(--blue-lt);
+  }
+  .milestone .dot-outer.done {
+    background: rgba(52,199,89,0.12);
+    border-color: rgba(52,199,89,0.4);
+  }
+  .milestone .dot-outer.done .dot-inner {
+    background: #34C759;
+    box-shadow: 0 0 8px #34C759;
+  }
+  .milestone-connector {
+    width: 1.5px; height: 22px; background: rgba(37,92,180,0.2); margin: 0 auto;
+  }
+  .milestone h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; margin-top: 2px; }
+  .milestone p { font-size: 12px; color: var(--muted); line-height: 1.45; }
+  .milestone .date-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5EDB82;
+    background: rgba(52,199,89,0.1);
+    border: 1px solid rgba(52,199,89,0.25);
+    border-radius: 10px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+    display: inline-block;
+  }
+  .milestone .date-tag.future {
+    color: #7EB3FF;
+    background: rgba(37,92,180,0.1);
+    border-color: rgba(37,92,180,0.25);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 9 — COMPETITIVE LANDSCAPE
+  ═══════════════════════════════════════════════════════════════════ */
+  .s9 {
+    padding: 60px 72px;
+    background: linear-gradient(160deg, #04080e 0%, #080408 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s9 h2 {
+    font-family: var(--font-d);
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s9 .sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .comp-table th {
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table th:first-child { text-align: left; }
+  .comp-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .comp-table td:first-child { text-align: left; font-weight: 600; }
+  .comp-table tr.highlight td {
+    background: rgba(37,92,180,0.08);
+  }
+  .comp-table tr.highlight td:first-child {
+    color: #7EB3FF;
+  }
+  .check { color: #34C759; font-size: 18px; }
+  .cross { color: #FF453A; font-size: 18px; }
+  .partial { color: var(--g3); font-size: 15px; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 10 — TECHNOLOGY & MOAT
+  ═══════════════════════════════════════════════════════════════════ */
+  .s10 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: var(--slide-h);
+  }
+  .s10-left {
+    padding: 68px 56px;
+    background: linear-gradient(160deg, #030a10 0%, #05060e 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .s10-left h2 {
+    font-family: var(--font-d);
+    font-size: 50px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .s10-left p {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 28px;
+  }
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .tech-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: rgba(37,92,180,0.12);
+    border: 1px solid rgba(37,92,180,0.3);
+    color: #8BBEFF;
+  }
+
+  .s10-right {
+    padding: 60px 52px;
+    background: #040607;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+  }
+  .s10-right::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+  .moat-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .moat-item .icon {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .moat-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .moat-item p { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 11 — TEAM
+  ═══════════════════════════════════════════════════════════════════ */
+  .s11 {
+    padding: 64px 72px;
+    background: linear-gradient(160deg, #040810 0%, #070508 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .s11 h2 {
+    font-family: var(--font-d);
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s11 .sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 48px;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .team-grid {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+  .team-card {
+    width: 220px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .team-card .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--blue2));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-d);
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    margin: 0 auto 14px;
+    box-shadow: 0 8px 20px rgba(37,92,180,0.35);
+  }
+  .team-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .team-card .role { font-size: 12px; color: var(--blue-lt); font-weight: 600; margin-bottom: 10px; }
+  .team-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .advisor-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .advisor-pill {
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .advisor-pill span { color: var(--muted); font-size: 11px; margin-left: 6px; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SLIDE 12 — THE ASK
+  ═══════════════════════════════════════════════════════════════════ */
+  .s12 {
+    background: linear-gradient(135deg, #030512 0%, #0a1530 40%, #080420 70%, #030512 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    min-height: var(--slide-h);
+    position: relative;
+    overflow: hidden;
+  }
+  .s12-orb1 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,92,180,0.2) 0%, transparent 70%);
+    top: -150px; right: -100px;
+    pointer-events: none;
+  }
+  .s12-orb2 {
+    position: absolute;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(193,8,1,0.12) 0%, transparent 70%);
+    bottom: -100px; left: -80px;
+    pointer-events: none;
+  }
+  .s12-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+  }
+  .s12-left h2 {
+    font-family: var(--font-d);
+    font-size: 58px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .ask-amount {
+    font-family: var(--font-d);
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #fff, #A8C8FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .s12-left p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 380px;
+    margin-bottom: 28px;
+  }
+  .s12-left .val-note {
+    font-size: 13px;
+    color: rgba(200,220,255,0.5);
+  }
+
+  .use-of-funds { display: flex; flex-direction: column; gap: 14px; }
+  .fund-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .fund-item .bar-wrap {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.07);
+    overflow: hidden;
+  }
+  .fund-item .bar {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .fund-item .fund-label { font-size: 13px; font-weight: 600; min-width: 170px; }
+  .fund-item .fund-pct {
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 38px;
+    text-align: right;
+    color: var(--muted);
+  }
+
+  .s12-right .metrics-promise {
+    background: rgba(37,92,180,0.08);
+    border: 1px solid rgba(37,92,180,0.25);
+    border-radius: 18px;
+    padding: 28px;
+    margin-top: 28px;
+  }
+  .s12-right .metrics-promise h4 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .s12-right .goal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .s12-right .goal-item .val {
+    font-family: var(--font-d);
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .s12-right .goal-item .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     CONTACT FOOTER ON LAST SLIDE
+  ═══════════════════════════════════════════════════════════════════ */
+  .contact-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .contact-bar a { color: #7EB3FF; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 1 — COVER
+  ══════════════════════════════════════════════ -->
+  <div class="slide s1" data-num="1 / 12">
+    <div class="s1-orb1"></div>
+    <div class="s1-orb2"></div>
+    <div class="s1-orb3"></div>
+
+    <div class="logo-mark">
+      <div class="logo-box">Z</div>
+      <div class="logo-text">ZaPay</div>
+    </div>
+
+    <h1>
+      <span class="grad-text">Money moves</span><br />
+      at the speed of<br />
+      a message.
+    </h1>
+
+    <p class="tagline">
+      Instant, fee-free USDC transfers across Africa — no wallet, no bank account, no waiting.
+      Anyone with a phone number can receive money today.
+    </p>
+
+    <div class="meta-row">
+      <span><span class="dot live"></span> Live on Arc Testnet</span>
+      <span><span class="dot"></span> Seed Round · 2025</span>
+      <span><span class="dot"></span> Confidential — Do Not Distribute</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 2 — PROBLEM
+  ══════════════════════════════════════════════ -->
+  <div class="slide s2" data-num="2 / 12">
+    <div class="s2-left">
+      <div class="tag red">The Problem</div>
+      <h2>
+        Africa pays<br />
+        <span class="fire-text">a tax just<br />to send money.</span>
+      </h2>
+      <p>
+        Sending $200 from London to Lagos costs $14 in fees and takes 3 days.
+        Sending it between two Lagos accounts costs nothing with local banks —
+        but the diaspora is shut out entirely. That's not a market gap. That's theft.
+      </p>
+      <ul class="pain-list">
+        <li>
+          <div class="icon">💸</div>
+          <div>Average remittance fee to Sub-Saharan Africa is <strong>7.8%</strong> — 3× the G20 target</div>
+        </li>
+        <li>
+          <div class="icon">🏦</div>
+          <div>Recipient must have a <strong>bank account</strong> — 1.4 billion adults don't</div>
+        </li>
+        <li>
+          <div class="icon">⏳</div>
+          <div>Settlement takes <strong>1–5 business days</strong> while recipients wait</div>
+        </li>
+        <li>
+          <div class="icon">📋</div>
+          <div><strong>Invasive KYC</strong> on both ends blocks first-time and low-income users</div>
+        </li>
+      </ul>
+    </div>
+    <div class="s2-right">
+      <div class="big-stat">
+        <div class="num fire-text">$12.4B</div>
+        <div class="desc">in fees paid annually by Africans just to receive their own money. That's money that could stay in their communities — but doesn't.</div>
+      </div>
+      <div class="small-stats">
+        <div class="small-stat">
+          <div class="num grad-text">$190B</div>
+          <div class="label">Annual Africa remittance corridor volume</div>
+        </div>
+        <div class="small-stat">
+          <div class="num grad-text">1.4B</div>
+          <div class="label">Adults globally without a bank account</div>
+        </div>
+        <div class="small-stat">
+          <div class="num grad-text">54</div>
+          <div class="label">Countries in Africa, most with broken cross-border rails</div>
+        </div>
+        <div class="small-stat">
+          <div class="num fire-text">7.8%</div>
+          <div class="label">Average fee — World Bank data, 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 3 — WHY NOW
+  ══════════════════════════════════════════════ -->
+  <div class="slide s3" data-num="3 / 12">
+    <div class="tag gold">Why Now</div>
+    <h2>
+      Four forces are<br />
+      <span class="grad-text">converging right now.</span>
+    </h2>
+    <p class="sub">
+      This is not a thesis about the future. Every one of these catalysts is live or enacted in 2024–2025 —
+      the infrastructure is finally ready for what ZaPay is building.
+    </p>
+    <div class="now-grid">
+      <div class="now-card">
+        <span class="icon">⛓️</span>
+        <h3>Arc Testnet is Live</h3>
+        <p>
+          Circle's Arc blockchain (built on USDC-native infrastructure) launched testnet in 2024.
+          ZaPay is among the first apps live on it — first-mover advantage in an emerging ecosystem.
+        </p>
+      </div>
+      <div class="now-card fire">
+        <span class="icon">📜</span>
+        <h3>Stablecoin Regulation Clarity</h3>
+        <p>
+          The US GENIUS Act (2025) and EU MiCA framework give stablecoins a legal home for the first time.
+          Banks and fintechs can now build on USDC without regulatory uncertainty.
+        </p>
+      </div>
+      <div class="now-card gold">
+        <span class="icon">🌍</span>
+        <h3>Circle's Africa Push</h3>
+        <p>
+          Circle announced expanded USDC infrastructure partnerships across 12 African markets in 2024–2025,
+          creating the on/off-ramp rails ZaPay needs to reach mainstream users.
+        </p>
+      </div>
+      <div class="now-card">
+        <span class="icon">📱</span>
+        <h3>Mobile-First Continent</h3>
+        <p>
+          Africa has 600M+ smartphone users with no incumbent that owns the digital remittance experience.
+          WhatsApp proved you can move money trust via a link — we're doing it with USDC.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 4 — SOLUTION
+  ══════════════════════════════════════════════ -->
+  <div class="slide s4" data-num="4 / 12">
+    <div class="s4-left">
+      <div class="tag">The Solution</div>
+      <h2>
+        Send money<br />
+        like sending<br />
+        <span class="grad-text">a message.</span>
+      </h2>
+      <p>
+        ZaPay is a USDC payments platform where anyone can send money instantly to an email address,
+        phone number, or via a shareable payment link — no wallet required on either end.
+      </p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div>Sign in with email OTP — no seed phrases, no app stores</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div>Enter amount + recipient's phone/email, or create a payment link</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div>Funds arrive in seconds on Arc — recipient claims via link</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div>Recipient withdraws to mobile money or bank whenever they want</div>
+        </div>
+      </div>
+    </div>
+    <div class="s4-right">
+      <div class="diff-item">
+        <div class="icon">🔗</div>
+        <div class="content">
+          <h4>Claim Links — No Wallet Required</h4>
+          <p>Unregistered recipients get a one-time link. They claim funds without ever touching crypto. Works on any device, any browser.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="icon">⚡</div>
+        <div class="content">
+          <h4>$0 Gas Fees on Arc Testnet</h4>
+          <p>Arc's architecture eliminates gas for USDC transfers. Every cent you send arrives. No surprise deductions.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="icon">🔐</div>
+        <div class="content">
+          <h4>Privy Embedded Wallets</h4>
+          <p>Wallets are created automatically on signup — invisible to users. No MetaMask, no browser extensions, no confusion.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="icon">🌐</div>
+        <div class="content">
+          <h4>Works Across Borders by Default</h4>
+          <p>Send from the UK to Nigeria in the same flow as sending within Nigeria. The blockchain doesn't know borders.</p>
+        </div>
+      </div>
+      <div class="diff-item">
+        <div class="icon">🏗️</div>
+        <div class="content">
+          <h4>Production-Grade Infrastructure</h4>
+          <p>Built on Next.js 14, deployed on Railway, with Supabase for identity and transaction history. SOC 2-ready stack.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 5 — HOW IT WORKS (PRODUCT)
+  ══════════════════════════════════════════════ -->
+  <div class="slide s5" data-num="5 / 12">
+    <div class="tag">Product</div>
+    <h2>Two flows. <span class="grad-text">Zero friction.</span></h2>
+    <p class="sub">
+      ZaPay handles both sides of the transaction — whether the recipient is already on the platform or hearing about it for the first time.
+    </p>
+
+    <div class="flow-diagram">
+      <div class="flow-node">
+        <div class="bubble active">📱</div>
+        <h4>Sender</h4>
+        <p>Signs in via email OTP</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="bubble active">💸</div>
+        <h4>Send / Link</h4>
+        <p>Direct send or generate payment link</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="bubble active">⛓️</div>
+        <h4>Arc Blockchain</h4>
+        <p>Instant USDC transfer, $0 gas</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="bubble">🔗</div>
+        <h4>Recipient</h4>
+        <p>Email notify or claim link</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="bubble">💰</div>
+        <h4>Withdraw</h4>
+        <p>To mobile money or bank</p>
+      </div>
+    </div>
+
+    <div class="feature-pills">
+      <span class="pill green">✓ Works without a crypto wallet</span>
+      <span class="pill green">✓ Works without a bank account</span>
+      <span class="pill green">✓ No KYC required to receive</span>
+      <span class="pill">USDC on Arc Testnet</span>
+      <span class="pill">Privy embedded wallets</span>
+      <span class="pill">Supabase identity layer</span>
+      <span class="pill gold">Railway · 99.9% uptime</span>
+      <span class="pill">Next.js 14 App Router</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 6 — MARKET SIZE
+  ══════════════════════════════════════════════ -->
+  <div class="slide s6" data-num="6 / 12">
+    <div class="s6-left">
+      <div class="tag">Market Size</div>
+      <h2>
+        A <span class="fire-text">massive</span><br />
+        underserved<br />
+        market.
+      </h2>
+      <p>
+        We're entering remittances but positioning for the broader digital payments opportunity
+        across Africa — a continent where 57% of adults still rely on cash.
+      </p>
+
+      <div class="market-circles">
+        <div class="market-circle">
+          <div class="ring" style="width:160px;height:160px;border-color:rgba(37,92,180,0.25);background:rgba(37,92,180,0.06);">
+            <span class="ring-num grad-text" style="font-size:28px;">$2.1T</span>
+            <span style="font-size:10px;color:var(--muted);text-align:center;padding:0 10px;">Africa payments 2030</span>
+          </div>
+          <div class="ring-tag" style="color:#7EB3FF;">TAM</div>
+        </div>
+        <div class="market-circle">
+          <div class="ring" style="width:120px;height:120px;border-color:rgba(193,8,1,0.3);background:rgba(193,8,1,0.06);">
+            <span class="ring-num fire-text" style="font-size:22px;">$190B</span>
+            <span style="font-size:10px;color:var(--muted);text-align:center;padding:0 10px;">Africa remittances</span>
+          </div>
+          <div class="ring-tag" style="color:#FF7B76;">SAM</div>
+        </div>
+        <div class="market-circle">
+          <div class="ring" style="width:84px;height:84px;border-color:rgba(217,195,104,0.35);background:rgba(217,195,104,0.06);">
+            <span class="ring-num" style="font-size:16px;background:linear-gradient(90deg,#g2,#D9C368);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:#D9C368;">$1.9B</span>
+            <span style="font-size:9px;color:var(--muted);text-align:center;padding:0 8px;">Year 3 target</span>
+          </div>
+          <div class="ring-tag" style="color:#E8D47A;">SOM</div>
+        </div>
+      </div>
+    </div>
+    <div class="s6-right">
+      <div class="insight-card">
+        <h4>🇳🇬 Nigeria — Priority Market</h4>
+        <p>$24.3B in remittances in 2024. The UK–Nigeria corridor alone is $4.6B annually.
+           Nigeria's CBN is actively encouraging stablecoin-based remittance alternatives.</p>
+      </div>
+      <div class="insight-card">
+        <h4>🇬🇭 Ghana — Fastest Growing</h4>
+        <p>$4.7B in remittances. 44% of Ghanaians use mobile money (highest penetration in Africa) —
+           perfect fit for ZaPay's mobile-first UX.</p>
+      </div>
+      <div class="insight-card">
+        <h4>🌍 Diaspora Corridor</h4>
+        <p>3.5M Nigerians in the UK alone send an average of $1,200/yr home.
+           At 1.5% fee, that's $63M in addressable revenue from one corridor.</p>
+      </div>
+      <div class="insight-card">
+        <h4>📈 Stablecoin Tailwinds</h4>
+        <p>Global stablecoin transaction volume hit $27.6T in 2024 —
+           surpassing Visa. Emerging market adoption is growing 3× faster than developed markets.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 7 — BUSINESS MODEL
+  ══════════════════════════════════════════════ -->
+  <div class="slide s7" data-num="7 / 12">
+    <div class="tag green">Business Model</div>
+    <h2>Simple monetization. <span class="grad-text">High-margin unit economics.</span></h2>
+    <p class="sub">
+      Free to send USDC (drives adoption). Revenue on the edges — fiat on/off ramps and premium services.
+      Same model PayPal used to reach 400M users.
+    </p>
+    <div class="revenue-grid">
+      <div class="rev-card primary">
+        <div class="phase">Now · Live</div>
+        <h3>Fiat On-Ramp Fee</h3>
+        <div class="num grad-text">1.5%</div>
+        <p>On every fiat → USDC top-up. Invisible to users as a "conversion fee." At $500 avg top-up, that's $7.50 per transaction.</p>
+      </div>
+      <div class="rev-card fire">
+        <div class="phase">Q2 2026</div>
+        <h3>Fiat Off-Ramp</h3>
+        <div class="num fire-text">1.0%</div>
+        <p>On USDC → mobile money / bank withdrawals. Recipient-side revenue unlocks bidirectional monetization.</p>
+      </div>
+      <div class="rev-card gold">
+        <div class="phase">Q4 2026</div>
+        <h3>Business API</h3>
+        <div class="num" style="color:#E8D47A;">0.5%</div>
+        <p>B2B payroll, freelancer payouts, and e-commerce settlement. Higher volume, lower per-tx friction.</p>
+      </div>
+    </div>
+    <div class="unit-econ">
+      <div class="ue-item">
+        <div class="val grad-text">$7.50</div>
+        <div class="lbl">Revenue per<br/>avg transaction</div>
+      </div>
+      <div class="ue-item">
+        <div class="val" style="color:#34C759;">~85%</div>
+        <div class="lbl">Gross margin<br/>(infrastructure costs)</div>
+      </div>
+      <div class="ue-item">
+        <div class="val grad-text">$0</div>
+        <div class="lbl">Cost to send<br/>USDC on Arc</div>
+      </div>
+      <div class="ue-item">
+        <div class="val" style="color:#E8D47A;">$3–8</div>
+        <div class="lbl">Estimated CAC<br/>(social / viral loops)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 8 — TRACTION
+  ══════════════════════════════════════════════ -->
+  <div class="slide s8" data-num="8 / 12">
+    <div class="s8-left">
+      <div class="tag green">Traction</div>
+      <h2>
+        Early signal.<br />
+        <span class="grad-text">Strong foundation.</span>
+      </h2>
+      <p>
+        ZaPay is pre-revenue, live on Arc Testnet. Our metrics reflect platform readiness and product-market signal —
+        not vanity numbers. Every line of production code is deployed and running.
+      </p>
+      <div class="traction-grid">
+        <div class="tr-stat">
+          <div class="num grad-text">Live</div>
+          <div class="lbl">Production deployment on Railway</div>
+        </div>
+        <div class="tr-stat">
+          <div class="num" style="color:#34C759;">2</div>
+          <div class="lbl">Complete transfer flows validated end-to-end</div>
+        </div>
+        <div class="tr-stat">
+          <div class="num grad-text">$0</div>
+          <div class="lbl">Gas cost per USDC transaction on Arc</div>
+        </div>
+        <div class="tr-stat">
+          <div class="num" style="color:#E8D47A;">&lt;3s</div>
+          <div class="lbl">Average transaction settlement time</div>
+        </div>
+      </div>
+    </div>
+    <div class="s8-right">
+      <div class="milestone">
+        <div class="line">
+          <div class="dot-outer done"><div class="dot-inner"></div></div>
+        </div>
+        <div>
+          <div class="date-tag">Nov 2024 ✓</div>
+          <h4>Core Platform Built</h4>
+          <p>Full Next.js 14 app with Privy auth, Supabase identity, embedded wallets, and payment link generation.</p>
+        </div>
+      </div>
+      <div class="milestone-connector"></div>
+      <div class="milestone">
+        <div class="line">
+          <div class="dot-outer done"><div class="dot-inner"></div></div>
+        </div>
+        <div>
+          <div class="date-tag">Jan 2025 ✓</div>
+          <h4>Arc Testnet Integration Complete</h4>
+          <p>Real on-chain USDC transfers live. Sender deduction, recipient credit, and transaction history all working.</p>
+        </div>
+      </div>
+      <div class="milestone-connector"></div>
+      <div class="milestone">
+        <div class="line">
+          <div class="dot-outer done"><div class="dot-inner"></div></div>
+        </div>
+        <div>
+          <div class="date-tag">Mar 2025 ✓</div>
+          <h4>Claim Link Flow Validated</h4>
+          <p>Unregistered recipients can claim USDC via shareable link — no wallet, no signup required at receive time.</p>
+        </div>
+      </div>
+      <div class="milestone-connector"></div>
+      <div class="milestone">
+        <div class="line">
+          <div class="dot-outer"><div class="dot-inner"></div></div>
+        </div>
+        <div>
+          <div class="date-tag future">Q3 2025 → Target</div>
+          <h4>Private Beta — 500 Users</h4>
+          <p>UK–Nigeria diaspora pilot. Partnering with 3 African student associations in London for onboarding.</p>
+        </div>
+      </div>
+      <div class="milestone-connector"></div>
+      <div class="milestone">
+        <div class="line">
+          <div class="dot-outer"><div class="dot-inner"></div></div>
+        </div>
+        <div>
+          <div class="date-tag future">Q1 2026 → Target</div>
+          <h4>Arc Mainnet Launch + Revenue</h4>
+          <p>Go live with fiat on-ramp monetization. Target $250K GMV in first 90 days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 9 — COMPETITIVE LANDSCAPE
+  ══════════════════════════════════════════════ -->
+  <div class="slide s9" data-num="9 / 12">
+    <div class="tag">Competitive Landscape</div>
+    <h2>We're not fighting Wise. <span class="grad-text">We're making them irrelevant.</span></h2>
+    <p class="sub">
+      Existing solutions force users to choose between cost and convenience. ZaPay eliminates the tradeoff.
+    </p>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Fee to Send</th>
+          <th>No Wallet Needed</th>
+          <th>No Bank Account</th>
+          <th>Instant Settlement</th>
+          <th>Link-Based Claim</th>
+          <th>Built for Africa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td>⚡ ZaPay</td>
+          <td><span class="check">$0</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Wise</td>
+          <td>~1–3%</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">~</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Western Union</td>
+          <td>3–8%</td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">~</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">~</span></td>
+        </tr>
+        <tr>
+          <td>Chipper Cash</td>
+          <td>Low fees</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">~</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td>Binance Pay</td>
+          <td>$0</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">~</span></td>
+        </tr>
+        <tr>
+          <td>Yellow Card</td>
+          <td>~1.5%</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">~</span></td>
+          <td><span class="partial">~</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 10 — TECHNOLOGY & MOAT
+  ══════════════════════════════════════════════ -->
+  <div class="slide s10" data-num="10 / 12">
+    <div class="s10-left">
+      <div class="tag">Technology</div>
+      <h2>
+        Built on the<br />
+        <span class="grad-text">right stack</span><br />
+        at the right time.
+      </h2>
+      <p>
+        We chose every technology for compounding advantages — not convenience. Arc gives us $0 gas.
+        Privy gives us invisible wallets. Railway gives us zero-ops scaling.
+        Together they create a moat competitors can't easily replicate.
+      </p>
+      <div class="tech-stack">
+        <span class="tech-badge">Arc Testnet</span>
+        <span class="tech-badge">Circle USDC</span>
+        <span class="tech-badge">Privy Embedded Wallets</span>
+        <span class="tech-badge">Next.js 14</span>
+        <span class="tech-badge">Supabase</span>
+        <span class="tech-badge">Railway</span>
+        <span class="tech-badge">viem</span>
+        <span class="tech-badge">TypeScript</span>
+      </div>
+    </div>
+    <div class="s10-right">
+      <div class="moat-item">
+        <div class="icon" style="background:rgba(37,92,180,0.15);border:1px solid rgba(37,92,180,0.3);">⛓️</div>
+        <div>
+          <h4>Arc Ecosystem First-Mover</h4>
+          <p>We're building on Arc while others are still watching. Early partners get preferred access to Circle's distribution, co-marketing, and API roadmap input.</p>
+        </div>
+      </div>
+      <div class="moat-item">
+        <div class="icon" style="background:rgba(52,199,89,0.1);border:1px solid rgba(52,199,89,0.2);">🔗</div>
+        <div>
+          <h4>Claim Link UX Patent-Worthy</h4>
+          <p>One-time tokenized payment claims — no wallet, no signup — is a UX breakthrough. Each claimed link converts a non-crypto user into a registered ZaPay user.</p>
+        </div>
+      </div>
+      <div class="moat-item">
+        <div class="icon" style="background:rgba(217,195,104,0.1);border:1px solid rgba(217,195,104,0.2);">🌐</div>
+        <div>
+          <h4>Network Effect by Design</h4>
+          <p>Every payment link sent is a distribution event. Recipient signs up → creates their own wallet → sends to someone new. Viral coefficient baked into the core product.</p>
+        </div>
+      </div>
+      <div class="moat-item">
+        <div class="icon" style="background:rgba(193,8,1,0.12);border:1px solid rgba(193,8,1,0.25);">🛡️</div>
+        <div>
+          <h4>Compliance by Architecture</h4>
+          <p>Privy handles identity/KYC for senders. On-chain transaction records are immutable audit trails. We're designed for regulatory inspection from day one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 11 — TEAM
+  ══════════════════════════════════════════════ -->
+  <div class="slide s11" data-num="11 / 12">
+    <div class="tag">Team</div>
+    <h2>Built by people who <span class="grad-text">live this problem.</span></h2>
+    <p class="sub">
+      We're not outsiders who discovered remittances in a McKinsey report. We're Africans who've paid those fees,
+      waited those days, and watched family members jump through hoops to receive money they earned.
+    </p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="avatar">Z</div>
+        <h4>Founder / CEO</h4>
+        <div class="role">Product & Vision</div>
+        <p>Full-stack engineer and product thinker. Built ZaPay from zero to a production app with real on-chain transactions. Deep understanding of African consumer behavior.</p>
+      </div>
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#C10801,#F16501);">T</div>
+        <h4>Co-Founder / CTO</h4>
+        <div class="role">Infrastructure & Blockchain</div>
+        <p>Blockchain integrations, Arc Testnet deployment, viem / Privy architecture. Obsessive about security, transaction integrity, and zero-downtime deployments.</p>
+      </div>
+      <div class="team-card">
+        <div class="avatar" style="background:linear-gradient(135deg,#1A6B3C,#2ECC71);">G</div>
+        <h4>Head of Growth</h4>
+        <div class="role">Distribution & Partnerships</div>
+        <p>Former growth lead at an African fintech with 200K+ users. Owns the UK–Nigeria diaspora corridor go-to-market and student association partnerships.</p>
+      </div>
+    </div>
+    <div class="advisor-row">
+      <div class="advisor-pill">Former Circle BD Lead <span>— Payments Advisor</span></div>
+      <div class="advisor-pill">Ex-Flutterwave <span>— Africa Compliance Advisor</span></div>
+      <div class="advisor-pill">YC W21 Founder <span>— Startup Operations Advisor</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 12 — THE ASK
+  ══════════════════════════════════════════════ -->
+  <div class="slide s12" data-num="12 / 12">
+    <div class="s12-orb1"></div>
+    <div class="s12-orb2"></div>
+    <div class="s12-content">
+      <div class="s12-left">
+        <div class="tag">Seed Round</div>
+        <h2>We're raising<br />our seed.</h2>
+        <div class="ask-amount">$500K</div>
+        <p>
+          18-month runway to mainnet launch, 500 beta users, first revenue, and Series A positioning.
+          We're raising on a SAFE at a $4M cap.
+        </p>
+        <p class="val-note">Lead investors receive observer board seat + pro-rata rights.</p>
+
+        <div class="use-of-funds" style="margin-top:28px;">
+          <div class="fund-item">
+            <div class="fund-label">🛠️ Engineering & Product</div>
+            <div class="bar-wrap"><div class="bar" style="width:40%;background:linear-gradient(90deg,var(--blue),var(--blue-lt));"></div></div>
+            <div class="fund-pct">40%</div>
+          </div>
+          <div class="fund-item">
+            <div class="fund-label">🌍 Market Expansion</div>
+            <div class="bar-wrap"><div class="bar" style="width:25%;background:linear-gradient(90deg,var(--g1),var(--g2));"></div></div>
+            <div class="fund-pct">25%</div>
+          </div>
+          <div class="fund-item">
+            <div class="fund-label">⚖️ Compliance & Legal</div>
+            <div class="bar-wrap"><div class="bar" style="width:20%;background:linear-gradient(90deg,var(--g2),var(--g3));"></div></div>
+            <div class="fund-pct">20%</div>
+          </div>
+          <div class="fund-item">
+            <div class="fund-label">🤝 Ops & Partnerships</div>
+            <div class="bar-wrap"><div class="bar" style="width:15%;background:rgba(255,255,255,0.25);"></div></div>
+            <div class="fund-pct">15%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s12-right">
+        <div class="use-of-funds">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">18-Month Targets</div>
+          <div class="metrics-promise">
+            <h4>After This Round We Will Have</h4>
+            <div class="goal-grid">
+              <div class="goal-item">
+                <div class="val grad-text">500</div>
+                <div class="lbl">Beta users, UK–Nigeria corridor</div>
+              </div>
+              <div class="goal-item">
+                <div class="val" style="color:#34C759;">$250K</div>
+                <div class="lbl">GMV in first 90 days on mainnet</div>
+              </div>
+              <div class="goal-item">
+                <div class="val fire-text">3</div>
+                <div class="lbl">Active remittance corridors</div>
+              </div>
+              <div class="goal-item">
+                <div class="val" style="color:#E8D47A;">Arc</div>
+                <div class="lbl">Mainnet launch, full monetization live</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-top:18px;">
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+            <strong style="color:#fff;display:block;margin-bottom:8px;">Why ZaPay wins:</strong>
+            The window to own Africa's stablecoin remittance layer is <em>right now</em> —
+            before Wise adds USDC, before Binance figures out UX, before a bank buys Chipper Cash.
+            We're already in production. We just need fuel.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-bar">
+      <div>
+        <strong>ZaPay</strong> — Money moves at the speed of a message
+      </div>
+      <div style="display:flex;gap:32px;">
+        <span>🌐 zapay.app</span>
+        <span>📧 <a href="mailto:invest@zapay.app">invest@zapay.app</a></span>
+        <span style="color:rgba(255,255,255,0.15);">Confidential · Seed 2025</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+</body>
+</html>
