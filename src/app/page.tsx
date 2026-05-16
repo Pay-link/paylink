@@ -218,7 +218,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div style={{ background: '#09090E', color: '#fff' }}>
+    <div className="lp-root">
       <style dangerouslySetInnerHTML={{ __html: `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -847,6 +847,75 @@ footer{
 [data-theme="light"] .lp-drawer-item:hover{background:rgba(0,0,0,0.04);color:var(--ink)}
 [data-theme="light"] .lp-drawer-divider{background:rgba(0,0,0,0.08)}
 [data-theme="light"] .lp-overlay{background:rgba(0,0,0,0.3)}
+[data-theme="light"] .lp-drawer-ghost{background:rgba(0,0,0,0.05);color:var(--ink2)}
+[data-theme="light"] .lp-drawer-ghost:hover{background:rgba(0,0,0,0.08);color:var(--ink)}
+[data-theme="light"] .lp-drawer-icon{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0.08);color:var(--ink3)}
+[data-theme="light"] .lp-drawer-primary .lp-drawer-icon{background:rgba(255,255,255,0.2);color:#fff}
+
+/* ── outer wrapper ── */
+.lp-root{background:var(--page);color:var(--ink)}
+
+/* ── hero ── */
+[data-theme="light"] .hero-eyebrow{background:rgba(37,92,180,0.07);border-color:rgba(37,92,180,0.16);color:var(--o3)}
+
+/* ── features section ── */
+[data-theme="light"] .deep-label{color:var(--o3)}
+[data-theme="light"] .deep-bg-glow{opacity:0.05}
+[data-theme="light"] .gc-icon{background:rgba(37,92,180,0.07);border-color:rgba(37,92,180,0.14)}
+
+/* ── dashboard preview section ── */
+[data-theme="light"] .preview-glow{opacity:0.06}
+[data-theme="light"] .preview-glow2{opacity:0.04}
+
+/* ── how it works ── */
+[data-theme="light"] .how-section::before{opacity:0.012}
+[data-theme="light"] .how-tag{color:var(--o3)}
+[data-theme="light"] .step-num{color:var(--o3)}
+[data-theme="light"] .step-icon{background:rgba(37,92,180,0.07);border-color:rgba(37,92,180,0.14)}
+
+/* ── fees ── */
+[data-theme="light"] .section-tag-orange{color:var(--o3)}
+[data-theme="light"] .section-h2{color:var(--ink)}
+[data-theme="light"] .section-sub{color:var(--ink3)}
+[data-theme="light"] .fee-table{border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .fee-head{background:rgba(0,0,0,0.03)}
+[data-theme="light"] .fee-head span{color:var(--ink3)}
+[data-theme="light"] .fee-row{border-bottom-color:rgba(0,0,0,0.06)}
+[data-theme="light"] .fee-row.hi{background:rgba(37,92,180,0.06)}
+[data-theme="light"] .fee-method{color:var(--ink2)}
+[data-theme="light"] .fee-them{color:var(--ink3)}
+
+/* ── testimonials ── */
+[data-theme="light"] .testi-section{background:var(--page2)}
+[data-theme="light"] .testi-card{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .testi-card:hover{border-color:rgba(37,92,180,0.2)}
+[data-theme="light"] .testi-text{color:var(--ink3)}
+[data-theme="light"] .testi-name{color:var(--ink)}
+[data-theme="light"] .testi-role{color:var(--ink3)}
+[data-theme="light"] .testi-glow{opacity:0.04}
+
+/* ── app section ── */
+[data-theme="light"] .app-eyebrow{color:var(--o3)}
+[data-theme="light"] .app-h2{color:var(--ink)}
+[data-theme="light"] .app-sub{color:var(--ink3)}
+[data-theme="light"] .app-btn{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .app-btn:hover{background:#fff;border-color:rgba(37,92,180,0.22)}
+[data-theme="light"] .app-btn-small{color:var(--ink3)}
+[data-theme="light"] .app-btn-big{color:var(--ink)}
+[data-theme="light"] .app-glow{opacity:0.04}
+
+/* ── final CTA ── */
+[data-theme="light"] .final-glow{opacity:0.07}
+[data-theme="light"] .btn-final-ghost{background:rgba(0,0,0,0.05);color:var(--ink2);border-color:rgba(0,0,0,0.12)}
+[data-theme="light"] .btn-final-ghost:hover{background:rgba(0,0,0,0.08);color:var(--ink)}
+
+/* ── trust strip ── */
+[data-theme="light"] .trust-h3{color:var(--ink3)}
+
+/* ── footer ── */
+[data-theme="light"] .footer-col-title{color:var(--ink3)}
+[data-theme="light"] .footer-bottom{border-top-color:rgba(0,0,0,0.08)}
+[data-theme="light"] .footer-arc span{color:var(--o3)}
 ` }} />
 
       {/* NAV overlay (mobile) */}
