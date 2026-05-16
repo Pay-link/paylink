@@ -302,7 +302,7 @@ export function Nav({ variant = 'app' }: NavProps) {
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
-            za<span style={{ color: 'var(--g1)' }}>pay</span>
+            <span>za<span style={{ color: 'var(--g1)' }}>pay</span></span>
           </Link>
 
           {/* Landing: centered section links (desktop only) */}

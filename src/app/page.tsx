@@ -926,7 +926,7 @@ footer{
         <a href="#" className="nav-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
-          za<span>pay</span>
+          <span>za<span style={{ color: 'var(--o1)' }}>pay</span></span>
         </a>
         <div className="nav-links">
           <a href="#how">How it works</a>
@@ -1372,7 +1372,7 @@ footer{
             <div className="footer-logo" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={22} height={22} style={{ display: 'block', flexShrink: 0 }} />
-            za<span>pay</span>
+            <span>za<span style={{ color: 'var(--o1)' }}>pay</span></span>
           </div>
             <p className="footer-desc">Send and receive money globally with just a link. Powered by Arc, settled in under a second.</p>
           </div>
