@@ -1385,7 +1385,7 @@ footer{
           <div>
             <div className="footer-col-title">Company</div>
             <div className="footer-links">
-              <a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Contact</a>
+              <a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="mailto:team@zapay.xyz">Contact</a>
             </div>
           </div>
           <div>
