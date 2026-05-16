@@ -70,7 +70,7 @@ export function ChatWidget() {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "Sorry, I'm having trouble connecting. Please try again or email oxclonenetwork@gmail.com for help.",
+        content: "Sorry, I'm having trouble connecting. Please try again or email support@zapay.xyz for help.",
       }])
     } finally {
       setLoading(false)
@@ -214,7 +214,7 @@ export function ChatWidget() {
               </button>
             </div>
             <div style={{ fontSize: 10, color: 'var(--ink4)', textAlign: 'center', marginTop: 6 }}>
-              Powered by AI · Can't help? <a href="mailto:oxclonenetwork@gmail.com" style={{ color: 'var(--g1)', textDecoration: 'none' }}>Email support</a>
+              Powered by AI · Can't help? <a href="mailto:support@zapay.xyz" style={{ color: 'var(--g1)', textDecoration: 'none' }}>Email support</a>
             </div>
           </div>
         </div>
