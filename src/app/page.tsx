@@ -43,7 +43,22 @@ export default function HomePage() {
   const router = useRouter()
   const [liveStats, setLiveStats] = useState({ links: 0, txs: 0 })
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const didMountRef = useRef(false)
+
+  // Load & apply theme
+  useEffect(() => {
+    const saved = (localStorage.getItem('zp-theme') as 'dark' | 'light') || 'dark'
+    setTheme(saved)
+    document.documentElement.setAttribute('data-theme', saved)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    localStorage.setItem('zp-theme', next)
+    document.documentElement.setAttribute('data-theme', next)
+  }
 
   // Close menu on outside tap & scroll lock
   useEffect(() => {
@@ -687,22 +702,44 @@ footer{
 }
 .lp-hamburger{display:none}
 .lp-mobile-cta{display:none}
+.lp-theme-toggle-mobile{display:none}
 .lp-overlay{display:none}
 .lp-drawer{display:none}
+/* desktop theme toggle */
+.lp-theme-toggle{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:10px;
+  border:1px solid var(--border);background:transparent;
+  color:rgba(255,255,255,0.65);cursor:pointer;font-size:18px;
+  transition:background .15s,color .15s,border-color .15s;flex-shrink:0;
+}
+.lp-theme-toggle:hover{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.18)}
+[data-theme="light"] .lp-theme-toggle{color:var(--ink3);border-color:rgba(0,0,0,0.12)}
+[data-theme="light"] .lp-theme-toggle:hover{background:rgba(0,0,0,0.06);color:var(--ink)}
 @media(max-width:600px){
   .lp-hamburger{
     display:flex;align-items:center;justify-content:center;
     width:38px;height:38px;border-radius:10px;
     border:1px solid var(--border);background:transparent;
     color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;
-    grid-column:3;justify-self:end;
+    grid-column:4;justify-self:end;
   }
   .lp-mobile-cta{
     display:inline-flex!important;align-items:center;justify-content:center;
     padding:7px 14px!important;font-size:12px!important;
     flex-shrink:0;white-space:nowrap;
-    grid-column:3;justify-self:end;
+    grid-column:4;justify-self:end;
   }
+  nav{grid-template-columns:auto 1fr auto auto!important;gap:8px}
+  .lp-theme-toggle-mobile{
+    display:flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:10px;
+    border:1px solid var(--border);background:transparent;
+    color:rgba(255,255,255,0.65);cursor:pointer;font-size:18px;
+    flex-shrink:0;grid-column:3;justify-self:end;
+    transition:background .15s,color .15s;
+  }
+  [data-theme="light"] .lp-theme-toggle-mobile{color:var(--ink3);border-color:rgba(0,0,0,0.12)}
   .lp-overlay{
     display:block;position:fixed;inset:0;
     background:rgba(0,0,0,0.5);z-index:199;
@@ -824,6 +861,10 @@ footer{
           <a href="#app">App</a>
         </div>
         <div className="nav-right">
+          {/* Theme toggle — desktop */}
+          <button onClick={toggleTheme} className="lp-theme-toggle" aria-label="Toggle theme">
+            <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+          </button>
           {authenticated ? (
             <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button onClick={() => router.push('/dashboard')} className="btn-pill btn-orange" style={{ cursor: 'pointer' }}>Dashboard</button>
@@ -836,7 +877,11 @@ footer{
             </span>
           )}
         </div>
-        {/* Mobile right corner: hamburger for auth users, Create link CTA for guests */}
+        {/* Theme toggle — mobile (always visible, column 3) */}
+        <button onClick={toggleTheme} className="lp-theme-toggle-mobile" aria-label="Toggle theme">
+          <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+        </button>
+        {/* Mobile right corner: hamburger for auth users, Create link CTA for guests (column 4) */}
         {authenticated ? (
           <button
             className="lp-hamburger"
@@ -873,6 +918,16 @@ footer{
           <button className="lp-drawer-cta lp-drawer-primary" onClick={() => { router.push('/dashboard'); setMenuOpen(false) }}>
             <span className="lp-drawer-icon"><Icon icon="ph:squares-four-bold" /></span>
             Dashboard
+          </button>
+          <button
+            className="lp-drawer-cta lp-drawer-ghost"
+            onClick={() => { toggleTheme(); setMenuOpen(false) }}
+            style={{ marginBottom: 0 }}
+          >
+            <span className="lp-drawer-icon">
+              <Icon icon={theme === 'dark' ? 'ph:sun-bold' : 'ph:moon-bold'} />
+            </span>
+            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
           </button>
           <button className="lp-drawer-logout" onClick={() => { logout(); setMenuOpen(false) }}>
             <span className="lp-drawer-icon"><Icon icon="ph:sign-out-bold" /></span>
