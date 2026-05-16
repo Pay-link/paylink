@@ -242,7 +242,7 @@ nav{
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border-bottom:0.5px solid var(--border);
 }
-.nav-logo{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em;text-decoration:none}
+.nav-logo{font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:-.04em;text-decoration:none;display:flex;align-items:center;gap:7px}
 .nav-logo span{color:var(--o1)}
 .nav-links{display:flex;gap:28px;justify-content:center}
 .nav-links a{font-size:14px;color:var(--ink3);text-decoration:none;font-weight:500;transition:color .15s}
@@ -923,7 +923,11 @@ footer{
 
       {/* NAV */}
       <nav>
-        <a href="#" className="nav-logo">za<span>pay</span></a>
+        <a href="#" className="nav-logo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
+          za<span>pay</span>
+        </a>
         <div className="nav-links">
           <a href="#how">How it works</a>
           <a href="#fees">Fees</a>
@@ -1365,7 +1369,11 @@ footer{
       <footer>
         <div className="footer-top">
           <div>
-            <div className="footer-logo">za<span>pay</span></div>
+            <div className="footer-logo" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={22} height={22} style={{ display: 'block', flexShrink: 0 }} />
+            za<span>pay</span>
+          </div>
             <p className="footer-desc">Send and receive money globally with just a link. Powered by Arc, settled in under a second.</p>
           </div>
           <div>

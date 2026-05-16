@@ -296,9 +296,12 @@ export function Nav({ variant = 'app' }: NavProps) {
 
           {/* Logo — always left */}
           <Link href="/" style={{
+            display: 'flex', alignItems: 'center', gap: 7,
             fontSize: 20, fontWeight: 700, color: 'var(--ink)',
             letterSpacing: '-.04em', textDecoration: 'none', flexShrink: 0,
           }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
             za<span style={{ color: 'var(--g1)' }}>pay</span>
           </Link>
 

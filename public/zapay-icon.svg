@@ -1,0 +1,14 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="zapayGradient" x1="80" y1="80" x2="430" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4A7FD4"/>
+      <stop offset="35%" stop-color="#255CB4"/>
+      <stop offset="70%" stop-color="#1A4A96"/>
+      <stop offset="100%" stop-color="#0D2258"/>
+    </linearGradient>
+  </defs>
+  <path
+    d="M180 80H390C405 80 413 98 402 109L281 230H360C377 230 385 250 373 261L210 430C198 442 180 433 180 417V300H120C104 300 96 281 107 270L229 149H150C133 149 125 129 137 118L180 80Z"
+    fill="url(#zapayGradient)"
+  />
+</svg>
