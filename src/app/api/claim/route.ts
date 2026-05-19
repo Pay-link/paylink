@@ -170,7 +170,7 @@ export async function PATCH(req: NextRequest) {
         const account = privateKeyToAccount(adminKey as `0x${string}`)
         const walletClient = createWalletClient({
           account,
-          chain: null,
+          chain: undefined,
           transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL)
         })
         const claimHash = padHex(`0x${token}`, { size: 32 })
