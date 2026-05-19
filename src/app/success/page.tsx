@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Nav } from '@/components/layout/Nav'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
-import { formatDateTime } from '@/lib/utils'
+import { formatDateTime, shortenTxHash } from '@/lib/utils'
 import { Icon } from '@iconify/react'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'
@@ -20,6 +20,7 @@ function SuccessContent() {
   const note = params.get('note') || 'Payment'
   const claimToken = params.get('claim_token') || ''
   const claimUrl = claimToken ? `${APP_URL}/claim/${claimToken}` : ''
+  const txHash = params.get('tx_hash') || ''
   const txId = '#ZP' + Date.now().toString().slice(-8)
   const [copied, setCopied] = useState(false)
 
@@ -101,7 +102,7 @@ function SuccessContent() {
                   { key: 'Total paid', val: `$${amount}`, bold: true },
                   { key: 'Network', val: 'Arc · USDC' },
                   { key: 'Date & time', val: formatDateTime(date) },
-                  { key: 'Transaction ID', val: txId },
+                  txHash ? { key: 'Tx hash', val: shortenTxHash(txHash) } : { key: 'Transaction ID', val: txId },
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '13px 18px', borderBottom: i < 7 ? '1px solid var(--border)' : 'none' }}>
                     <span style={{ fontSize: 14, color: 'var(--ink3)' }}>{row.key}</span>

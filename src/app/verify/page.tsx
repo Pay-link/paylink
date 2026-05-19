@@ -122,6 +122,7 @@ function VerifyContent() {
         })
 
         // 6. Go to success
+        if (txHash) base.set('tx_hash', txHash)
         router.push(`/success?${base.toString()}`)
 
       } else {
@@ -165,6 +166,7 @@ function VerifyContent() {
           const amountRaw = parseUnits(amount, 6)
           const claimHash = padHex(`0x${claimJson.token}`, { size: 32 })
           
+          let depositTxHash = ''
           try {
             await walletClient.writeContract({
               address: usdcAddress,
@@ -173,7 +175,7 @@ function VerifyContent() {
               args: [ESCROW_ADDRESS, amountRaw],
               chain: null,
             })
-            await walletClient.writeContract({
+            depositTxHash = await walletClient.writeContract({
               address: ESCROW_ADDRESS,
               abi: escrowAbi,
               functionName: 'deposit',
@@ -208,6 +210,7 @@ function VerifyContent() {
         }
 
         if (claimJson.token) base.set('claim_token', claimJson.token)
+        if (typeof depositTxHash !== 'undefined' && depositTxHash) base.set('tx_hash', depositTxHash)
         router.push(`/success?${base.toString()}`)
       }
     } catch (err: any) {
