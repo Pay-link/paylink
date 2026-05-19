@@ -118,6 +118,10 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
   }
 
   const handlePayNow = () => {
+    if (authenticated && user?.id === link?.owner_id) {
+      alert("You cannot pay your own link!")
+      return
+    }
     if (selectedMethod === 'wallet') {
       setWantsToPay(true)
       if (!authenticated) login()
@@ -460,6 +464,10 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   <button
                     className="btn-primary"
                     onClick={() => {
+                      if (!authenticated && link && contact && (contact === link.owner_email)) {
+                        alert("You cannot pay your own link!")
+                        return
+                      }
                       setWantsToPay(true)
                       if (!authenticated) {
                         login()

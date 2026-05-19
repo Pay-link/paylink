@@ -8,6 +8,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { useState } from 'react'
 import { isValidContact } from '@/lib/utils'
 import { Icon } from '@iconify/react'
+import { useUser } from '@/hooks/useUser'
 
 type Step = 1 | 2 | 3 | 4
 
@@ -23,6 +24,7 @@ export default function SendPage() {
   const [recipientChecking, setRecipientChecking] = useState(false)
   const [recipientUnregistered, setRecipientUnregistered] = useState(false)
   const [isPendingClaim, setIsPendingClaim] = useState(false)
+  const { email, phone } = useUser()
 
   // Skip Identity step for already-authenticated users
   useEffect(() => {
@@ -170,6 +172,13 @@ export default function SendPage() {
                         disabled={!recipient.contact || recipientChecking}
                         onClick={async () => {
                           setRecipientChecking(true)
+                          const isSelf = (!authenticated && recipient.contact === senderContact) ||
+                                         (authenticated && (recipient.contact === email || recipient.contact === phone))
+                          if (isSelf) {
+                            alert("You cannot send money to yourself!")
+                            setRecipientChecking(false)
+                            return
+                          }
                           try {
                             const res = await fetch(`/api/users/lookup?contact=${encodeURIComponent(recipient.contact)}`)
                             const json = await res.json()
