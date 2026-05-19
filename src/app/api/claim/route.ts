@@ -179,6 +179,7 @@ export async function PATCH(req: NextRequest) {
            abi: escrowAbi,
            functionName: 'release',
            args: [claimHash, claimer.wallet_address as `0x${string}`],
+           chain: null,
         })
       } catch (err) {
         console.error('Failed to release on-chain escrow', err)
