@@ -547,36 +547,38 @@ export default function DashboardPage() {
               </div>
 
               {/* Escrow Claims */}
-              {pendingClaims.length > 0 && (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Pending Escrow Claims</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Pending Escrow Claims</div>
+              </div>
+              <div style={{ ...cardStyle, marginBottom: 20 }}>
+                {pendingClaims.length === 0 ? (
+                  <div style={{ padding: '32px', textAlign: 'center', color: 'var(--ink3)', fontSize: 14 }}>
+                    No pending escrow claims. <Link href="/send" style={{ color: 'var(--g1)', fontWeight: 500 }}>Send to an email →</Link>
                   </div>
-                  <div style={{ ...cardStyle, marginBottom: 20 }}>
-                    {pendingClaims.map((claim: any, i: number) => {
-                      const isExpired = new Date(claim.expires_at) < new Date()
-                      return (
-                        <div key={claim.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < pendingClaims.length-1 ? '1px solid var(--border)' : 'none' }}>
-                          <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}><Icon icon="ph:lock-key-bold" /></div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>To: {claim.recipient_email}</div>
-                            <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
-                              ${claim.amount} · {isExpired ? 'Expired' : `Expires ${new Date(claim.expires_at).toLocaleDateString()}`}
-                            </div>
-                          </div>
-                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                            {isExpired ? (
-                              <button onClick={() => handleRefund(claim)} style={{ padding: '6px 12px', background: 'var(--g1)', color: '#fff', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>Refund</button>
-                            ) : (
-                              <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: 'rgba(245,158,11,.15)', color: '#FDB64E' }}>Pending</span>
-                            )}
+                ) : (
+                  pendingClaims.map((claim: any, i: number) => {
+                    const isExpired = new Date(claim.expires_at) < new Date()
+                    return (
+                      <div key={claim.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < pendingClaims.length-1 ? '1px solid var(--border)' : 'none' }}>
+                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}><Icon icon="ph:lock-key-bold" /></div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>To: {claim.recipient_email}</div>
+                          <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
+                            ${claim.amount} · {isExpired ? 'Expired' : `Expires ${new Date(claim.expires_at).toLocaleDateString()}`}
                           </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                </>
-              )}
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          {isExpired ? (
+                            <button onClick={() => handleRefund(claim)} style={{ padding: '6px 12px', background: 'var(--g1)', color: '#fff', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>Refund</button>
+                          ) : (
+                            <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: 'rgba(245,158,11,.15)', color: '#FDB64E' }}>Pending</span>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
 
               {/* My Links */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
