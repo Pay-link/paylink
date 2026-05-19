@@ -1,17 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { usePrivy } from '@privy-io/react-auth'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { Nav } from '@/components/layout/Nav'
 import Link from 'next/link'
-import { createPublicClient, http, parseAbiItem } from 'viem'
+import { createWalletClient, custom, createPublicClient, http, parseAbiItem, padHex } from 'viem'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
 import { useLocalCurrency } from '@/hooks/useLocalCurrency'
 import { Icon } from '@iconify/react'
+import { escrowAbi, ESCROW_ADDRESS } from '@/lib/escrowAbi'
 
 const arcTestnet = {
   id: 5042002,
@@ -28,10 +29,12 @@ const usdcAbi = [
 
 export default function DashboardPage() {
   const { authenticated, ready, logout } = usePrivy()
+  const { wallets } = useWallets()
   const { profile, walletAddress, email, phone, displayName, userId } = useUser()
   const router = useRouter()
   const [links, setLinks] = useState<any[]>([])
   const [transactions, setTransactions] = useState<any[]>([])
+  const [pendingClaims, setPendingClaims] = useState<any[]>([])
   const [displayBalance, setDisplayBalance] = useState(0)
   const [topUpOpen, setTopUpOpen] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false)
@@ -74,15 +77,19 @@ export default function DashboardPage() {
 
   const loadRealData = async () => {
     try {
-      const [linksData, txData] = await Promise.all([
+      const [linksData, txData, claimsData] = await Promise.all([
         supabase.from('payment_links').select('*').eq('owner_id', userId).order('created_at', { ascending: false }).limit(10),
         supabase.from('transactions').select('*').or(`sender_id.eq.${userId},recipient_id.eq.${userId}`).order('created_at', { ascending: false }).limit(10),
+        supabase.from('pending_claims').select('*').eq('sender_id', userId).eq('status', 'pending').order('created_at', { ascending: false }).limit(10),
       ])
       if (linksData.error) console.error('Links fetch error:', linksData.error)
       else if (linksData.data?.length) setLinks(linksData.data)
 
       if (txData.error) console.error('Transactions fetch error:', txData.error)
       else if (txData.data?.length) setTransactions(txData.data)
+
+      if (claimsData.error) console.error('Claims fetch error:', claimsData.error)
+      else if (claimsData.data) setPendingClaims(claimsData.data)
     } catch (err) {
       console.error('Dashboard data error:', err)
     } finally {
@@ -162,6 +169,43 @@ export default function DashboardPage() {
       supabase.removeChannel(channel)
     }
   }, [walletAddress, userId])
+
+  const handleRefund = async (claim: any) => {
+    if (!ESCROW_ADDRESS || ESCROW_ADDRESS === '0x') {
+      alert("Escrow contract not deployed. Simulating refund on DB...")
+      await supabase.from('pending_claims').update({ status: 'expired' }).eq('id', claim.id)
+      setPendingClaims(prev => prev.filter(c => c.id !== claim.id))
+      return
+    }
+    try {
+      const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
+      if (!activeWallet) return alert("Wallet not connected")
+
+      const provider = await activeWallet.getEthereumProvider()
+      const walletClient = createWalletClient({
+        account: activeWallet.address as `0x${string}`,
+        transport: custom(provider),
+      })
+      
+      const claimHash = padHex(`0x${claim.claim_token}`, { size: 32 })
+      
+      await walletClient.writeContract({
+        address: ESCROW_ADDRESS,
+        abi: escrowAbi,
+        functionName: 'refund',
+        args: [claimHash],
+        chain: null,
+      })
+
+      // Update DB to mark as expired/refunded
+      await supabase.from('pending_claims').update({ status: 'expired' }).eq('id', claim.id)
+      setPendingClaims(prev => prev.filter(c => c.id !== claim.id))
+      alert("Refund successful!")
+    } catch (e: any) {
+      console.error(e)
+      alert(e.message || "Failed to refund")
+    }
+  }
 
   const animateBalance = (target: number) => {
     const duration = 1200
@@ -501,6 +545,38 @@ export default function DashboardPage() {
                   </div>
                 )}
               </div>
+
+              {/* Escrow Claims */}
+              {pendingClaims.length > 0 && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Pending Escrow Claims</div>
+                  </div>
+                  <div style={{ ...cardStyle, marginBottom: 20 }}>
+                    {pendingClaims.map((claim: any, i: number) => {
+                      const isExpired = new Date(claim.expires_at) < new Date()
+                      return (
+                        <div key={claim.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < pendingClaims.length-1 ? '1px solid var(--border)' : 'none' }}>
+                          <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}><Icon icon="ph:lock-key-bold" /></div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>To: {claim.recipient_email}</div>
+                            <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
+                              ${claim.amount} · {isExpired ? 'Expired' : `Expires ${new Date(claim.expires_at).toLocaleDateString()}`}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                            {isExpired ? (
+                              <button onClick={() => handleRefund(claim)} style={{ padding: '6px 12px', background: 'var(--g1)', color: '#fff', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>Refund</button>
+                            ) : (
+                              <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: 'rgba(245,158,11,.15)', color: '#FDB64E' }}>Pending</span>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
 
               {/* My Links */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>

@@ -5,13 +5,20 @@ import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
-import { createWalletClient, custom, parseUnits } from 'viem'
+import { createWalletClient, custom, parseUnits, padHex } from 'viem'
+import { escrowAbi, ESCROW_ADDRESS } from '@/lib/escrowAbi'
 
 const usdcAddress = '0x3600000000000000000000000000000000000000' as const
 const usdcTransferAbi = [
   {
     type: 'function', name: 'transfer',
     inputs: [{ name: 'to', type: 'address' }, { name: 'value', type: 'uint256' }],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function', name: 'approve',
+    inputs: [{ name: 'spender', type: 'address' }, { name: 'value', type: 'uint256' }],
     outputs: [{ name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
   },
@@ -119,27 +126,8 @@ function VerifyContent() {
 
       } else {
         // ── Unregistered recipient: escrow / pending claim ─────────────────────
-        const sendRes = await fetch('/api/transactions/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderId: user.id,
-            senderEmail: userEmail,
-            recipientContact: contact || to,
-            amount: parseFloat(amount),
-            note: note || 'Escrow hold',
-          }),
-        })
-        const sendJson = await sendRes.json()
-        if (!sendRes.ok) {
-          setSendError(sendJson.error === 'Insufficient balance'
-            ? `Insufficient balance. You have $${sendJson.balance?.toFixed(2) || '0.00'} USDC.`
-            : sendJson.error || 'Failed to process payment. Please try again.')
-          setSending(false)
-          return
-        }
-
-        // Create the claim record for the recipient to redeem
+        
+        // 1. Create the claim record to get the token
         const claimRes = await fetch('/api/claim', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -153,8 +141,73 @@ function VerifyContent() {
           }),
         })
         const claimJson = await claimRes.json()
-        if (claimJson.token) base.set('claim_token', claimJson.token)
+        if (!claimRes.ok) {
+          setSendError(claimJson.error || 'Failed to create claim')
+          setSending(false)
+          return
+        }
 
+        // 2. Perform On-Chain Escrow Deposit if contract is configured
+        if (ESCROW_ADDRESS && ESCROW_ADDRESS !== '0x') {
+          const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
+          if (!activeWallet) {
+             setSendError('Wallet not found')
+             setSending(false)
+             return
+          }
+          const provider = await activeWallet.getEthereumProvider()
+          try { await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x4CEF52' }] }) } catch (_) {}
+          
+          const walletClient = createWalletClient({
+            account: activeWallet.address as `0x${string}`,
+            transport: custom(provider),
+          })
+          const amountRaw = parseUnits(amount, 6)
+          const claimHash = padHex(`0x${claimJson.token}`, { size: 32 })
+          
+          try {
+            await walletClient.writeContract({
+              address: usdcAddress,
+              abi: usdcTransferAbi,
+              functionName: 'approve',
+              args: [ESCROW_ADDRESS, amountRaw],
+              chain: null,
+            })
+            await walletClient.writeContract({
+              address: ESCROW_ADDRESS,
+              abi: escrowAbi,
+              functionName: 'deposit',
+              args: [claimHash, amountRaw],
+              chain: null,
+            })
+          } catch (err: any) {
+             console.error('Escrow deposit failed', err)
+             setSendError('Failed to deposit funds to escrow')
+             setSending(false)
+             return
+          }
+        }
+
+        // 3. Record transaction in database
+        const sendRes = await fetch('/api/transactions/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId: user.id,
+            senderEmail: userEmail,
+            recipientContact: contact || to,
+            amount: parseFloat(amount),
+            note: note || 'Escrow hold',
+          }),
+        })
+        const sendJson = await sendRes.json()
+        if (!sendRes.ok && (!ESCROW_ADDRESS || ESCROW_ADDRESS === '0x')) {
+          setSendError(sendJson.error)
+          setSending(false)
+          return
+        }
+
+        if (claimJson.token) base.set('claim_token', claimJson.token)
         router.push(`/success?${base.toString()}`)
       }
     } catch (err: any) {

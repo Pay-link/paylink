@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
 import { sanitizeText, isValidEmail, isValidAmount } from '@/lib/sanitize'
+import { createWalletClient, http, padHex } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+import { escrowAbi } from '@/lib/escrowAbi'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -101,8 +104,39 @@ export async function PATCH(req: NextRequest) {
       return Response.json({ error: 'Invalid claimedBy' }, { status: 400 })
     }
 
-    // Atomic update: only succeeds if status='pending' AND not expired in one query
-    // This prevents race conditions — two concurrent requests cannot both succeed
+    // 1. Fetch claimer details
+    const { data: claimer } = await supabase
+      .from('users')
+      .select('id, email, phone, balance_usdc, wallet_address')
+      .eq('id', claimedBy)
+      .single()
+
+    if (!claimer) {
+      return Response.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // 2. Fetch existing claim details
+    const { data: existing } = await supabase
+      .from('pending_claims')
+      .select('recipient_email, status, expires_at, amount')
+      .eq('claim_token', token)
+      .single()
+
+    if (!existing) return Response.json({ error: 'Claim not found' }, { status: 404 })
+
+    // 3. Verify authorization
+    const recipientContact = existing.recipient_email.toLowerCase()
+    const claimerEmail = (claimer.email || '').toLowerCase()
+    const claimerPhone = (claimer.phone || '').toLowerCase()
+
+    if (claimerEmail !== recipientContact && claimerPhone !== recipientContact) {
+      return Response.json({ error: 'This claim link is not intended for you.' }, { status: 403 })
+    }
+
+    if (existing.status === 'claimed') return Response.json({ error: 'Already claimed' }, { status: 409 })
+    if (new Date(existing.expires_at) < new Date()) return Response.json({ error: 'Claim has expired' }, { status: 410 })
+
+    // 4. Atomic update: only succeeds if status='pending' AND not expired in one query
     const { data, error } = await supabase
       .from('pending_claims')
       .update({
@@ -112,39 +146,43 @@ export async function PATCH(req: NextRequest) {
       })
       .eq('claim_token', token)
       .eq('status', 'pending')
-      .gt('expires_at', new Date().toISOString())
       .select()
       .single()
 
     if (error || !data) {
-      // Could be: not found, already claimed, or expired
-      const { data: existing } = await supabase
-        .from('pending_claims')
-        .select('status, expires_at')
-        .eq('claim_token', token)
-        .single()
-
-      if (!existing) return Response.json({ error: 'Claim not found' }, { status: 404 })
-      if (existing.status === 'claimed') return Response.json({ error: 'Already claimed' }, { status: 409 })
-      if (new Date(existing.expires_at) < new Date()) return Response.json({ error: 'Claim has expired' }, { status: 410 })
       return Response.json({ error: 'Claim unavailable' }, { status: 409 })
     }
 
-    // Credit the claimer's balance
-    const { data: claimer } = await supabase
+    // 5. Credit the claimer's DB balance
+    await supabase
       .from('users')
-      .select('id, balance_usdc')
+      .update({
+        balance_usdc: (claimer.balance_usdc || 0) + data.amount,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', claimedBy)
-      .single()
 
-    if (claimer) {
-      await supabase
-        .from('users')
-        .update({
-          balance_usdc: (claimer.balance_usdc || 0) + data.amount,
-          updated_at: new Date().toISOString(),
+    // 6. Release on-chain if configured
+    const escrowAddr = process.env.NEXT_PUBLIC_ESCROW_ADDRESS
+    const adminKey = process.env.ADMIN_PRIVATE_KEY
+    if (escrowAddr && escrowAddr !== '0x' && adminKey && claimer.wallet_address) {
+      try {
+        const account = privateKeyToAccount(adminKey as `0x${string}`)
+        const walletClient = createWalletClient({
+          account,
+          chain: null,
+          transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL)
         })
-        .eq('id', claimedBy)
+        const claimHash = padHex(`0x${token}`, { size: 32 })
+        await walletClient.writeContract({
+           address: escrowAddr as `0x${string}`,
+           abi: escrowAbi,
+           functionName: 'release',
+           args: [claimHash, claimer.wallet_address as `0x${string}`],
+        })
+      } catch (err) {
+        console.error('Failed to release on-chain escrow', err)
+      }
     }
 
     return Response.json({ claim: data })

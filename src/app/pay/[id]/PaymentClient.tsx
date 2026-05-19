@@ -296,7 +296,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 11, color: 'var(--ink3)', marginBottom: 4 }}>Amount</div>
                 <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em' }}>
-                  {formatUSD(link.amount)}
+                  {formatUSD(effectiveAmount)}
                 </div>
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -304,7 +304,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   background: 'var(--g-soft)', padding: '3px 10px', borderRadius: 20,
                   marginTop: 4,
                 }}>
-                  {(link.amount ?? 0).toFixed(2)} USDC · Arc
+                  {effectiveAmount.toFixed(2)} USDC · Arc
                 </div>
               </div>
             </div>
@@ -407,9 +407,9 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     padding: '16px 20px', marginBottom: 24,
                   }}>
                     {[
-                      { key: 'You send', val: formatUSD(link.amount), green: false },
+                      { key: 'You send', val: formatUSD(effectiveAmount), green: false },
                       { key: 'Gas fee', val: '$0.00', green: true },
-                      { key: 'Total', val: formatUSD(link.amount), green: false, bold: true },
+                      { key: 'Total', val: formatUSD(effectiveAmount), green: false, bold: true },
                     ].map((row, i) => (
                       <div key={i} style={{
                         display: 'flex', justifyContent: 'space-between',
@@ -425,7 +425,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   <button className="btn-primary" onClick={handlePayNow}>
                     {selectedMethod === 'wallet'
                       ? <><Icon icon="ph:link-bold" /> Connect Wallet to Pay</>
-                      : <><Icon icon="ph:lock-bold" /> Continue to pay · {formatUSD(link.amount)}</>}
+                      : <><Icon icon="ph:lock-bold" /> Continue to pay · {formatUSD(effectiveAmount)}</>}
                   </button>
                 </>
               )}
@@ -484,7 +484,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     Processing your payment
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--ink3)', lineHeight: 1.6 }}>
-                    Settling {formatUSD(link.amount)} on Arc Network.<br />
+                    Settling {formatUSD(effectiveAmount)} on Arc Network.<br />
                     This takes less than a second.
                   </div>
                 </div>
@@ -506,7 +506,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                     Payment sent!
                   </div>
                   <div style={{ fontSize: 36, fontWeight: 700, color: 'var(--g1)', marginBottom: 8 }}>
-                    {formatUSD(link.amount)}
+                    {formatUSD(effectiveAmount)}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
                     <span style={{ fontSize: 12, background: 'var(--g-soft)', color: 'var(--g1)', padding: '4px 12px', borderRadius: 20, fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -521,7 +521,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                   <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', marginBottom: 20, textAlign: 'left' }}>
                     {[
                       { key: 'To', val: link.owner_name },
-                      { key: 'Amount', val: `${formatUSD(link.amount)} USDC`, green: true },
+                      { key: 'Amount', val: `${formatUSD(effectiveAmount)} USDC`, green: true },
                       { key: 'Gas fee', val: '$0.00', green: true },
                       { key: 'Network', val: 'Arc · USDC' },
                       { key: 'Tx hash', val: shortenTxHash(txHash) },
@@ -554,7 +554,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
           <div className="card" style={{ padding: '22px 24px' }}>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 18 }}>Order summary</div>
             {[
-              { key: 'Amount', val: formatUSD(link.amount) },
+              { key: 'Amount', val: formatUSD(effectiveAmount) },
               { key: 'Gas fee', val: '$0.00', green: true },
               { key: 'Network', val: 'Arc · USDC' },
               { key: 'Settlement', val: '<1 second', green: true },
@@ -576,7 +576,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
                 <div style={{ fontSize: 11, color: 'var(--ink3)' }}>Charged today</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>{formatUSD(link.amount)}</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>{formatUSD(effectiveAmount)}</div>
                 <div style={{ fontSize: 11, color: 'var(--ink3)' }}>USDC</div>
               </div>
             </div>
@@ -597,7 +597,7 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       </div>}
       <style>{`
         @media(max-width:768px){
-          .two-col-layout{grid-template-columns:1fr!important;padding:0 16px 90px!important;gap:0!important}
+          .two-col-layout{grid-template-columns:1fr!important;padding:0 16px 140px!important;gap:0!important}
           .two-col-layout>div:last-child{display:none!important}
           .page-header{padding:12px 16px 20px!important}
           .card{padding:16px 18px!important}

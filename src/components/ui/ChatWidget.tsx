@@ -127,9 +127,9 @@ export function ChatWidget() {
           font-family: var(--font, sans-serif); font-size: 13px;
           color: var(--ink, #fff); placeholder-color: var(--ink4);
         }
-        @media (max-width: 480px) {
-          .chat-widget-panel { width: calc(100vw - 24px); right: 12px; bottom: 80px; }
-          .chat-bubble-btn { bottom: 80px; right: 12px; }
+        @media (max-width: 768px) {
+          .chat-widget-panel { width: calc(100vw - 32px); right: 16px; bottom: 85px; }
+          .chat-bubble-btn { bottom: 85px; right: 16px; }
         }
       `}</style>
 
