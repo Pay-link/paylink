@@ -12,7 +12,7 @@ const TABS = [
   { id: 'home',     icon: 'ph:squares-four-bold',        label: 'Home',     href: '/dashboard' },
   { id: 'faucet',   icon: 'ph:drop-bold',                label: 'Faucet',   href: 'https://faucet.circle.com' },
   { id: 'send',     icon: 'ph:paper-plane-right-bold',   label: 'Send',     href: '/send' },
-  { id: 'activity', icon: 'ph:clock-countdown-bold',     label: 'Activity', href: '/dashboard' },
+  { id: 'activity', icon: 'ph:clock-countdown-bold',     label: 'Activity', href: '/dashboard#recent-transactions' },
 ]
 
 export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {

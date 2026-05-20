@@ -456,16 +456,21 @@ export function Nav({ variant = 'app' }: NavProps) {
               {/* Account section */}
               <div className="nav-drawer-section-lbl" style={{ marginTop: 8 }}>Account</div>
               {[
-                { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#' },
-                { label: 'My links', icon: 'ph:link-simple-bold', href: '#' },
+                { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#recent-transactions' },
+                { label: 'My links', icon: 'ph:link-simple-bold', href: '#my-links' },
                 { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
                 { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
-                { label: 'Help & support', icon: 'ph:question-bold', href: '#' },
-              ].map(item => (
+                { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
+              ].map(item => item.href ? (
                 <Link key={item.label} href={item.href} className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
                   <span className="nav-drawer-icon"><Icon icon={item.icon} /></span>
                   {item.label}
                 </Link>
+              ) : (
+                <button key={item.label} className="nav-drawer-item" style={{ border: 'none', background: 'transparent', width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font)' }} onClick={() => { setMenuOpen(false); item.action(); }}>
+                  <span className="nav-drawer-icon"><Icon icon={item.icon} /></span>
+                  {item.label}
+                </button>
               ))}
 
               <div className="nav-drawer-divider" />

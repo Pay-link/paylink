@@ -45,6 +45,7 @@ export default function DashboardPage() {
   const [mobileTab, setMobileTab] = useState<'home' | 'links' | 'send' | 'activity'>('home')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [openLinkMenuId, setOpenLinkMenuId] = useState<string | null>(null)
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
@@ -70,6 +71,13 @@ export default function DashboardPage() {
     window.addEventListener('click', close)
     return () => window.removeEventListener('click', close)
   }, [notifOpen])
+
+  useEffect(() => {
+    if (!openLinkMenuId) return
+    const close = () => setOpenLinkMenuId(null)
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [openLinkMenuId])
 
   useEffect(() => {
     if (authenticated && userId) loadRealData()
@@ -223,15 +231,41 @@ export default function DashboardPage() {
   const displayTxs = transactions.map(tx => ({
     ...tx,
     type: tx.recipient_id === userId ? 'received' : 'sent',
-    name: tx.sender_email || tx.recipient_wallet?.slice(0,8) || 'Unknown',
-    initials: (tx.sender_email || 'UK').slice(0,2).toUpperCase(),
+    name: tx.recipient_id === userId 
+          ? (tx.sender_email || tx.sender_id || 'Unknown') 
+          : (tx.recipient_contact || tx.recipient_email || tx.recipient_wallet?.slice(0,8) || 'Unknown'),
+    initials: (tx.recipient_id === userId ? (tx.sender_email || 'UK') : (tx.recipient_contact || tx.recipient_email || 'UK')).slice(0,2).toUpperCase(),
     color: tx.recipient_id === userId ? 'rgba(37,92,180,.12)' : 'rgba(220,50,50,.12)',
     tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
   }))
 
-  const displayLinks = links
+  const displayLinks = links.map(link => {
+    const isExpired = link.expiry && new Date(link.expiry) < new Date()
+    return { ...link, status: isExpired ? 'expired' : link.status }
+  })
   const balance = displayBalance || (dataLoaded ? 0 : 0)
-  const favourites: any[] = []
+
+  const favMap = new Map<string, any>()
+  displayTxs.filter(tx => tx.type === 'sent').forEach(tx => {
+    if (!favMap.has(tx.name)) {
+      favMap.set(tx.name, {
+        name: tx.name,
+        initials: tx.initials,
+        color: tx.color,
+        tc: tx.tc,
+        count: 1,
+        lastSent: new Date(tx.created_at).getTime(),
+        online: Math.random() > 0.7 // fake online status for UI polish
+      })
+    } else {
+      const existing = favMap.get(tx.name)
+      existing.count += 1
+      existing.lastSent = Math.max(existing.lastSent, new Date(tx.created_at).getTime())
+    }
+  })
+  const favourites = Array.from(favMap.values())
+    .sort((a, b) => b.count - a.count || b.lastSent - a.lastSent)
+    .slice(0, 5)
 
   const notifications = [
     ...transactions.filter(tx => tx.recipient_id === userId).map(tx => ({
@@ -312,15 +346,19 @@ export default function DashboardPage() {
 
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', margin: '16px 0 6px' }}>Account</div>
           {[
-            { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#' },
-            { label: 'My links', icon: 'ph:link-simple-bold', href: '#' },
+            { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#recent-transactions' },
+            { label: 'My links', icon: 'ph:link-simple-bold', href: '#my-links' },
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
-            { label: 'Help & support', icon: 'ph:question-bold', href: '#' },
-          ].map(item => (
+            { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
+          ].map(item => item.href ? (
             <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2 }}>
               <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
             </Link>
+          ) : (
+            <button key={item.label} onClick={item.action} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2, width: '100%', fontFamily: 'var(--font)' }}>
+              <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
+            </button>
           ))}
         </nav>
 
@@ -511,7 +549,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Transactions */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div id="recent-transactions" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Recent transactions</div>
                 <span style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, cursor: 'pointer' }}>View all</span>
               </div>
@@ -581,13 +619,13 @@ export default function DashboardPage() {
               </div>
 
               {/* My Links */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div id="my-links" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>My active links</div>
                 <Link href="/create" style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, textDecoration: 'none' }}>Create new</Link>
               </div>
               <div style={cardStyle}>
                 {displayLinks.map((link: any, i: number) => (
-                  <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < displayLinks.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }}>
+                  <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < displayLinks.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }} onClick={() => router.push(`/pay/${link.slug}`)}>
                     <div style={{ width: 38, height: 38, borderRadius: 11, background: link.status === 'expired' ? 'var(--page)' : 'var(--g-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: link.status === 'expired' ? 'var(--ink4)' : 'var(--g1)', flexShrink: 0 }}><Icon icon="ph:link-bold" /></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: link.status === 'expired' ? 'var(--ink3)' : 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{link.note || 'Payment link'}</div>
@@ -595,11 +633,44 @@ export default function DashboardPage() {
                         {(process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz').replace(/^https?:\/\//, '')}/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>${link.amount?.toFixed(2)}</div>
-                      <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: link.status === 'active' ? 'var(--g-soft)' : link.status === 'expired' ? 'var(--page)' : 'rgba(99,102,241,.18)', color: link.status === 'active' ? 'var(--g1)' : link.status === 'expired' ? 'var(--ink4)' : '#818CF8' }}>
-                        {link.status === 'active' ? 'Active' : link.status === 'expired' ? 'Expired' : `Paid ×${link.paid_count}`}
-                      </span>
+                    <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>${link.amount?.toFixed(2)}</div>
+                        <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: link.status === 'active' ? 'var(--g-soft)' : link.status === 'expired' ? 'var(--page)' : 'rgba(99,102,241,.18)', color: link.status === 'active' ? 'var(--g1)' : link.status === 'expired' ? 'var(--ink4)' : '#818CF8' }}>
+                          {link.status === 'active' ? 'Active' : link.status === 'expired' ? 'Expired' : `Paid ×${link.paid_count}`}
+                        </span>
+                      </div>
+                      <div style={{ position: 'relative' }}>
+                        <button onClick={(e) => { e.stopPropagation(); setOpenLinkMenuId(openLinkMenuId === link.id ? null : link.id) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink3)', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Icon icon="ph:dots-three-vertical-bold" style={{ fontSize: 20 }} />
+                        </button>
+                        {openLinkMenuId === link.id && (
+                          <div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', right: 0, top: 30, background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,.15)', zIndex: 100, overflow: 'hidden', minWidth: 140 }}>
+                            <div onClick={(e) => {
+                              e.stopPropagation()
+                              const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'}/pay/${link.slug}`
+                              navigator.clipboard.writeText(url)
+                              setCopied(true)
+                              setTimeout(() => setCopied(false), 2000)
+                              setOpenLinkMenuId(null)
+                            }} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid var(--border)' }}>
+                              <Icon icon="ph:copy-bold" style={{ fontSize: 16 }} /> Copy link
+                            </div>
+                            <div onClick={async (e) => {
+                              e.stopPropagation()
+                              if (!confirm('Are you sure you want to delete this link?')) return
+                              try {
+                                const res = await fetch(`/api/links/${link.slug}`, { method: 'DELETE' })
+                                if (!res.ok) throw new Error('Failed to delete link')
+                                setLinks(prev => prev.filter(l => l.slug !== link.slug))
+                              } catch (err: any) { alert(err.message) }
+                              setOpenLinkMenuId(null)
+                            }} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#E53935', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <Icon icon="ph:trash-bold" style={{ fontSize: 16 }} /> Delete
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
