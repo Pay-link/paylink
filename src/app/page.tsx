@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 declare global {
   namespace JSX {
@@ -575,18 +575,19 @@ nav{
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TRUST STRIP
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-.trust-section{background:var(--page2);padding:56px 5%;text-align:center;border-top:0.5px solid var(--border)}
-.trust-h3{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
-.trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.trust-pill{
-  display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.05);border:0.5px solid var(--border);
-  border-radius:14px;padding:12px 16px;min-width:190px;
-  transition:all .2s;cursor:pointer;text-decoration:none;
-}
-.trust-pill:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px);}
-.trust-pill-logo{width:36px;height:36px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:4px;}
-.trust-pill-name{font-size:13px;font-weight:600;color:var(--ink);flex:1;text-align:left;white-space:nowrap}
+.trust-section{background:var(--page);padding:40px 0;text-align:center;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);overflow:hidden;}
+.trust-h3{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;font-weight:600;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px;}
+.trust-marquee-wrapper{width:100%;overflow:hidden;position:relative;display:flex;align-items:center;}
+.trust-marquee-wrapper::before,.trust-marquee-wrapper::after{content:'';position:absolute;top:0;width:150px;height:100%;z-index:2;pointer-events:none;}
+.trust-marquee-wrapper::before{left:0;background:linear-gradient(to right,var(--page) 0%,transparent 100%);}
+.trust-marquee-wrapper::after{right:0;background:linear-gradient(to left,var(--page) 0%,transparent 100%);}
+.trust-marquee{display:flex;align-items:center;width:max-content;animation:trustScroll 24s linear infinite;}
+.trust-marquee:hover{animation-play-state:paused;}
+@keyframes trustScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.trust-item{display:flex;align-items:center;gap:10px;padding:0 36px;text-decoration:none;transition:opacity .2s;cursor:pointer;}
+.trust-item:hover{opacity:0.8;}
+.trust-item-logo{width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:4px;}
+.trust-item-name{font-size:16px;font-weight:700;color:var(--ink2);white-space:nowrap;letter-spacing:-.02em;font-family:var(--font-display);}
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FINAL CTA
@@ -685,11 +686,11 @@ footer{
   .sb-item:nth-child(odd){border-right:0.5px solid var(--border)}
   .sb-item:nth-last-child(-n+2){border-bottom:none}
 
-  /* Trust logos — 2-column grid instead of vertical list */
-  .trust-section{padding:36px 16px}
-  .trust-pills{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .trust-pill{min-width:0;padding:12px 12px}
-  .trust-pill-name{font-size:12px}
+  /* Trust logos — marquee doesn't need to wrap on mobile */
+  .trust-section{padding:36px 0}
+  .trust-marquee-wrapper::before,.trust-marquee-wrapper::after{width:60px;}
+  .trust-item{padding:0 24px;}
+  .trust-item-name{font-size:14px;}
 
   /* Footer — brand full-width, link cols in 2-col grid */
   .footer-top{grid-template-columns:1fr 1fr}
@@ -1329,23 +1330,31 @@ footer{
       {/* â•â• TRUST â•â• */}
       <section className="trust-section reveal">
         <div className="trust-h3">Built on trusted infrastructure</div>
-        <div className="trust-pills">
-          {([
-            { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
-            { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
-            { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
-            { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
-            { name: 'Ramp Network', logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fbea83f9fa8fe4a0a81be6_RAMP_logo_Digital__icon.svg', fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
-            { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                                                                    fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
-          ] as const).map(p => (
-            <a key={p.name} className="trust-pill" href={p.href} target="_blank" rel="noopener noreferrer">
-              <div className="trust-pill-logo">
-                <TrustLogo logoUrl={p.logoUrl} fallbackDomain={p.fallbackDomain} name={p.name} icon={p.icon} bg={p.bg} fg={p.fg} />
-              </div>
-              <span className="trust-pill-name">{p.name}</span>
-              <Icon icon="ph:arrow-up-right-bold" style={{ fontSize: 14, color: 'var(--ink4)', flexShrink: 0 }} />
-            </a>
-          ))}
+        <div className="trust-marquee-wrapper">
+          <div className="trust-marquee">
+            {[
+              { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
+              { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
+              { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
+              { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
+              { name: 'Ramp Network', logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fbea83f9fa8fe4a0a81be6_RAMP_logo_Digital__icon.svg', fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
+              { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                                                                    fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
+            ].concat([
+              { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
+              { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
+              { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
+              { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
+              { name: 'Ramp Network', logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fbea83f9fa8fe4a0a81be6_RAMP_logo_Digital__icon.svg', fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
+              { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                                                                    fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
+            ]).map((p, i) => (
+              <a key={`${p.name}-${i}`} className="trust-item" href={p.href} target="_blank" rel="noopener noreferrer">
+                <div className="trust-item-logo">
+                  <TrustLogo logoUrl={p.logoUrl} fallbackDomain={p.fallbackDomain} name={p.name} icon={p.icon} bg={p.bg} fg={p.fg} />
+                </div>
+                <span className="trust-item-name">{p.name}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
