@@ -1333,20 +1333,13 @@ footer{
         <div className="trust-marquee-wrapper">
           <div className="trust-marquee">
             {[
-              { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
-              { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
-              { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
-              { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
-              { name: 'Ramp Network', logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fbea83f9fa8fe4a0a81be6_RAMP_logo_Digital__icon.svg', fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
-              { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                                                                    fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
-            ].concat([
-              { name: 'Arc Network',  logoUrl: 'https://cdn.prod.website-files.com/685311a976e7c248b5dfde95/699e21e934a48439675361dc_arc-icon.svg',         fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
-              { name: 'Circle',       logoUrl: 'https://cdn.prod.website-files.com/67116d0daddc92483c812e88/67116d0daddc92483c812f72_Circle%20Logo.avif',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
-              { name: 'Privy',        logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd1312a4091121d979e970_privy-icon.png',       fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
-              { name: 'Pimlico',      logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fd13ab4bb4bb22a0b54c12_pimlico-icon.svg',     fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
-              { name: 'Ramp Network', logoUrl: 'https://cdn.prod.website-files.com/68af181813eec5493447a1ae/68fbea83f9fa8fe4a0a81be6_RAMP_logo_Digital__icon.svg', fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
-              { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                                                                    fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
-            ]).map((p, i) => (
+              { name: 'Arc Network',  logoUrl: 'https://www.google.com/s2/favicons?domain=arc.network&sz=128', fallbackDomain: 'arc.network',   icon: 'ph:lightning-fill',             bg: '#255CB4', fg: '#fff', href: 'https://arc.network' },
+              { name: 'Circle',       logoUrl: 'https://www.google.com/s2/favicons?domain=circle.com&sz=128',  fallbackDomain: 'circle.com',    icon: 'ph:currency-circle-dollar-fill',bg: '#00D395', fg: '#fff', href: 'https://circle.com' },
+              { name: 'Privy',        logoUrl: 'https://www.google.com/s2/favicons?domain=privy.io&sz=128',    fallbackDomain: 'privy.io',      icon: 'ph:shield-check-fill',          bg: '#7B3FE4', fg: '#fff', href: 'https://privy.io' },
+              { name: 'Pimlico',      logoUrl: 'https://www.google.com/s2/favicons?domain=pimlico.io&sz=128',  fallbackDomain: 'pimlico.io',    icon: 'ph:gas-pump-fill',              bg: '#3B82F6', fg: '#fff', href: 'https://pimlico.io' },
+              { name: 'Ramp Network', logoUrl: 'https://www.google.com/s2/favicons?domain=ramp.network&sz=128',fallbackDomain: 'ramp.network', icon: 'ph:arrows-left-right-bold',  bg: '#6C47FF', fg: '#fff', href: 'https://ramp.network' },
+              { name: 'Yellow Card',  logoUrl: 'https://logo.clearbit.com/yellowcard.io',                      fallbackDomain: 'yellowcard.io', icon: 'ph:credit-card-fill',           bg: '#F5C518', fg: '#1a1a1a', href: 'https://yellowcard.io' },
+            ].flatMap(p => [p, p]).map((p, i) => (
               <a key={`${p.name}-${i}`} className="trust-item" href={p.href} target="_blank" rel="noopener noreferrer">
                 <div className="trust-item-logo">
                   <TrustLogo logoUrl={p.logoUrl} fallbackDomain={p.fallbackDomain} name={p.name} icon={p.icon} bg={p.bg} fg={p.fg} />
