@@ -149,6 +149,7 @@ function VerifyContent() {
         }
 
         // 2. Perform On-Chain Escrow Deposit if contract is configured
+        let depositTxHash = ''
         if (ESCROW_ADDRESS && ESCROW_ADDRESS !== '0x') {
           const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
           if (!activeWallet) {
@@ -166,7 +167,6 @@ function VerifyContent() {
           const amountRaw = parseUnits(amount, 6)
           const claimHash = padHex(`0x${claimJson.token}`, { size: 32 })
           
-          let depositTxHash = ''
           try {
             await walletClient.writeContract({
               address: usdcAddress,
