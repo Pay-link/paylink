@@ -467,7 +467,7 @@ export function Nav({ variant = 'app' }: NavProps) {
                   {item.label}
                 </Link>
               ) : (
-                <button key={item.label} className="nav-drawer-item" style={{ border: 'none', background: 'transparent', width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font)' }} onClick={() => { setMenuOpen(false); item.action(); }}>
+                <button key={item.label} className="nav-drawer-item" style={{ border: 'none', background: 'transparent', width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font)' }} onClick={() => { setMenuOpen(false); item.action?.(); }}>
                   <span className="nav-drawer-icon"><Icon icon={item.icon} /></span>
                   {item.label}
                 </button>
