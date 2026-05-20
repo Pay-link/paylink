@@ -264,15 +264,33 @@ nav{
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .hero{
   min-height:100vh;
-  display:flex;flex-direction:column;
+  display:flex;
   align-items:center;justify-content:center;
-  padding:100px 5% 60px;
+  padding:120px 5% 60px;
   position:relative;overflow:hidden;
   background:var(--page);
-  text-align:center;
 }
 #particle-canvas{position:absolute;inset:0;z-index:0;pointer-events:none}
-.hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%}
+.hero-wrapper{
+  position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:1200px;width:100%;gap:40px;
+}
+.hero-text-col{
+  flex:1 1 50%;
+  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+}
+.hero-graphic-col{
+  flex:1 1 50%;
+  display:flex;justify-content:center;align-items:center;
+  position:relative;perspective:1200px;
+  min-height:500px;
+}
+@media (max-width: 900px) {
+  .hero-wrapper { flex-direction: column; text-align: center; margin-top: 40px; }
+  .hero-text-col { align-items: center; text-align: center; }
+  .hero-graphic-col { margin-top: 40px; width: 100%; transform: scale(0.85); }
+}
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:7px;
   font-size:13px;font-weight:500;color:var(--o3);
@@ -1014,31 +1032,112 @@ footer{
       <section className="hero">
         <canvas id="particle-canvas"></canvas>
 
-        <div className="hero-center">
-          <div className="hero-eyebrow">
-            <div className="hero-dot"></div>
-            Built on Arc &nbsp;·&nbsp; Powered by USDC
+        <div className="hero-wrapper">
+          <div className="hero-text-col">
+            <div className="hero-eyebrow">
+              <div className="hero-dot"></div>
+              Built on Arc &nbsp;·&nbsp; Powered by USDC
+            </div>
+            <h1 className="hero-h1" id="hero-headline"><span className="cursor-blink" id="cursor"></span></h1>
+            <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
+            <div className="hero-ctas">
+              {authenticated ? (
+                <motion.button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
+                  <iconify-icon icon="ph:squares-four-bold"></iconify-icon>
+                  Go to Dashboard
+                </motion.button>
+              ) : (
+                <>
+                  <motion.button onClick={() => router.push('/send')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
+                    <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
+                    Send money
+                  </motion.button>
+                  <motion.button onClick={() => router.push('/create')} className="btn-hero-ghost" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
+                    <iconify-icon icon="ph:link-bold"></iconify-icon>
+                    Create link
+                  </motion.button>
+                </>
+              )}
+            </div>
           </div>
-          <h1 className="hero-h1" id="hero-headline"><span className="cursor-blink" id="cursor"></span></h1>
-          <p className="hero-sub">No wallet needed. No crypto knowledge required. Send or receive money globally — anyone, anywhere, in seconds.</p>
-          <div className="hero-ctas">
-            {authenticated ? (
-              <motion.button onClick={() => router.push('/dashboard')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-                <iconify-icon icon="ph:squares-four-bold"></iconify-icon>
-                Go to Dashboard
-              </motion.button>
-            ) : (
-              <>
-                <motion.button onClick={() => router.push('/send')} className="btn-hero-orange" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-                  <iconify-icon icon="ph:paper-plane-right-bold"></iconify-icon>
-                  Send money
-                </motion.button>
-                <motion.button onClick={() => router.push('/create')} className="btn-hero-ghost" style={{ cursor: 'pointer' }} whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-                  <iconify-icon icon="ph:link-bold"></iconify-icon>
-                  Create link
-                </motion.button>
-              </>
-            )}
+
+          <div className="hero-graphic-col">
+            <div style={{ position: 'relative', width: 260, height: 530, transformStyle: 'preserve-3d' }}>
+              {/* Phone 1 (Bottom Layer) */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ repeat: Infinity, duration: 6, ease: 'easeInOut' }}
+                style={{
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                  background: 'var(--white)', borderRadius: 32,
+                  boxShadow: '0 24px 64px rgba(0,0,0,0.2), inset 0 0 0 8px var(--ink)',
+                  transform: 'translate3d(-60px, 40px, -80px) rotateX(20deg) rotateY(-20deg) rotateZ(-12deg)',
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                }}
+              >
+                <div style={{ height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>za<span style={{color:'var(--g1)'}}>pay</span></div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--page)' }} />
+                </div>
+                <div style={{ padding: 20 }}>
+                  <div style={{ height: 16, width: '40%', background: 'var(--page)', borderRadius: 4, marginBottom: 12 }} />
+                  <div style={{ height: 32, width: '70%', background: 'var(--page)', borderRadius: 4, marginBottom: 24 }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[1, 2, 3, 4, 5].map(i => <div key={i} style={{ height: 48, background: 'var(--page)', borderRadius: 8, border: '1px solid var(--border)' }} />)}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Phone 2 (Middle Layer) */}
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut', delay: 0.3 }}
+                style={{
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                  background: 'var(--white)', borderRadius: 32,
+                  boxShadow: '0 32px 80px rgba(0,0,0,0.25), inset 0 0 0 8px var(--ink)',
+                  transform: 'translate3d(0px, 0px, 0px) rotateX(20deg) rotateY(-20deg) rotateZ(-12deg)',
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                }}
+              >
+                <div style={{ height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>za<span style={{color:'var(--g1)'}}>pay</span></div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--page)' }} />
+                </div>
+                <div style={{ padding: 20 }}>
+                  <div style={{ fontSize: 12, color: 'var(--ink4)', marginBottom: 4 }}>Total Balance</div>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--ink)', marginBottom: 24 }}>$12,450.00</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[1, 2, 3, 4].map(i => <div key={i} style={{ height: 54, background: 'var(--page)', borderRadius: 12, border: '1px solid var(--border)' }} />)}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Phone 3 (Top Layer) */}
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 0.6 }}
+                style={{
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                  background: 'var(--white)', borderRadius: 32,
+                  boxShadow: '0 40px 100px rgba(0,0,0,0.3), inset 0 0 0 8px var(--ink)',
+                  transform: 'translate3d(60px, -40px, 80px) rotateX(20deg) rotateY(-20deg) rotateZ(-12deg)',
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                }}
+              >
+                <div style={{ height: 60, display: 'flex', alignItems: 'center', padding: '0 20px', borderBottom: '1px solid var(--border)' }}>
+                  <Icon icon="ph:arrow-left-bold" style={{ fontSize: 20, color: 'var(--ink)', marginRight: 16 }} />
+                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>New Payment Link</div>
+                </div>
+                <div style={{ padding: 20 }}>
+                  <div style={{ height: 90, background: 'var(--page)', borderRadius: 12, border: '1px solid var(--border)', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--ink)' }}>$500.00</div>
+                  </div>
+                  <div style={{ height: 48, background: 'var(--page)', borderRadius: 8, border: '1px solid var(--border)', marginBottom: 12 }} />
+                  <div style={{ height: 48, background: 'var(--g1)', borderRadius: 100, marginTop: 24 }} />
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
