@@ -296,8 +296,8 @@ export function Nav({ variant = 'app' }: NavProps) {
 
           {/* Logo — always left */}
           <Link href="/" style={{
-            display: 'flex', alignItems: 'center', gap: 7,
-            fontSize: 20, fontWeight: 700, color: 'var(--ink)',
+            display: 'flex', alignItems: 'center', gap: 4,
+            fontSize: 20, fontWeight: 700, color: '#FFF',
             letterSpacing: '-.04em', textDecoration: 'none', flexShrink: 0,
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
