@@ -185,6 +185,8 @@ export async function PATCH(req: NextRequest) {
     // 4. Release on-chain if configured
     const escrowAddr = process.env.NEXT_PUBLIC_ESCROW_ADDRESS
     const adminKey = process.env.ADMIN_PRIVATE_KEY
+    let txHash: string | null = null
+
     if (escrowAddr && escrowAddr !== '0x' && adminKey && claimer.wallet_address) {
       try {
         const account = privateKeyToAccount(adminKey as `0x${string}`)
@@ -222,7 +224,7 @@ export async function PATCH(req: NextRequest) {
           console.log('Claim is already inactive on-chain but was previously deposited. Assuming already released or refunded.')
         } else {
           // Otherwise, call release on-chain
-          const txHash = await walletClient.writeContract({
+          const hash = await walletClient.writeContract({
              address: escrowAddr as `0x${string}`,
              abi: escrowAbi,
              functionName: 'release',
@@ -230,7 +232,8 @@ export async function PATCH(req: NextRequest) {
              chain: null,
           })
           // Wait for release to be mined
-          await publicClient.waitForTransactionReceipt({ hash: txHash })
+          await publicClient.waitForTransactionReceipt({ hash })
+          txHash = hash
         }
       } catch (err: any) {
         console.error('Failed to release on-chain escrow:', err)
@@ -266,6 +269,30 @@ export async function PATCH(req: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq('id', claimedBy)
+
+    // 7. Log the successful claim transaction
+    try {
+      const { error: txError } = await supabase
+        .from('transactions')
+        .insert({
+          sender_id: data.sender_id,
+          sender_email: data.sender_email,
+          sender_wallet: escrowAddr || '0x0000000000000000000000000000000000000000',
+          recipient_id: claimedBy,
+          recipient_wallet: claimer.wallet_address || '0x0000000000000000000000000000000000000000',
+          amount: data.amount,
+          note: data.note || 'Claimed escrow hold',
+          tx_hash: txHash || `zapay-claim-${token}`,
+          status: 'confirmed',
+          payment_method: 'email_otp',
+          confirmed_at: new Date().toISOString()
+        })
+      if (txError) {
+        console.error('Failed to log claim transaction in DB:', txError)
+      }
+    } catch (txErr) {
+      console.error('Exception while logging claim transaction in DB:', txErr)
+    }
 
     return Response.json({ claim: data })
   } catch (err: any) {

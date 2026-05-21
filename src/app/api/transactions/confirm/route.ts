@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
     }
 
-    // Validate sender_id exists
-    if (!sender_id || typeof sender_id !== 'string' || sender_id.length > 255) {
+    // Validate sender_id format if provided
+    if (sender_id && (typeof sender_id !== 'string' || sender_id.length > 255)) {
       return NextResponse.json({ error: 'Invalid sender' }, { status: 400 })
     }
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       .from('transactions')
       .insert({
         link_id: link_id || null,
-        sender_id: sender_id.slice(0, 255),
+        sender_id: sender_id ? sender_id.slice(0, 255) : null,
         sender_email: sanitizeText(sender_email, 255),
         sender_wallet,
         recipient_id: recipient_id || null,

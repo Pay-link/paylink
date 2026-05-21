@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
-import { sanitizeText, isValidAmount } from '@/lib/sanitize'
+import { sanitizeText, isValidAmount, isValidTxHash } from '@/lib/sanitize'
 import { isValidEmail, isValidPhone } from '@/lib/utils'
 import { createPublicClient, http } from 'viem'
 
@@ -37,10 +37,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { senderId, senderEmail, recipientContact, amount, note } = body
+    const { senderId, senderEmail, recipientContact, amount, note, txHash } = body
 
     if (!senderId || typeof senderId !== 'string' || senderId.length > 255) {
       return Response.json({ error: 'Invalid sender' }, { status: 400 })
+    }
+    if (txHash && !isValidTxHash(txHash)) {
+      return Response.json({ error: 'Invalid transaction hash' }, { status: 400 })
     }
     if (!isValidAmount(String(amount)) || parseFloat(String(amount)) <= 0) {
       return Response.json({ error: 'Invalid amount' }, { status: 400 })
@@ -113,7 +116,7 @@ export async function POST(req: NextRequest) {
         recipient_wallet: '',
         amount: amountNum,
         note: sanitizeText(note, 300),
-        tx_hash: `zapay-internal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        tx_hash: txHash || `zapay-internal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         gas_fee: 0,
         status: 'confirmed',
         payment_method: 'email_otp',

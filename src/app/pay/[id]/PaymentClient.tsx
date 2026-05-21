@@ -181,6 +181,8 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           link_id: link.id,
+          sender_id: user?.id || null,
+          sender_email: user?.email?.address || null,
           sender_wallet: activeWallet.address,
           recipient_id: link.owner_id,
           recipient_wallet: link.owner_wallet,

@@ -212,6 +212,7 @@ function VerifyContent() {
             recipientContact: contact || to,
             amount: parseFloat(amount),
             note: note || 'Escrow hold',
+            txHash: depositTxHash || undefined,
           }),
         })
         const sendJson = await sendRes.json()
