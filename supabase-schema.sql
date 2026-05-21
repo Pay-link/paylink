@@ -75,6 +75,25 @@ CREATE TABLE IF NOT EXISTS favourites (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── PENDING CLAIMS ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS pending_claims (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  claim_token TEXT UNIQUE NOT NULL,
+  sender_id TEXT NOT NULL REFERENCES users(id),
+  sender_name TEXT NOT NULL,
+  sender_email TEXT,
+  recipient_email TEXT NOT NULL,
+  amount DECIMAL(18,6) NOT NULL,
+  note TEXT DEFAULT '',
+  status TEXT DEFAULT 'pending'
+    CHECK (status IN ('pending','claimed','expired')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  claimed_by TEXT REFERENCES users(id),
+  claimed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── INDEXES ───────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_payment_links_slug ON payment_links(slug);
 CREATE INDEX IF NOT EXISTS idx_payment_links_owner ON payment_links(owner_id);
@@ -82,12 +101,15 @@ CREATE INDEX IF NOT EXISTS idx_transactions_sender ON transactions(sender_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_recipient ON transactions(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_link ON transactions(link_id);
 CREATE INDEX IF NOT EXISTS idx_favourites_owner ON favourites(owner_id);
+CREATE INDEX IF NOT EXISTS idx_pending_claims_token ON pending_claims(claim_token);
+CREATE INDEX IF NOT EXISTS idx_pending_claims_sender ON pending_claims(sender_id);
 
 -- ── ROW LEVEL SECURITY ────────────────────────────────────────
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payment_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE favourites ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_claims ENABLE ROW LEVEL SECURITY;
 
 -- Users: can only read/update their own profile
 CREATE POLICY "Users can view own profile"
@@ -112,6 +134,13 @@ CREATE POLICY "Users can view own transactions"
 CREATE POLICY "Users manage own favourites"
   ON favourites FOR ALL USING (auth.uid()::text = owner_id);
 
+-- Pending Claims: anyone can read claims via token, senders manage their own
+CREATE POLICY "Anyone can view pending claims via token"
+  ON pending_claims FOR SELECT USING (TRUE);
+
+CREATE POLICY "Senders can manage their claims"
+  ON pending_claims FOR ALL USING (auth.uid()::text = sender_id);
+
 -- ── UPDATED_AT TRIGGER ────────────────────────────────────────
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -127,6 +156,10 @@ CREATE TRIGGER users_updated_at
 
 CREATE TRIGGER payment_links_updated_at
   BEFORE UPDATE ON payment_links
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER pending_claims_updated_at
+  BEFORE UPDATE ON pending_claims
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ── RPC FUNCTIONS ─────────────────────────────────────────────
