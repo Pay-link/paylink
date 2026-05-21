@@ -95,7 +95,7 @@ export async function PATCH(req: NextRequest) {
   if (!rateLimit(`claim-patch:${getIp(req)}`, 10, 60_000)) return rateLimitResponse()
 
   try {
-    const { token, claimedBy } = await req.json()
+    const { token, claimedBy, claimerEmail: providedEmail, claimerPhone: providedPhone, claimerWallet: providedWallet } = await req.json()
 
     if (!token || !/^[0-9a-f]{32}$/.test(token)) {
       return Response.json({ error: 'Invalid token format' }, { status: 400 })
@@ -104,15 +104,61 @@ export async function PATCH(req: NextRequest) {
       return Response.json({ error: 'Invalid claimedBy' }, { status: 400 })
     }
 
-    // 1. Fetch claimer details
-    const { data: claimer } = await supabase
+    // 1. Fetch or auto-create claimer details
+    let { data: claimer } = await supabase
       .from('users')
       .select('id, email, phone, balance_usdc, wallet_address')
       .eq('id', claimedBy)
-      .single()
+      .maybeSingle()
 
     if (!claimer) {
-      return Response.json({ error: 'User not found' }, { status: 404 })
+      const email = providedEmail || null
+      const phone = providedPhone || null
+      const walletAddress = providedWallet || ''
+      const displayName = email?.split('@')[0] || phone || 'ZaPay User'
+
+      const { data: newUser, error: createError } = await supabase
+        .from('users')
+        .insert({
+          id: claimedBy,
+          email,
+          phone,
+          display_name: displayName,
+          wallet_address: walletAddress,
+          balance_usdc: 0,
+          bank_setup: false,
+          kyc_status: 'none',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select('id, email, phone, balance_usdc, wallet_address')
+        .single()
+
+      if (createError || !newUser) {
+        console.error('Failed to auto-create user on claim:', createError)
+        return Response.json({ error: 'User not found' }, { status: 404 })
+      }
+
+      claimer = newUser
+    } else {
+      // Update email, phone, and/or wallet_address if they are not set or changed
+      const updates: any = {}
+      if (!claimer.email && providedEmail) updates.email = providedEmail
+      if (!claimer.phone && providedPhone) updates.phone = providedPhone
+      if (providedWallet && claimer.wallet_address !== providedWallet) updates.wallet_address = providedWallet
+
+      if (Object.keys(updates).length > 0) {
+        updates.updated_at = new Date().toISOString()
+        const { data: updatedUser } = await supabase
+          .from('users')
+          .update(updates)
+          .eq('id', claimedBy)
+          .select('id, email, phone, balance_usdc, wallet_address')
+          .single()
+        if (updatedUser) {
+          claimer = updatedUser
+        }
+      }
     }
 
     // 2. Fetch existing claim details

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { usePrivy } from '@privy-io/react-auth'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { Icon } from '@iconify/react'
 import { Nav } from '@/components/layout/Nav'
 
@@ -22,6 +22,7 @@ export default function ClaimPage() {
   const { token } = useParams<{ token: string }>()
   const router = useRouter()
   const { authenticated, ready, login, user } = usePrivy()
+  const { wallets } = useWallets()
 
   const [claim, setClaim] = useState<Claim | null>(null)
   const [loading, setLoading] = useState(true)
@@ -52,10 +53,21 @@ export default function ClaimPage() {
   const completeClaim = async () => {
     if (!user?.id) { setClaiming(false); return }
     try {
+      const embeddedWallet = wallets.find(w => w.walletClientType === 'privy')
+      const walletAddress = embeddedWallet?.address || ''
+      const email = user?.email?.address || null
+      const phone = user?.phone?.number || null
+
       const res = await fetch('/api/claim', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, claimedBy: user.id }),
+        body: JSON.stringify({
+          token,
+          claimedBy: user.id,
+          claimerEmail: email,
+          claimerPhone: phone,
+          claimerWallet: walletAddress,
+        }),
       })
       const json = await res.json()
       if (json.error) {
