@@ -5,7 +5,7 @@ import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icon } from '@iconify/react'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
-import { createWalletClient, custom, parseUnits, padHex } from 'viem'
+import { createWalletClient, custom, parseUnits, padHex, createPublicClient, http } from 'viem'
 import { escrowAbi, ESCROW_ADDRESS } from '@/lib/escrowAbi'
 
 const usdcAddress = '0x3600000000000000000000000000000000000000' as const
@@ -168,13 +168,22 @@ function VerifyContent() {
           const claimHash = padHex(`0x${claimJson.token}`, { size: 32 })
           
           try {
-            await walletClient.writeContract({
+            const approveTxHash = await walletClient.writeContract({
               address: usdcAddress,
               abi: usdcTransferAbi,
               functionName: 'approve',
               args: [ESCROW_ADDRESS, amountRaw],
               chain: null,
             })
+
+            const rpcUrl = process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'
+            const publicClient = createPublicClient({
+              transport: http(rpcUrl)
+            })
+            
+            // Wait for approve transaction to be mined
+            await publicClient.waitForTransactionReceipt({ hash: approveTxHash })
+
             depositTxHash = await walletClient.writeContract({
               address: ESCROW_ADDRESS,
               abi: escrowAbi,
@@ -182,6 +191,9 @@ function VerifyContent() {
               args: [claimHash, amountRaw],
               chain: null,
             })
+
+            // Wait for deposit transaction to be mined
+            await publicClient.waitForTransactionReceipt({ hash: depositTxHash as `0x${string}` })
           } catch (err: any) {
              console.error('Escrow deposit failed', err)
              setSendError('Failed to deposit funds to escrow')

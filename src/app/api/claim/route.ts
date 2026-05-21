@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 import { rateLimit, getIp, rateLimitResponse } from '@/lib/rateLimit'
 import { sanitizeText, isValidEmail, isValidAmount } from '@/lib/sanitize'
-import { createWalletClient, http, padHex } from 'viem'
+import { createWalletClient, createPublicClient, http, padHex } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { escrowAbi } from '@/lib/escrowAbi'
 
@@ -182,7 +182,66 @@ export async function PATCH(req: NextRequest) {
     if (existing.status === 'claimed') return Response.json({ error: 'Already claimed' }, { status: 409 })
     if (new Date(existing.expires_at) < new Date()) return Response.json({ error: 'Claim has expired' }, { status: 410 })
 
-    // 4. Atomic update: only succeeds if status='pending' AND not expired in one query
+    // 4. Release on-chain if configured
+    const escrowAddr = process.env.NEXT_PUBLIC_ESCROW_ADDRESS
+    const adminKey = process.env.ADMIN_PRIVATE_KEY
+    if (escrowAddr && escrowAddr !== '0x' && adminKey && claimer.wallet_address) {
+      try {
+        const account = privateKeyToAccount(adminKey as `0x${string}`)
+        const walletClient = createWalletClient({
+          account,
+          chain: undefined,
+          transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL)
+        })
+        const publicClient = createPublicClient({
+          transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network')
+        })
+        const claimHash = padHex(`0x${token}`, { size: 32 })
+
+        // Check if the claim exists and is active on-chain
+        const claimInfo = await publicClient.readContract({
+          address: escrowAddr as `0x${string}`,
+          abi: escrowAbi,
+          functionName: 'claims',
+          args: [claimHash],
+        }) as [string, bigint, bigint, boolean]
+        
+        const [onChainSender, onChainAmount, onChainExpiresAt, onChainActive] = claimInfo
+
+        if (onChainSender === '0x0000000000000000000000000000000000000000') {
+          return Response.json(
+            { error: 'Escrow deposit not found. The sender did not successfully transfer funds to the escrow contract.' },
+            { status: 400 }
+          )
+        }
+
+        if (!onChainActive) {
+          // If the claim is already inactive on-chain but was deposited,
+          // it might have already been released in a previous request.
+          // In this case, we don't need to call release on-chain again.
+          console.log('Claim is already inactive on-chain but was previously deposited. Assuming already released or refunded.')
+        } else {
+          // Otherwise, call release on-chain
+          const txHash = await walletClient.writeContract({
+             address: escrowAddr as `0x${string}`,
+             abi: escrowAbi,
+             functionName: 'release',
+             args: [claimHash, claimer.wallet_address as `0x${string}`],
+             chain: null,
+          })
+          // Wait for release to be mined
+          await publicClient.waitForTransactionReceipt({ hash: txHash })
+        }
+      } catch (err: any) {
+        console.error('Failed to release on-chain escrow:', err)
+        return Response.json(
+          { error: 'Failed to release funds on-chain: ' + (err.message || err) },
+          { status: 500 }
+        )
+      }
+    }
+
+    // 5. Atomic update: only succeeds if status='pending' AND not expired in one query
     const { data, error } = await supabase
       .from('pending_claims')
       .update({
@@ -199,7 +258,7 @@ export async function PATCH(req: NextRequest) {
       return Response.json({ error: 'Claim unavailable' }, { status: 409 })
     }
 
-    // 5. Credit the claimer's DB balance
+    // 6. Credit the claimer's DB balance
     await supabase
       .from('users')
       .update({
@@ -207,30 +266,6 @@ export async function PATCH(req: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq('id', claimedBy)
-
-    // 6. Release on-chain if configured
-    const escrowAddr = process.env.NEXT_PUBLIC_ESCROW_ADDRESS
-    const adminKey = process.env.ADMIN_PRIVATE_KEY
-    if (escrowAddr && escrowAddr !== '0x' && adminKey && claimer.wallet_address) {
-      try {
-        const account = privateKeyToAccount(adminKey as `0x${string}`)
-        const walletClient = createWalletClient({
-          account,
-          chain: undefined,
-          transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL)
-        })
-        const claimHash = padHex(`0x${token}`, { size: 32 })
-        await walletClient.writeContract({
-           address: escrowAddr as `0x${string}`,
-           abi: escrowAbi,
-           functionName: 'release',
-           args: [claimHash, claimer.wallet_address as `0x${string}`],
-           chain: null,
-        })
-      } catch (err) {
-        console.error('Failed to release on-chain escrow', err)
-      }
-    }
 
     return Response.json({ claim: data })
   } catch (err: any) {

@@ -197,13 +197,22 @@ export default function DashboardPage() {
       
       const claimHash = padHex(`0x${claim.claim_token}`, { size: 32 })
       
-      await walletClient.writeContract({
+      const refundHash = await walletClient.writeContract({
         address: ESCROW_ADDRESS,
         abi: escrowAbi,
         functionName: 'refund',
         args: [claimHash],
         chain: null,
       })
+
+      const rpcUrl = 'https://rpc.testnet.arc.network'
+      const publicClient = createPublicClient({
+        chain: arcTestnet,
+        transport: http(rpcUrl)
+      })
+
+      // Wait for refund transaction to be mined
+      await publicClient.waitForTransactionReceipt({ hash: refundHash })
 
       // Update DB to mark as expired/refunded
       await supabase.from('pending_claims').update({ status: 'expired' }).eq('id', claim.id)
