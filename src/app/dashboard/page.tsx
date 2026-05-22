@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { Nav } from '@/components/layout/Nav'
 import Link from 'next/link'
@@ -28,16 +28,28 @@ const usdcAbi = [
   { type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view' },
 ] as const
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { authenticated, ready, logout } = usePrivy()
   const { wallets } = useWallets()
   const { profile, walletAddress, email, phone, displayName, userId } = useUser()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [links, setLinks] = useState<any[]>([])
   const [transactions, setTransactions] = useState<any[]>([])
   const [pendingClaims, setPendingClaims] = useState<any[]>([])
   const [displayBalance, setDisplayBalance] = useState(0)
   const [topUpOpen, setTopUpOpen] = useState(false)
+  const [escrowModalOpen, setEscrowModalOpen] = useState(false)
+  const [refundingId, setRefundingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (searchParams && searchParams.get('escrow') === 'true') {
+      setEscrowModalOpen(true)
+      const url = new URL(window.location.href)
+      url.searchParams.delete('escrow')
+      window.history.replaceState({}, '', url.pathname + url.search)
+    }
+  }, [searchParams])
   const [dataLoaded, setDataLoaded] = useState(false)
   const [showLocal, setShowLocal] = useState(false)
   const localCurrency = useLocalCurrency()
@@ -188,6 +200,7 @@ export default function DashboardPage() {
       return
     }
     try {
+      setRefundingId(claim.id)
       const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
       if (!activeWallet) return alert("Wallet not connected")
 
@@ -223,6 +236,8 @@ export default function DashboardPage() {
     } catch (e: any) {
       console.error(e)
       alert(e.message || "Failed to refund")
+    } finally {
+      setRefundingId(null)
     }
   }
 
@@ -363,6 +378,7 @@ export default function DashboardPage() {
           {[
             { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '/dashboard/transactions', id: 'tour-dash-history' },
             { label: 'My links', icon: 'ph:link-simple-bold', href: '/dashboard/links', id: 'tour-dash-links' },
+            { label: 'Escrow claims', icon: 'ph:lock-key-bold', action: () => setEscrowModalOpen(true) },
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
             { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
@@ -600,81 +616,7 @@ export default function DashboardPage() {
                   </div>
                 )}
               </div>
-
-              {/* Escrow Claims */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Pending Escrow Claims</div>
-              </div>
-              <div style={{ ...cardStyle, marginBottom: 20 }}>
-                {pendingClaims.length === 0 ? (
-                  <div style={{ padding: '32px', textAlign: 'center', color: 'var(--ink3)', fontSize: 14 }}>
-                    No pending escrow claims. <Link href="/send" style={{ color: 'var(--g1)', fontWeight: 500 }}>Send to an email →</Link>
-                  </div>
-                ) : (
-                  pendingClaims.map((claim: any, i: number) => {
-                    const isExpired = new Date(claim.expires_at) < new Date()
-                    return (
-                      <div key={claim.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < pendingClaims.length-1 ? '1px solid var(--border)' : 'none' }}>
-                        <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}><Icon icon="ph:lock-key-bold" /></div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>To: {claim.recipient_email}</div>
-                          <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
-                            ${claim.amount} · {isExpired ? 'Expired' : `Expires ${new Date(claim.expires_at).toLocaleDateString()}`}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                          {isExpired ? (
-                            <button onClick={() => handleRefund(claim)} style={{ padding: '6px 12px', background: 'var(--g1)', color: '#fff', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all .2s' }}>Refund</button>
-                          ) : (
-                            <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: 'rgba(245,158,11,.15)', color: '#FDB64E' }}>Pending</span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })
-                )}
-              </div>
-
-              {/* Payment Links Quick Access Banner */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(37,92,180,0.08) 100%)',
-                borderRadius: 20,
-                border: '1px solid var(--border)',
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-                cursor: 'pointer',
-                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-              }}
-              className="links-banner-widget"
-              onClick={() => router.push('/dashboard/links')}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: '50%',
-                    background: 'var(--g-soft)',
-                    color: 'var(--g1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 20,
-                  }}>
-                    <Icon icon="ph:link-simple-bold" />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>Payment Links Manager</div>
-                    <div style={{ fontSize: 12, color: 'var(--ink3)' }}>
-                      You have {links.filter(l => !l.expiry || new Date(l.expiry) >= new Date()).length} active links. Share and collect payments.
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--g1)', fontSize: 13, fontWeight: 700 }}>
-                  Manage <Icon icon="ph:arrow-right-bold" />
-                </div>
-              </div>
+              
             </div>
 
             {/* Right sidebar */}
@@ -805,6 +747,75 @@ export default function DashboardPage() {
                 <Icon icon="ph:arrow-down-bold" /> Top up $100
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Escrow Claims Modal Overlay */}
+      {escrowModalOpen && (
+        <div onClick={() => setEscrowModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--white)', borderRadius: 24, padding: 28, width: '100%', maxWidth: 480, boxShadow: '0 24px 60px rgba(0,0,0,.6)', border: '1px solid var(--border)', position: 'relative' }}>
+            <button onClick={() => setEscrowModalOpen(false)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--ink3)', transition: 'color 0.2s' }}>×</button>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, marginTop: 4 }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--g-soft)', color: 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}><Icon icon="ph:lock-key-bold" /></div>
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: 0 }}>Escrow Claims</h3>
+                <p style={{ fontSize: 12, color: 'var(--ink3)', margin: '2px 0 0' }}>Manage pending and expired secure escrow payments.</p>
+              </div>
+            </div>
+
+            <div style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {pendingClaims.length === 0 ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ink3)', fontSize: 14 }}>
+                  <Icon icon="ph:shield-slash-bold" style={{ fontSize: 36, color: 'var(--ink4)', marginBottom: 12, display: 'block', margin: '0 auto 8px' }} />
+                  <div style={{ fontWeight: 600, color: 'var(--ink2)', marginBottom: 4 }}>No escrow claims found</div>
+                  <div style={{ fontSize: 12, color: 'var(--ink4)' }}>
+                    Any payments sent to an email or phone number that are still secure in escrow will appear here.
+                  </div>
+                </div>
+              ) : (
+                pendingClaims.map((claim: any) => {
+                  const isExpired = new Date(claim.expires_at) < new Date()
+                  const isRefunding = refundingId === claim.id
+                  return (
+                    <div key={claim.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', background: 'var(--page)', border: '1px solid var(--border)', borderRadius: 16 }}>
+                      <div style={{ width: 34, height: 34, borderRadius: '50%', background: isExpired ? 'rgba(239, 68, 68, 0.08)' : 'var(--g-soft)', color: isExpired ? '#EF4444' : 'var(--g1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}><Icon icon="ph:lock-key-bold" /></div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>To: {claim.recipient_email}</div>
+                        <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
+                          ${claim.amount} · {isExpired ? 'Expired' : `Expires ${new Date(claim.expires_at).toLocaleDateString()}`}
+                        </div>
+                      </div>
+                      <div style={{ flexShrink: 0 }}>
+                        {isExpired ? (
+                          <button 
+                            disabled={isRefunding}
+                            onClick={() => handleRefund(claim)} 
+                            style={{ 
+                              padding: '6px 12px', 
+                              background: 'var(--g1)', 
+                              color: '#fff', 
+                              borderRadius: 8, 
+                              border: 'none', 
+                              fontSize: 12, 
+                              fontWeight: 600, 
+                              cursor: isRefunding ? 'not-allowed' : 'pointer', 
+                              opacity: isRefunding ? 0.7 : 1, 
+                              transition: 'all .2s' 
+                            }}
+                          >
+                            {isRefunding ? 'Refunding...' : 'Refund'}
+                          </button>
+                        ) : (
+                          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: 'rgba(245,158,11,.15)', color: '#FDB64E', textTransform: 'uppercase', letterSpacing: '.04em' }}>Pending</span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -974,5 +985,13 @@ export default function DashboardPage() {
       <MobileBottomNav activeTab={mobileTab} onTabChange={tab => setMobileTab(tab as any)} />
       <OnboardingTour />
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--page)' }}>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   )
 }

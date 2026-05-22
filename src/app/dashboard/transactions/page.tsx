@@ -127,6 +127,7 @@ export default function TransactionsHistoryPage() {
           {[
             { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '/dashboard/transactions', active: true },
             { label: 'My links', icon: 'ph:link-simple-bold', href: '/dashboard/links' },
+            { label: 'Escrow claims', icon: 'ph:lock-key-bold', href: '/dashboard?escrow=true' },
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
             { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
