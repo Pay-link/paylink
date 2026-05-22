@@ -59,7 +59,20 @@ function DashboardContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [notifOpen, setNotifOpen] = useState(false)
   const [openLinkMenuId, setOpenLinkMenuId] = useState<string | null>(null)
-  const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
+  const [seenIds, setSeenIds] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('zp-seen-notifs')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          if (Array.isArray(parsed)) return new Set(parsed)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+    return new Set()
+  })
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [selectedTx, setSelectedTx] = useState<any | null>(null)
 
@@ -334,9 +347,16 @@ function DashboardContent() {
 
   const unreadCount = notifications.filter(n => !seenIds.has(n.id)).length
 
-  const openNotifs = () => {
-    setNotifOpen(o => !o)
-    setSeenIds(new Set(notifications.map(n => n.id)))
+  const openNotifs = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const nextOpen = !notifOpen
+    setNotifOpen(nextOpen)
+    if (nextOpen) {
+      const ids = notifications.map(n => n.id)
+      const newSeen = new Set(ids)
+      setSeenIds(newSeen)
+      localStorage.setItem('zp-seen-notifs', JSON.stringify(Array.from(newSeen)))
+    }
   }
 
   const now = new Date()
@@ -358,8 +378,10 @@ function DashboardContent() {
       <aside className="desktop-sidebar" style={{ width: sidebarOpen ? 240 : 0, flexShrink: 0, background: 'var(--white)', borderRight: sidebarOpen ? '1px solid var(--border)' : 'none', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto', overflowX: 'hidden', transition: 'width .2s ease', }}>
         <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 208 }}>
           <div>
-            <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
-              za<span style={{ color: 'var(--g1)' }}>pay</span>
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
+              <span>za<span style={{ color: 'var(--g1)' }}>pay</span></span>
             </Link>
             <div style={{ fontSize: 12, color: 'var(--ink4)', marginTop: 3 }}>Your global wallet</div>
           </div>

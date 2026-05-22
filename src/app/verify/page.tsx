@@ -279,8 +279,10 @@ function VerifyContent() {
     return (
       <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
         <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
-          <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-            za<span style={{ color: 'var(--g1)' }}>pay</span>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={24} height={24} style={{ display: 'block', flexShrink: 0 }} />
+            <span>za<span style={{ color: 'var(--g1)' }}>pay</span></span>
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />
@@ -342,8 +344,10 @@ function VerifyContent() {
   return (
     <div style={{ background: 'var(--page)', minHeight: '100vh' }}>
       <nav style={{ height: 62, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', background: 'rgba(9,9,14,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)' }}>
-        <a href="/" style={{ fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
-          za<span style={{ color: 'var(--g1)' }}>pay</span>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 21, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={24} height={24} style={{ display: 'block', flexShrink: 0 }} />
+          <span>za<span style={{ color: 'var(--g1)' }}>pay</span></span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: 'var(--ink3)' }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--g3)', display: 'inline-block' }} />

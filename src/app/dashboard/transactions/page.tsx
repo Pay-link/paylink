@@ -93,8 +93,10 @@ export default function TransactionsHistoryPage() {
       <aside className="desktop-sidebar" style={{ width: sidebarOpen ? 240 : 0, flexShrink: 0, background: 'var(--white)', borderRight: sidebarOpen ? '1px solid var(--border)' : 'none', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, overflowY: 'auto', overflowX: 'hidden', transition: 'width .2s ease', }}>
         <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 208 }}>
           <div>
-            <Link href="/" style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none', display: 'block' }}>
-              za<span style={{ color: 'var(--g1)' }}>pay</span>
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 22, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-.04em', textDecoration: 'none' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={26} height={26} style={{ display: 'block', flexShrink: 0 }} />
+              <span>za<span style={{ color: 'var(--g1)' }}>pay</span></span>
             </Link>
             <div style={{ fontSize: 12, color: 'var(--ink4)', marginTop: 3 }}>Your global wallet</div>
           </div>
