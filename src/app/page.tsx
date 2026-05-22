@@ -1128,7 +1128,11 @@ footer{
             <div className="dash-card">
               <div className="dash-header">
                 <div className="dash-header-row">
-                  <div className="dash-logo">za<span>pay</span></div>
+                  <div className="dash-logo" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={16} height={16} style={{ display: 'block', flexShrink: 0, filter: 'brightness(0) invert(1)' }} />
+                    <span>za<span style={{ color: 'rgba(255,255,255,.55)' }}>pay</span></span>
+                  </div>
                   <div className="dash-badge">
                     <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', display: 'inline-block' }} />
                     Arc Testnet
@@ -1303,7 +1307,14 @@ footer{
           <div className="reveal reveal-delay-2">
             <div className="app-phone">
               <div className="app-screen">
-                <div className="app-s-header">za<span>pay</span><iconify-icon icon="ph:bell-bold" style={{ fontSize: '13px', color: 'rgba(255,255,255,.25)' }}></iconify-icon></div>
+                 <div className="app-s-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/zapay-icon.svg" alt="" aria-hidden="true" width={14} height={14} style={{ display: 'block', flexShrink: 0 }} />
+                    <span>za<span style={{ color: 'var(--o1)' }}>pay</span></span>
+                  </div>
+                  <iconify-icon icon="ph:bell-bold" style={{ fontSize: '13px', color: 'rgba(255,255,255,.25)' }}></iconify-icon>
+                 </div>
                 <div className="app-s-lbl">Payments this month</div>
                 <div className="app-tx">
                   {[
