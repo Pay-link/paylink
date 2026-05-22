@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { supabase } from '@/lib/supabase'
+
 
 export interface UserProfile {
   id: string
@@ -38,42 +38,27 @@ export function useUser() {
       const phone = user?.phone?.number || null
       const displayName = email?.split('@')[0] || phone || 'ZaPay User'
 
-      // Check if user exists
-      const { data: existing } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user!.id)
-        .maybeSingle()
-
-      if (existing) {
-        // Update wallet address if changed
-        if (existing.wallet_address !== walletAddress && walletAddress) {
-          await supabase
-            .from('users')
-            .update({ wallet_address: walletAddress, updated_at: new Date().toISOString() })
-            .eq('id', user!.id)
-        }
-        setProfile({ ...existing, wallet_address: walletAddress || existing.wallet_address })
-      } else {
-        // Create new user
-        const newUser = {
-          id: user!.id,
+      const res = await fetch('/api/users/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user!.id,
           email,
           phone,
-          display_name: displayName,
-          wallet_address: walletAddress,
-          balance_usdc: 0,
-          bank_setup: false,
-          kyc_status: 'none',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-        const { data: created } = await supabase
-          .from('users')
-          .insert(newUser)
-          .select()
-          .single()
-        if (created) setProfile(created)
+          displayName,
+          walletAddress,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error(`Sync request failed with status ${res.status}`)
+      }
+
+      const synced = await res.json()
+      if (synced && !synced.error) {
+        setProfile(synced)
       }
     } catch (err) {
       console.error('useUser sync error:', err)

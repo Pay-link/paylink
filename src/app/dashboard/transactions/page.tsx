@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { Nav } from '@/components/layout/Nav'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+
 import { useUser } from '@/hooks/useUser'
 import { timeAgo } from '@/lib/utils'
 import { Icon } from '@iconify/react'
@@ -47,15 +47,15 @@ export default function TransactionsHistoryPage() {
   }, [authenticated, userId])
 
   const loadTransactions = async () => {
+    if (!userId) return
     try {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
-        .order('created_at', { ascending: false })
-
-      if (error) console.error('Transactions fetch error:', error)
-      else if (data) setTransactions(data)
+      const res = await fetch(`/api/transactions?userId=${encodeURIComponent(userId)}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) setTransactions(data)
+      } else {
+        console.error('Transactions fetch error status:', res.status)
+      }
     } catch (err) {
       console.error('Transactions fetch exception:', err)
     } finally {

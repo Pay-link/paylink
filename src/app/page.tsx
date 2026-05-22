@@ -70,14 +70,14 @@ export default function HomePage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [linksRes, txsRes] = await Promise.all([
-          supabase.from('payment_links').select('id', { count: 'exact', head: true }),
-          supabase.from('transactions').select('id', { count: 'exact', head: true }),
-        ])
-        setLiveStats({
-          links: linksRes.count ?? 0,
-          txs: txsRes.count ?? 0,
-        })
+        const res = await fetch('/api/stats')
+        if (res.ok) {
+          const data = await res.json()
+          setLiveStats({
+            links: data.links ?? 0,
+            txs: data.txs ?? 0,
+          })
+        }
       } catch (_) {}
     }
     fetchStats()

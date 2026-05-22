@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import { Nav } from '@/components/layout/Nav'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { getExpiryLabel, getLinkUrl, formatUSD } from '@/lib/utils'
 import { Icon } from '@iconify/react'
@@ -23,9 +22,10 @@ export default function PaymentLinksPage() {
   // Tab states
   const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active')
   
-  // Copy state
+  // Kebab Dropdown menu state
+  const [openKebabId, setOpenKebabId] = useState<string | null>(null)
+  const [showShareMenu, setShowShareMenu] = useState(false)
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null)
-  const [openShareLinkId, setOpenShareLinkId] = useState<string | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem('zp-theme') as 'dark' | 'light' | null
@@ -48,15 +48,15 @@ export default function PaymentLinksPage() {
   }, [authenticated, userId])
 
   const loadLinks = async () => {
+    if (!userId) return
     try {
-      const { data, error } = await supabase
-        .from('payment_links')
-        .select('*')
-        .eq('owner_id', userId)
-        .order('created_at', { ascending: false })
-
-      if (error) console.error('Payment links fetch error:', error)
-      else if (data) setLinks(data)
+      const res = await fetch(`/api/links?ownerId=${encodeURIComponent(userId)}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data)) setLinks(data)
+      } else {
+        console.error('Payment links fetch error status:', res.status)
+      }
     } catch (err) {
       console.error('Payment links load exception:', err)
     } finally {
@@ -67,16 +67,20 @@ export default function PaymentLinksPage() {
   const handleDelete = async (linkId: string) => {
     if (!confirm('Are you sure you want to delete this payment link? This action cannot be undone.')) return
     try {
-      const { error } = await supabase
-        .from('payment_links')
-        .delete()
-        .eq('id', linkId)
+      const res = await fetch('/api/links', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: linkId }),
+      })
 
-      if (error) {
-        console.error('Error deleting link:', error)
-        alert('Failed to delete payment link.')
-      } else {
+      if (res.ok) {
         setLinks(prev => prev.filter(l => l.id !== linkId))
+        setOpenKebabId(null)
+      } else {
+        console.error('Failed to delete payment link')
+        alert('Failed to delete payment link.')
       }
     } catch (err) {
       console.error('Exception deleting link:', err)
@@ -87,8 +91,22 @@ export default function PaymentLinksPage() {
     const url = getLinkUrl(slug)
     navigator.clipboard.writeText(url)
     setCopiedLinkId(id)
-    setTimeout(() => setCopiedLinkId(null), 2000)
+    setTimeout(() => {
+      setCopiedLinkId(null)
+      setOpenKebabId(null)
+    }, 1500)
   }
+
+  // Close menus on outside click
+  useEffect(() => {
+    if (!openKebabId) return
+    const handleOutsideClick = () => {
+      setOpenKebabId(null)
+      setShowShareMenu(false)
+    }
+    window.addEventListener('click', handleOutsideClick)
+    return () => window.removeEventListener('click', handleOutsideClick)
+  }, [openKebabId])
 
   const processedLinks = links.map(link => {
     const isExpired = link.expiry && new Date(link.expiry) < new Date()
@@ -213,7 +231,9 @@ export default function PaymentLinksPage() {
                 alignItems: 'center',
                 gap: 6,
                 boxShadow: '0 4px 14px rgba(37,92,180,.25)',
+                transition: 'all 0.2s',
               }}
+              className="create-link-btn"
             >
               <Icon icon="ph:plus-bold" /> Create New Link
             </button>
@@ -227,7 +247,11 @@ export default function PaymentLinksPage() {
             ].map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
+                onClick={() => {
+                  setActiveTab(tab.key as any)
+                  setOpenKebabId(null)
+                  setShowShareMenu(false)
+                }}
                 style={{
                   padding: '12px 4px',
                   background: 'none',
@@ -245,10 +269,10 @@ export default function PaymentLinksPage() {
             ))}
           </div>
 
-          {/* Links Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+          {/* MetaMask Activity Style Single-Column List */}
+          <div style={{ ...cardStyle, background: 'var(--white)', overflow: 'visible' }}>
             {currentDisplayList.length === 0 ? (
-              <div style={{ ...cardStyle, gridColumn: '1 / -1', padding: '64px 24px', textAlign: 'center', color: 'var(--ink3)' }}>
+              <div style={{ padding: '64px 24px', textAlign: 'center', color: 'var(--ink3)' }}>
                 <Icon icon="ph:link-break-bold" style={{ fontSize: 48, color: 'var(--ink4)', marginBottom: 12, display: 'block', margin: '0 auto 10px' }} />
                 <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink2)', marginBottom: 4 }}>No links here</div>
                 <div style={{ fontSize: 13, color: 'var(--ink4)', marginBottom: 16 }}>
@@ -263,142 +287,261 @@ export default function PaymentLinksPage() {
                 )}
               </div>
             ) : (
-              currentDisplayList.map((link) => (
-                <div key={link.id} style={{ ...cardStyle, padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
+              currentDisplayList.map((link, i) => (
+                <div
+                  key={link.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    padding: '16px 20px',
+                    borderBottom: i < currentDisplayList.length - 1 ? '1px solid var(--border)' : 'none',
+                    transition: 'background-color 0.15s ease',
+                    position: 'relative',
+                  }}
+                  className="list-row-item"
+                >
                   
-                  {/* Link Header */}
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                      <span style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        letterSpacing: '.06em',
-                        padding: '3px 8px',
-                        borderRadius: 20,
-                        background: link.isActive ? 'var(--g-soft)' : 'rgba(0,0,0,0.06)',
-                        color: link.isActive ? 'var(--g1)' : 'var(--ink4)',
-                      }}>
-                        {getExpiryLabel(link.expiry)}
+                  {/* Soft circular avatar */}
+                  <div 
+                    style={{ 
+                      width: 44, 
+                      height: 44, 
+                      borderRadius: '50%', 
+                      background: link.isActive ? 'rgba(34, 197, 94, 0.12)' : 'rgba(0, 0, 0, 0.06)', 
+                      color: link.isActive ? 'var(--g1)' : 'var(--ink4)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      flexShrink: 0 
+                    }}
+                  >
+                    <Icon icon="ph:link-simple-bold" style={{ fontSize: 20 }} />
+                  </div>
+
+                  {/* Main Link Details */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 3 }}>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>
+                        {formatUSD(link.amount)}
                       </span>
-
-                      <button
-                        onClick={() => handleDelete(link.id)}
-                        title="Delete Link"
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'var(--ink4)',
-                          cursor: 'pointer',
-                          padding: 4,
-                          borderRadius: 6,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'color .15s, background-color .15s',
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.color = '#CC2020'; e.currentTarget.style.backgroundColor = 'rgba(204,32,32,0.08)' }}
-                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--ink4)'; e.currentTarget.style.backgroundColor = 'transparent' }}
-                      >
-                        <Icon icon="ph:trash-bold" style={{ fontSize: 16 }} />
-                      </button>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink3)' }}>
+                        USDC
+                      </span>
                     </div>
 
-                    <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', marginBottom: 4 }}>
-                      {formatUSD(link.amount)} <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink3)' }}>USDC</span>
-                    </div>
-
-                    <div style={{ fontSize: 13, color: 'var(--ink2)', fontWeight: 500, marginBottom: 8, fontStyle: link.note ? 'normal' : 'italic' }}>
+                    <div style={{ fontSize: 13, color: 'var(--ink2)', fontWeight: 500, marginBottom: 4, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', fontStyle: link.note ? 'normal' : 'italic' }}>
                       {link.note || 'No description'}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink4)', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink4)', flexWrap: 'wrap' }}>
                       <Icon icon="ph:clock-bold" />
                       <span>Created {new Date(link.created_at).toLocaleDateString()}</span>
                       <span>·</span>
-                      <Icon icon="ph:credit-card-bold" />
                       <span style={{ textTransform: 'capitalize' }}>{link.receive_type} payout</span>
                     </div>
                   </div>
 
-                  {/* Link Actions */}
-                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  {/* Expiry Pill, usage count, and Kebab action */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
                     
-                    {/* Copy Link Button */}
-                    <button
-                      onClick={() => handleCopy(link.slug, link.id)}
-                      style={{
-                        flex: 1,
-                        background: copiedLinkId === link.id ? 'var(--g-soft)' : 'var(--page)',
-                        color: copiedLinkId === link.id ? 'var(--g1)' : 'var(--ink)',
-                        border: `1.5px solid ${copiedLinkId === link.id ? 'var(--border-g)' : 'var(--border)'}`,
-                        borderRadius: 12,
-                        padding: '10px 14px',
-                        fontSize: 12,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 6,
-                        transition: 'all .15s',
-                      }}
-                    >
-                      <Icon icon={copiedLinkId === link.id ? 'ph:check-bold' : 'ph:copy-bold'} style={{ fontSize: 14 }} />
-                      {copiedLinkId === link.id ? 'Copied URL!' : 'Copy Payment URL'}
-                    </button>
+                    {/* Status badges & usage info */}
+                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: 6 }} className="badges-column">
+                      <div>
+                        <span style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          letterSpacing: '.06em',
+                          padding: '3px 8px',
+                          borderRadius: 20,
+                          background: link.isActive ? 'var(--g-soft)' : 'rgba(0,0,0,0.06)',
+                          color: link.isActive ? 'var(--g1)' : 'var(--ink4)',
+                        }}>
+                          {getExpiryLabel(link.expiry)}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--g1)' }}>
+                        {link.paid_count} collected
+                      </div>
+                    </div>
 
-                    {/* Quick share visual trigger */}
+                    {/* Vertical Kebab Button & Floating Dropdown */}
                     <div style={{ position: 'relative' }}>
                       <button
-                        onClick={() => setOpenShareLinkId(openShareLinkId === link.id ? null : link.id)}
+                        onClick={(e) => {
+                          e.stopPropagation() // Prevent triggers
+                          if (openKebabId === link.id) {
+                            setOpenKebabId(null)
+                            setShowShareMenu(false)
+                          } else {
+                            setOpenKebabId(link.id)
+                            setShowShareMenu(false)
+                          }
+                        }}
                         style={{
-                          background: openShareLinkId === link.id ? 'var(--g-soft)' : 'var(--page)',
-                          color: openShareLinkId === link.id ? 'var(--g1)' : 'var(--ink3)',
-                          border: `1.5px solid ${openShareLinkId === link.id ? 'var(--border-g)' : 'var(--border)'}`,
-                          borderRadius: 12,
-                          width: 38,
-                          height: 38,
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--ink3)',
+                          cursor: 'pointer',
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          cursor: 'pointer',
-                          transition: 'all .15s',
+                          transition: 'all 0.15s',
                         }}
+                        className="kebab-btn"
                       >
-                        <Icon icon="ph:share-network-bold" style={{ fontSize: 16 }} />
+                        <Icon icon="ph:dots-three-vertical-bold" style={{ fontSize: 18 }} />
                       </button>
 
-                      {/* Share Popover Overlay */}
-                      {openShareLinkId === link.id && (
-                        <>
-                          <div onClick={() => setOpenShareLinkId(null)} style={{ position: 'fixed', inset: 0, zIndex: 110 }} />
-                          <div style={{
+                      {/* Floating Kebab Dropdown */}
+                      {openKebabId === link.id && (
+                        <div
+                          onClick={(e) => e.stopPropagation()} // Stop closing
+                          style={{
                             position: 'absolute',
-                            bottom: 46,
+                            top: 36,
                             right: 0,
                             background: 'var(--white)',
                             border: '1px solid var(--border)',
                             borderRadius: 14,
                             boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-                            padding: '8px',
+                            padding: 6,
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 4,
-                            zIndex: 120,
-                            minWidth: 150,
-                          }}>
-                            {[
-                              { label: 'WhatsApp', icon: 'ph:whatsapp-logo-bold', color: '#25D366', url: `https://wa.me/?text=${encodeURIComponent(`Pay me ${formatUSD(link.amount)} via ZaPay: ${getLinkUrl(link.slug)}`)}` },
-                              { label: 'Telegram', icon: 'ph:telegram-logo-bold', color: '#0088cc', url: `https://t.me/share/url?url=${encodeURIComponent(getLinkUrl(link.slug))}` },
-                              { label: 'Twitter / X', icon: 'ph:twitter-logo-bold', color: '#1DA1F2', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Pay me ${formatUSD(link.amount)} via ZaPay: ${getLinkUrl(link.slug)}`)}` }
-                            ].map(platform => (
+                            gap: 2,
+                            zIndex: 100,
+                            minWidth: 168,
+                            animation: 'fadeInUp 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                          }}
+                        >
+                          {!showShareMenu ? (
+                            <>
+                              {/* Option: Copy Link */}
+                              <button
+                                onClick={() => handleCopy(link.slug, link.id)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: copiedLinkId === link.id ? 'var(--g1)' : 'var(--ink)',
+                                  background: copiedLinkId === link.id ? 'var(--g-soft)' : 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  width: '100%',
+                                  transition: 'background-color 0.15s',
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (copiedLinkId !== link.id) e.currentTarget.style.backgroundColor = 'var(--page)'
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (copiedLinkId !== link.id) e.currentTarget.style.backgroundColor = 'transparent'
+                                }}
+                              >
+                                <Icon icon={copiedLinkId === link.id ? 'ph:check-bold' : 'ph:copy-bold'} style={{ fontSize: 14 }} />
+                                {copiedLinkId === link.id ? 'Copied URL!' : 'Copy Payment URL'}
+                              </button>
+
+                              {/* Option: Share Link */}
+                              <button
+                                onClick={() => setShowShareMenu(true)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: 'var(--ink)',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  width: '100%',
+                                  transition: 'background-color 0.15s',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--page)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                              >
+                                <Icon icon="ph:share-network-bold" style={{ fontSize: 14 }} />
+                                Share Link...
+                              </button>
+
+                              <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+
+                              {/* Option: Delete Link */}
+                              <button
+                                onClick={() => handleDelete(link.id)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  color: '#DC2626',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  width: '100%',
+                                  transition: 'all 0.15s',
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.08)'
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.backgroundColor = 'transparent'
+                                }}
+                              >
+                                <Icon icon="ph:trash-bold" style={{ fontSize: 14 }} />
+                                Delete Link
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              {/* Submenu Header / Back Button */}
+                              <button
+                                onClick={() => setShowShareMenu(false)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                  padding: '6px 8px',
+                                  borderRadius: 6,
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  color: 'var(--ink3)',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  width: '100%',
+                                  textAlign: 'left',
+                                  marginBottom: 4,
+                                }}
+                              >
+                                <Icon icon="ph:arrow-left-bold" /> Back
+                              </button>
+
+                              {/* WhatsApp */}
                               <a
-                                key={platform.label}
-                                href={platform.url}
+                                href={`https://wa.me/?text=${encodeURIComponent(`Pay me ${formatUSD(link.amount)} via ZaPay: ${getLinkUrl(link.slug)}`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={() => setOpenShareLinkId(null)}
+                                onClick={() => {
+                                  setOpenKebabId(null)
+                                  setShowShareMenu(false)
+                                }}
                                 style={{
                                   display: 'flex',
                                   alignItems: 'center',
@@ -414,31 +557,71 @@ export default function PaymentLinksPage() {
                                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--page)'}
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                               >
-                                <Icon icon={platform.icon} style={{ fontSize: 15, color: platform.color }} />
-                                {platform.label}
+                                <Icon icon="ph:whatsapp-logo-bold" style={{ fontSize: 15, color: '#25D366' }} />
+                                WhatsApp
                               </a>
-                            ))}
-                          </div>
-                        </>
+
+                              {/* Telegram */}
+                              <a
+                                href={`https://t.me/share/url?url=${encodeURIComponent(getLinkUrl(link.slug))}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => {
+                                  setOpenKebabId(null)
+                                  setShowShareMenu(false)
+                                }}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  color: 'var(--ink2)',
+                                  textDecoration: 'none',
+                                  fontWeight: 500,
+                                  transition: 'background-color .15s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--page)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                              >
+                                <Icon icon="ph:telegram-logo-bold" style={{ fontSize: 15, color: '#0088cc' }} />
+                                Telegram
+                              </a>
+
+                              {/* Twitter / X */}
+                              <a
+                                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Pay me ${formatUSD(link.amount)} via ZaPay: ${getLinkUrl(link.slug)}`)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => {
+                                  setOpenKebabId(null)
+                                  setShowShareMenu(false)
+                                }}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '8px 10px',
+                                  borderRadius: 8,
+                                  fontSize: 12,
+                                  color: 'var(--ink2)',
+                                  textDecoration: 'none',
+                                  fontWeight: 500,
+                                  transition: 'background-color .15s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--page)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                              >
+                                <Icon icon="ph:twitter-logo-bold" style={{ fontSize: 15, color: '#1DA1F2' }} />
+                                Twitter / X
+                              </a>
+                            </>
+                          )}
+                        </div>
                       )}
                     </div>
 
-                  </div>
-
-                  {/* Paid stats indicator banner inside active links */}
-                  <div style={{
-                    marginTop: 12,
-                    background: 'var(--page)',
-                    borderRadius: 10,
-                    padding: '8px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    fontSize: 11,
-                    color: 'var(--ink3)'
-                  }}>
-                    <span style={{ fontWeight: 500 }}>Usage & Payouts</span>
-                    <span style={{ fontWeight: 700, color: 'var(--g1)' }}>{link.paid_count} Payments Collected</span>
                   </div>
 
                 </div>
@@ -450,12 +633,30 @@ export default function PaymentLinksPage() {
 
       <style>{`
         .dash-mobile-nav-wrapper { display: none; }
+        .list-row-item:hover {
+          background-color: var(--page) !important;
+        }
+        .kebab-btn:hover {
+          background-color: var(--page) !important;
+          color: var(--ink) !important;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         @media(max-width:768px){
           .dash-mobile-nav-wrapper { display: block; }
           .desktop-sidebar{display:none!important}
           .desktop-main{margin-left:0!important}
           .desktop-topbar{display:none!important}
-          .dash-content{padding-top:16px!important;padding-bottom:90px!important;padding-left:16px!important;padding-right:16px!important}
+          .dash-content{padding-top:16px!important;padding-bottom:90px!important;padding-left:12px!important;padding-right:12px!important}
+          .badges-column { display: none !important; }
         }
         [data-theme="light"] .zp-dash-topbar {
           background: rgba(242,244,250,0.95) !important;

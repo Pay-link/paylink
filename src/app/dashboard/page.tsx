@@ -98,20 +98,26 @@ function DashboardContent() {
   }, [authenticated, userId])
 
   const loadRealData = async () => {
+    if (!userId) return
     try {
-      const [linksData, txData, claimsData] = await Promise.all([
-        supabase.from('payment_links').select('*').eq('owner_id', userId).order('created_at', { ascending: false }).limit(10),
-        supabase.from('transactions').select('*').or(`sender_id.eq.${userId},recipient_id.eq.${userId}`).order('created_at', { ascending: false }).limit(10),
-        supabase.from('pending_claims').select('*').eq('sender_id', userId).eq('status', 'pending').order('created_at', { ascending: false }).limit(10),
+      const [linksRes, txRes, claimsRes] = await Promise.all([
+        fetch(`/api/links?ownerId=${encodeURIComponent(userId)}`),
+        fetch(`/api/transactions?userId=${encodeURIComponent(userId)}`),
+        fetch(`/api/claims?senderId=${encodeURIComponent(userId)}`),
       ])
-      if (linksData.error) console.error('Links fetch error:', linksData.error)
-      else if (linksData.data?.length) setLinks(linksData.data)
 
-      if (txData.error) console.error('Transactions fetch error:', txData.error)
-      else if (txData.data?.length) setTransactions(txData.data)
-
-      if (claimsData.error) console.error('Claims fetch error:', claimsData.error)
-      else if (claimsData.data) setPendingClaims(claimsData.data)
+      if (linksRes.ok) {
+        const linksData = await linksRes.json()
+        if (Array.isArray(linksData)) setLinks(linksData.slice(0, 10))
+      }
+      if (txRes.ok) {
+        const txData = await txRes.json()
+        if (Array.isArray(txData)) setTransactions(txData.slice(0, 10))
+      }
+      if (claimsRes.ok) {
+        const claimsData = await claimsRes.json()
+        if (Array.isArray(claimsData)) setPendingClaims(claimsData.slice(0, 10))
+      }
     } catch (err) {
       console.error('Dashboard data error:', err)
     } finally {
@@ -195,7 +201,11 @@ function DashboardContent() {
   const handleRefund = async (claim: any) => {
     if (!ESCROW_ADDRESS || ESCROW_ADDRESS === '0x') {
       alert("Escrow contract not deployed. Simulating refund on DB...")
-      await supabase.from('pending_claims').update({ status: 'expired' }).eq('id', claim.id)
+      await fetch('/api/claims', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claimId: claim.id, status: 'expired' })
+      })
       setPendingClaims(prev => prev.filter(c => c.id !== claim.id))
       return
     }
@@ -230,7 +240,11 @@ function DashboardContent() {
       await publicClient.waitForTransactionReceipt({ hash: refundHash })
 
       // Update DB to mark as expired/refunded
-      await supabase.from('pending_claims').update({ status: 'expired' }).eq('id', claim.id)
+      await fetch('/api/claims', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claimId: claim.id, status: 'expired' })
+      })
       setPendingClaims(prev => prev.filter(c => c.id !== claim.id))
       alert("Refund successful!")
     } catch (e: any) {
