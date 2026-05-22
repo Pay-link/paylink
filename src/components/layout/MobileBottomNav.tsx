@@ -12,7 +12,7 @@ const TABS = [
   { id: 'home',     icon: 'ph:squares-four-bold',        label: 'Home',     href: '/dashboard' },
   { id: 'faucet',   icon: 'ph:drop-bold',                label: 'Faucet',   href: 'https://faucet.circle.com' },
   { id: 'send',     icon: 'ph:paper-plane-right-bold',   label: 'Send',     href: '/send' },
-  { id: 'activity', icon: 'ph:clock-countdown-bold',     label: 'Activity', href: '/dashboard#recent-transactions' },
+  { id: 'activity', icon: 'ph:clock-countdown-bold',     label: 'Activity', href: '/dashboard/transactions' },
 ]
 
 export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {
@@ -63,6 +63,15 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
         {TABS.map(tab => (
           <button
             key={tab.id}
+            id={
+              tab.id === 'faucet'
+                ? 'tour-dash-faucet-mobile'
+                : tab.id === 'send'
+                ? 'tour-dash-send-mobile'
+                : tab.id === 'activity'
+                ? 'tour-dash-history-mobile'
+                : undefined
+            }
             onClick={() => handleTab(tab)}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
@@ -76,6 +85,7 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
           </button>
         ))}
         <button
+          id="tour-dash-createlink-mobile"
           onClick={() => router.push('/create')}
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,

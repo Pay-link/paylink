@@ -13,6 +13,7 @@ import { formatUSD, timeAgo, getExpiryLabel } from '@/lib/utils'
 import { useLocalCurrency } from '@/hooks/useLocalCurrency'
 import { Icon } from '@iconify/react'
 import { escrowAbi, ESCROW_ADDRESS } from '@/lib/escrowAbi'
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour'
 
 const arcTestnet = {
   id: 5042002,
@@ -48,6 +49,7 @@ export default function DashboardPage() {
   const [openLinkMenuId, setOpenLinkMenuId] = useState<string | null>(null)
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [selectedTx, setSelectedTx] = useState<any | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem('zp-theme') as 'dark' | 'light' | null
@@ -248,6 +250,10 @@ export default function DashboardPage() {
     tc: tx.recipient_id === userId ? 'var(--g1)' : '#CC2020',
   }))
 
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const recentTxs = displayTxs.filter(tx => new Date(tx.created_at) >= sevenDaysAgo)
+
   const displayLinks = links.map(link => {
     const isExpired = link.expiry && new Date(link.expiry) < new Date()
     return { ...link, status: isExpired ? 'expired' : link.status }
@@ -337,17 +343,17 @@ export default function DashboardPage() {
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', marginBottom: 6 }}>Main</div>
           {[
             { label: 'Dashboard', icon: 'ph:squares-four-bold', href: '/dashboard', active: true },
-            { label: 'Send money', icon: 'ph:paper-plane-right-bold', href: '/send' },
-            { label: 'Create link', icon: 'ph:link-bold', href: '/create' },
-            { label: 'Faucet', icon: 'ph:drop-bold', href: 'https://faucet.circle.com', external: true },
+            { label: 'Send money', icon: 'ph:paper-plane-right-bold', href: '/send', id: 'tour-dash-send' },
+            { label: 'Create link', icon: 'ph:link-bold', href: '/create', id: 'tour-dash-createlink' },
+            { label: 'Faucet', icon: 'ph:drop-bold', href: 'https://faucet.circle.com', external: true, id: 'tour-dash-faucet' },
           ].map(item => {
             const style = { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: (item as any).active ? 700 : 500, color: (item as any).active ? 'var(--g1)' : 'var(--ink3)', background: (item as any).active ? 'var(--g-soft)' : 'transparent', textDecoration: 'none', marginBottom: 2 } as React.CSSProperties
             return (item as any).external ? (
-              <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={style}>
+              <a key={item.label} id={item.id} href={item.href} target="_blank" rel="noopener noreferrer" style={style}>
                 <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
               </a>
             ) : (
-              <Link key={item.label} href={item.href} style={style}>
+              <Link key={item.label} id={item.id} href={item.href} style={style}>
                 <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
               </Link>
             )
@@ -355,13 +361,13 @@ export default function DashboardPage() {
 
           <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ink4)', letterSpacing: '.08em', textTransform: 'uppercase', padding: '0 12px', margin: '16px 0 6px' }}>Account</div>
           {[
-            { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '#recent-transactions' },
-            { label: 'My links', icon: 'ph:link-simple-bold', href: '#my-links' },
+            { label: 'Transaction history', icon: 'ph:clock-countdown-bold', href: '/dashboard/transactions', id: 'tour-dash-history' },
+            { label: 'My links', icon: 'ph:link-simple-bold', href: '/dashboard/links', id: 'tour-dash-links' },
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
             { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
           ].map(item => item.href ? (
-            <Link key={item.label} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2 }}>
+            <Link key={item.label} id={item.id} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2 }}>
               <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}
             </Link>
           ) : (
@@ -559,12 +565,14 @@ export default function DashboardPage() {
 
               {/* Transactions */}
               <div id="recent-transactions" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Recent transactions</div>
-                <span style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, cursor: 'pointer' }}>View all</span>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Recent transactions (Last 7 Days)</div>
+                <span style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, cursor: 'pointer' }} onClick={() => router.push('/dashboard/transactions')}>View all</span>
               </div>
               <div style={{ ...cardStyle, marginBottom: 20 }}>
-                {displayTxs.map((tx: any, i: number) => (
-                  <div key={tx.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < displayTxs.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }}>
+                {recentTxs.map((tx: any, i: number) => (
+                  <div key={tx.id} onClick={() => setSelectedTx(tx)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < recentTxs.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--page)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: tx.color, color: tx.tc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{tx.initials}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{tx.name}</div>
@@ -586,9 +594,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 ))}
-                {displayTxs.length === 0 && (
+                {recentTxs.length === 0 && (
                   <div style={{ padding: '32px', textAlign: 'center', color: 'var(--ink3)', fontSize: 14 }}>
-                    No transactions yet. <Link href="/send" style={{ color: 'var(--g1)', fontWeight: 500 }}>Send your first payment →</Link>
+                    No recent transactions in the last 7 days. <span onClick={() => router.push('/dashboard/transactions')} style={{ color: 'var(--g1)', fontWeight: 500, cursor: 'pointer' }}>View all-time history →</span>
                   </div>
                 )}
               </div>
@@ -627,67 +635,45 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              {/* My Links */}
-              <div id="my-links" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>My active links</div>
-                <Link href="/create" style={{ fontSize: 13, color: 'var(--g1)', fontWeight: 500, textDecoration: 'none' }}>Create new</Link>
-              </div>
-              <div style={cardStyle}>
-                {displayLinks.map((link: any, i: number) => (
-                  <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 18px', borderBottom: i < displayLinks.length-1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }} onClick={() => router.push(`/pay/${link.slug}`)}>
-                    <div style={{ width: 38, height: 38, borderRadius: 11, background: link.status === 'expired' ? 'var(--page)' : 'var(--g-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: link.status === 'expired' ? 'var(--ink4)' : 'var(--g1)', flexShrink: 0 }}><Icon icon="ph:link-bold" /></div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: link.status === 'expired' ? 'var(--ink3)' : 'var(--ink)', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{link.note || 'Payment link'}</div>
-                      <div style={{ fontSize: 11, color: 'var(--ink4)' }}>
-                        {(process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz').replace(/^https?:\/\//, '')}/pay/{link.slug} · {link.expiry ? getExpiryLabel(link.expiry) : 'Never expires'}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>${link.amount?.toFixed(2)}</div>
-                        <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 20, background: link.status === 'active' ? 'var(--g-soft)' : link.status === 'expired' ? 'var(--page)' : 'rgba(99,102,241,.18)', color: link.status === 'active' ? 'var(--g1)' : link.status === 'expired' ? 'var(--ink4)' : '#818CF8' }}>
-                          {link.status === 'active' ? 'Active' : link.status === 'expired' ? 'Expired' : `Paid ×${link.paid_count}`}
-                        </span>
-                      </div>
-                      <div style={{ position: 'relative' }}>
-                        <button onClick={(e) => { e.stopPropagation(); setOpenLinkMenuId(openLinkMenuId === link.id ? null : link.id) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink3)', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Icon icon="ph:dots-three-vertical-bold" style={{ fontSize: 20 }} />
-                        </button>
-                        {openLinkMenuId === link.id && (
-                          <div onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', right: 0, top: 30, background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,.15)', zIndex: 100, overflow: 'hidden', minWidth: 140 }}>
-                            <div onClick={(e) => {
-                              e.stopPropagation()
-                              const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://zapay.xyz'}/pay/${link.slug}`
-                              navigator.clipboard.writeText(url)
-                              setCopied(true)
-                              setTimeout(() => setCopied(false), 2000)
-                              setOpenLinkMenuId(null)
-                            }} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: 'var(--ink)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid var(--border)' }}>
-                              <Icon icon="ph:copy-bold" style={{ fontSize: 16 }} /> Copy link
-                            </div>
-                            <div onClick={async (e) => {
-                              e.stopPropagation()
-                              if (!confirm('Are you sure you want to delete this link?')) return
-                              try {
-                                const res = await fetch(`/api/links/${link.slug}`, { method: 'DELETE' })
-                                if (!res.ok) throw new Error('Failed to delete link')
-                                setLinks(prev => prev.filter(l => l.slug !== link.slug))
-                              } catch (err: any) { alert(err.message) }
-                              setOpenLinkMenuId(null)
-                            }} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#E53935', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <Icon icon="ph:trash-bold" style={{ fontSize: 16 }} /> Delete
-                            </div>
-                          </div>
-                        )}
-                      </div>
+              {/* Payment Links Quick Access Banner */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(37,92,180,0.08) 100%)',
+                borderRadius: 20,
+                border: '1px solid var(--border)',
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 20,
+                cursor: 'pointer',
+                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+              }}
+              className="links-banner-widget"
+              onClick={() => router.push('/dashboard/links')}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: '50%',
+                    background: 'var(--g-soft)',
+                    color: 'var(--g1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                  }}>
+                    <Icon icon="ph:link-simple-bold" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>Payment Links Manager</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink3)' }}>
+                      You have {links.filter(l => !l.expiry || new Date(l.expiry) >= new Date()).length} active links. Share and collect payments.
                     </div>
                   </div>
-                ))}
-                {displayLinks.length === 0 && (
-                  <div style={{ padding: '32px', textAlign: 'center', color: 'var(--ink3)', fontSize: 14 }}>
-                    No links yet. <Link href="/create" style={{ color: 'var(--g1)', fontWeight: 500 }}>Create your first link →</Link>
-                  </div>
-                )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--g1)', fontSize: 13, fontWeight: 700 }}>
+                  Manage <Icon icon="ph:arrow-right-bold" />
+                </div>
               </div>
             </div>
 
@@ -767,7 +753,7 @@ export default function DashboardPage() {
       {/* Top up modal */}
       {topUpOpen && (
         <div onClick={() => setTopUpOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--white)', borderRadius: 24, padding: 28, width: '100%', maxWidth: 400, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.6)', border: '1px solid var(--border)' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--white)', borderRadius: 24, padding: 28, width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,.6)', border: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>Top up wallet</div>
               <button onClick={() => setTopUpOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: 'var(--ink3)' }}>×</button>
@@ -823,6 +809,144 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Transaction Detail Modal */}
+      {selectedTx && (
+        <div onClick={() => setSelectedTx(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--white)', borderRadius: 24, padding: 28, width: '100%', maxWidth: 440, boxShadow: '0 24px 60px rgba(0,0,0,.6)', border: '1px solid var(--border)', position: 'relative' }}>
+            <button onClick={() => setSelectedTx(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: 'var(--ink3)', transition: 'color 0.2s' }}>×</button>
+            
+            <div style={{ textAlign: 'center', marginBottom: 24, marginTop: 10 }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: selectedTx.color, color: selectedTx.tc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 700, margin: '0 auto 12px' }}>
+                {selectedTx.initials}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 4 }}>
+                {selectedTx.type === 'sent' ? 'Sent Money' : 'Received Money'}
+              </div>
+              <div style={{ fontSize: 32, fontWeight: 700, color: selectedTx.type === 'sent' ? 'var(--ink)' : 'var(--g1)', letterSpacing: '-.04em' }}>
+                {selectedTx.type === 'sent' ? '−' : '+'}${selectedTx.amount.toFixed(2)} <span style={{ fontSize: 16, fontWeight: 500, color: 'var(--ink3)' }}>USDC</span>
+              </div>
+            </div>
+
+            {/* Money Flow Visual */}
+            <div style={{ background: 'var(--page)', borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, border: '1px solid var(--border)' }}>
+              <div style={{ textAlign: 'left', width: '40%', overflow: 'hidden' }}>
+                <div style={{ fontSize: 10, color: 'var(--ink4)', textTransform: 'uppercase', fontWeight: 600, marginBottom: 2 }}>Sender</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  {selectedTx.type === 'sent' ? 'You' : selectedTx.name}
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '20%' }}>
+                <Icon icon="ph:arrow-right-bold" style={{ fontSize: 18, color: 'var(--g1)', animation: 'pulse 2s infinite' }} />
+              </div>
+              <div style={{ textAlign: 'right', width: '40%', overflow: 'hidden' }}>
+                <div style={{ fontSize: 10, color: 'var(--ink4)', textTransform: 'uppercase', fontWeight: 600, marginBottom: 2 }}>Recipient</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  {selectedTx.type === 'sent' ? selectedTx.name : 'You'}
+                </div>
+              </div>
+            </div>
+
+            {/* Transaction Lifecycle Stepper */}
+            {selectedTx.tx_hash && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20, padding: '12px 14px', background: 'var(--page)', border: '1px solid var(--border)', borderRadius: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 2 }}>
+                  On-Chain Status
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {/* Step 1 */}
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--g-soft)', border: '1px solid var(--g3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--g1)', fontSize: 9, fontWeight: 700 }}>
+                        ✓
+                      </div>
+                      <div style={{ width: 1.5, height: 12, background: 'var(--border-g)', marginTop: 2 }} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>Payment Sent</div>
+                      <div style={{ fontSize: 10, color: 'var(--ink4)' }}>Transmitted to Arc Network</div>
+                    </div>
+                  </div>
+                  
+                  {/* Step 2 */}
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--g-soft)', border: '1px solid var(--g3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--g1)', fontSize: 9, fontWeight: 700 }}>
+                        ✓
+                      </div>
+                      <div style={{ width: 1.5, height: 12, background: 'var(--border)', marginTop: 2 }} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>On-Chain Confirmed</div>
+                      <div style={{ fontSize: 10, color: 'var(--ink4)' }}>Mined & settled in block (RPC verified)</div>
+                    </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(245,158,11,.1)', border: '1.5px dashed #FDB64E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FDB64E', fontSize: 10, fontWeight: 700 }}>
+                      ⏳
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>Explorer Syncing</div>
+                      <div style={{ fontSize: 10, color: 'var(--ink4)' }}>indexer catching up (~few mins)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Transaction Details */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                <span style={{ color: 'var(--ink3)' }}>Status</span>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: selectedTx.status === 'confirmed' ? 'var(--g-soft)' : 'rgba(245,158,11,.15)', color: selectedTx.status === 'confirmed' ? 'var(--g1)' : '#FDB64E' }}>
+                  {selectedTx.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                <span style={{ color: 'var(--ink3)' }}>Date</span>
+                <span style={{ color: 'var(--ink)', fontWeight: 500 }}>
+                  {new Date(selectedTx.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                <span style={{ color: 'var(--ink3)' }}>Note</span>
+                <span style={{ color: 'var(--ink)', fontWeight: 500, fontStyle: selectedTx.note ? 'normal' : 'italic' }}>
+                  {selectedTx.note || 'No note'}
+                </span>
+              </div>
+              {selectedTx.tx_hash && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                  <span style={{ color: 'var(--ink3)' }}>On-Chain Hash</span>
+                  <span style={{ color: 'var(--ink)', fontFamily: 'monospace', fontSize: 12 }}>
+                    {selectedTx.tx_hash.slice(0, 8)}...{selectedTx.tx_hash.slice(-8)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Block Explorer Link */}
+            {selectedTx.tx_hash ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <a href={`https://testnet.arcscan.app/tx/${selectedTx.tx_hash}`} target="_blank" rel="noopener noreferrer" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--g1)', color: '#fff', borderRadius: 100, padding: '14px', fontFamily: 'var(--font)', fontSize: 14, fontWeight: 700, cursor: 'pointer', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 14px rgba(37,92,180,.25)', transition: 'all .2s' }}>
+                  <Icon icon="ph:magnifying-glass-bold" /> View on ArcScan Explorer ↗
+                </a>
+                <div style={{ display: 'flex', gap: 8, background: 'rgba(245,158,11,.05)', border: '1px solid rgba(245,158,11,.2)', borderRadius: 12, padding: '10px 12px' }}>
+                  <Icon icon="ph:info-bold" style={{ fontSize: 16, color: '#FDB64E', flexShrink: 0, marginTop: 1 }} />
+                  <div style={{ fontSize: 11, color: '#B27612', lineHeight: 1.4, textAlign: 'left' }}>
+                    <strong>Explorer lag note:</strong> The blockchain confirmed this transaction instantly, but the Arc Testnet block explorer website operates a lagging database indexer and may take several minutes to reflect the amount and time details.
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink4)', background: 'var(--page)', padding: '10px 14px', borderRadius: 12 }}>
+                <Icon icon="ph:info-bold" style={{ verticalAlign: 'middle', marginRight: 4 }} /> Off-chain payment (No on-chain hash available)
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
         /* Mobile nav wrapper — only shown on mobile */
@@ -848,6 +972,7 @@ export default function DashboardPage() {
       `}</style>
 
       <MobileBottomNav activeTab={mobileTab} onTabChange={tab => setMobileTab(tab as any)} />
+      <OnboardingTour />
     </div>
   )
 }

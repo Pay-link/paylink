@@ -102,11 +102,17 @@ function SuccessContent() {
                   { key: 'Total paid', val: `$${amount}`, bold: true },
                   { key: 'Network', val: 'Arc · USDC' },
                   { key: 'Date & time', val: formatDateTime(date) },
-                  txHash ? { key: 'Tx hash', val: shortenTxHash(txHash) } : { key: 'Transaction ID', val: txId },
+                  txHash ? { key: 'Tx hash', val: shortenTxHash(txHash), link: `https://testnet.arcscan.app/tx/${txHash}` } : { key: 'Transaction ID', val: txId },
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '13px 18px', borderBottom: i < 7 ? '1px solid var(--border)' : 'none' }}>
                     <span style={{ fontSize: 14, color: 'var(--ink3)' }}>{row.key}</span>
-                    <span style={{ fontSize: 14, fontWeight: (row as any).bold ? 700 : 500, color: (row as any).green ? 'var(--g1)' : 'var(--ink)' }}>{row.val}</span>
+                    {(row as any).link ? (
+                      <a href={(row as any).link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, fontWeight: 500, color: 'var(--g1)', display: 'flex', alignItems: 'center', gap: 4, textDecoration: 'underline' }}>
+                        {row.val} <Icon icon="ph:arrow-square-out-bold" style={{ fontSize: 13 }} />
+                      </a>
+                    ) : (
+                      <span style={{ fontSize: 14, fontWeight: (row as any).bold ? 700 : 500, color: (row as any).green ? 'var(--g1)' : 'var(--ink)' }}>{row.val}</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -152,12 +158,21 @@ function SuccessContent() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'sticky', top: 82 }}>
           <div style={{ ...card, padding: '22px 24px' }}>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--ink)' }}>Arc confirmation</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--g-soft)', border: '0.5px solid var(--border-g)', borderRadius: 14, padding: '14px 16px', marginBottom: 12 }}>
               <Icon icon="ph:shield-check-bold" style={{ fontSize: 22, color: 'var(--g1)', flexShrink: 0 }} />
               <div style={{ fontSize: 13, color: 'var(--g1)', lineHeight: 1.5 }}>
                 <strong>Settled on-chain.</strong> This payment is permanent and verifiable on Arc Network.
               </div>
             </div>
+
+            {/* Sync Warning for testnet explorer lag */}
+            <div style={{ display: 'flex', gap: 10, background: 'rgba(245,158,11,.07)', border: '0.5px solid rgba(245,158,11,.3)', borderRadius: 14, padding: '12px 14px', marginBottom: 14 }}>
+              <Icon icon="ph:info-bold" style={{ fontSize: 18, color: '#FDB64E', flexShrink: 0, marginTop: 1 }} />
+              <div style={{ fontSize: 12, color: '#B27612', lineHeight: 1.4 }}>
+                <strong>Explorer syncing note:</strong> Mined instantly on the blockchain, but the block explorer's search indexer may take a few minutes to show the updated amount.
+              </div>
+            </div>
+
             {[
               { key: 'Status', val: 'Confirmed' },
               { key: 'Block time', val: '0.3 seconds' },

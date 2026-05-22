@@ -122,12 +122,21 @@ export function PaymentClient({ link, error, slug }: PaymentClientProps) {
       alert("You cannot pay your own link!")
       return
     }
-    if (selectedMethod === 'wallet') {
+    if (selectedMethod === 'card') {
+      setState('card')
+      setStep('Step 2 of 2')
+    }
+    else if (authenticated) {
+      handleProcess()
+    }
+    else if (selectedMethod === 'wallet') {
       setWantsToPay(true)
       if (!authenticated) login()
     }
-    else if (selectedMethod === 'card') { setState('card'); setStep('Step 2 of 2') }
-    else { setState('email'); setStep('Step 2 of 2') }
+    else {
+      setState('email')
+      setStep('Step 2 of 2')
+    }
   }
 
   const handleProcess = async () => {

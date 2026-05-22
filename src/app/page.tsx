@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Icon } from '@iconify/react'
 import { motion } from 'framer-motion'
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour'
 
 function TrustLogo({ logoUrl, fallbackDomain, name, icon, bg, fg }: { logoUrl: string; fallbackDomain: string; name: string; icon: string; bg: string; fg: string }) {
   const [src, setSrc] = useState(logoUrl)
@@ -945,7 +946,7 @@ footer{
               <button onClick={logout} className="btn-pill btn-ghost" style={{ cursor: 'pointer' }}>Log out</button>
             </span>
           ) : (
-            <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span id="tour-landing-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button onClick={login} className="btn-pill btn-ghost" style={{ cursor: 'pointer' }}>Sign in</button>
               <button onClick={() => router.push('/create')} className="btn-pill btn-orange" style={{ cursor: 'pointer' }}>Create link</button>
             </span>
@@ -1409,6 +1410,7 @@ footer{
           <div className="footer-arc">Powered by <span>Arc Network</span> & Circle USDC</div>
         </div>
       </footer>
+      <OnboardingTour />
     </div>
   )
 }
