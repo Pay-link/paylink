@@ -41,30 +41,3 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
-  try {
-    const { slug } = params
-    const supabase = createServerClient()
-
-    // Assuming authentication is checked or we just rely on slug (slug is a secret in itself)
-    // Actually, dashboard will call this with a session cookie.
-    
-    // Soft delete by setting status to 'cancelled'
-    const { error } = await supabase
-      .from('payment_links')
-      .update({ status: 'cancelled' })
-      .eq('slug', slug)
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
-    }
-
-    return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error('Delete link error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}

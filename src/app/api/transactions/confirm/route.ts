@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { rateLimit, getIp } from '@/lib/rateLimit'
 import { sanitizeText, isValidAddress, isValidTxHash, isValidAmount } from '@/lib/sanitize'
+import { createPublicClient, http } from 'viem'
+
+const arcPublicClient = createPublicClient({
+  transport: http(process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'),
+})
 
 export async function POST(request: NextRequest) {
   // Rate limit: 10 confirmations per minute per IP
@@ -47,6 +52,62 @@ export async function POST(request: NextRequest) {
 
     if (existingTx) {
       return NextResponse.json({ error: 'Transaction already recorded' }, { status: 409 })
+    }
+
+    // On-Chain Transaction Verification
+    const usdcAddress = '0x3600000000000000000000000000000000000000'
+    let isVerified = false
+    let verificationError = ''
+
+    try {
+      // 1. Fetch transaction receipt from the blockchain
+      const receipt = await arcPublicClient.getTransactionReceipt({ hash: tx_hash as `0x${string}` })
+      
+      // 2. Verify status
+      if (receipt.status !== 'success') {
+        verificationError = 'On-chain transaction failed or reverted'
+      } else {
+        // 3. Find the Transfer log matching USDC address and Transfer signature
+        const transferTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+        const transferLog = receipt.logs.find(log => 
+          log.address.toLowerCase() === usdcAddress.toLowerCase() && 
+          log.topics[0] === transferTopic
+        )
+
+        if (!transferLog) {
+          verificationError = 'No valid USDC Transfer log found in this transaction'
+        } else {
+          const recipientTopic = transferLog.topics[2]
+          if (!recipientTopic) {
+            verificationError = 'USDC Transfer log does not contain a recipient topic'
+          } else {
+            // Extract recipient address from topic 2 (padded 32-byte address: 12 bytes padding, 20 bytes address)
+            const onchainRecipient = '0x' + recipientTopic.slice(26)
+            
+            // Decode amount from log data
+            const onchainAmountRaw = BigInt(transferLog.data)
+            const onchainAmount = Number(onchainAmountRaw) / 1_000_000 // 6 decimals for USDC
+
+            const expectedRecipient = recipient_wallet.toLowerCase()
+            const expectedAmount = parseFloat(amount)
+
+            if (onchainRecipient.toLowerCase() !== expectedRecipient) {
+              verificationError = `On-chain transfer recipient (${onchainRecipient}) does not match expected (${expectedRecipient})`
+            } else if (Math.abs(onchainAmount - expectedAmount) > 0.001) {
+              verificationError = `On-chain transfer amount ($${onchainAmount}) does not match expected ($${expectedAmount})`
+            } else {
+              isVerified = true
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error('On-chain verification error:', err)
+      verificationError = `Failed to fetch on-chain transaction receipt: ${err.message || err}`
+    }
+
+    if (!isVerified) {
+      return NextResponse.json({ error: `On-chain transaction verification failed: ${verificationError}` }, { status: 400 })
     }
 
     // If link_id provided, verify the amount matches the link's amount (prevents underpayment)
