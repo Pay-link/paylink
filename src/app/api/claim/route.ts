@@ -103,6 +103,9 @@ export async function PATCH(req: NextRequest) {
     if (!claimedBy || typeof claimedBy !== 'string' || claimedBy.length > 255) {
       return Response.json({ error: 'Invalid claimedBy' }, { status: 400 })
     }
+    if (!providedWallet || typeof providedWallet !== 'string' || !/^0x[0-9a-fA-F]{40}$/.test(providedWallet)) {
+      return Response.json({ error: 'Your secure wallet is still preparing. Please wait a moment and try again.' }, { status: 400 })
+    }
 
     // 1. Fetch or auto-create claimer details
     let { data: claimer } = await supabase

@@ -461,6 +461,7 @@ export function Nav({ variant = 'app' }: NavProps) {
                 { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
                 { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
                 { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
+                { label: 'Feedback', icon: 'ph:chat-teardrop-text-bold', action: () => window.dispatchEvent(new CustomEvent('open-feedback')) },
               ].map(item => item.href ? (
                 <Link key={item.label} href={item.href} className="nav-drawer-item" onClick={() => setMenuOpen(false)}>
                   <span className="nav-drawer-icon"><Icon icon={item.icon} /></span>

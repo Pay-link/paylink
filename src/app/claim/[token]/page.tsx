@@ -23,6 +23,7 @@ export default function ClaimPage() {
   const router = useRouter()
   const { authenticated, ready, login, user } = usePrivy()
   const { wallets } = useWallets()
+  const activeWallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0]
 
   const [claim, setClaim] = useState<Claim | null>(null)
   const [loading, setLoading] = useState(true)
@@ -42,19 +43,17 @@ export default function ClaimPage() {
       .finally(() => setLoading(false))
   }, [token])
 
-  // After login completes, auto-claim — guard against double-fire
+  // After login completes, wait for wallet address and then auto-claim — guard against double-fire
   useEffect(() => {
-    if (ready && authenticated && user && claiming && claim && !claimInProgress.current) {
+    if (ready && authenticated && user && claiming && claim && activeWallet?.address && !claimInProgress.current) {
       claimInProgress.current = true
-      completeClaim()
+      completeClaim(activeWallet.address)
     }
-  }, [ready, authenticated, user, claiming, claim])
+  }, [ready, authenticated, user, claiming, claim, activeWallet?.address])
 
-  const completeClaim = async () => {
+  const completeClaim = async (walletAddress: string) => {
     if (!user?.id) { setClaiming(false); return }
     try {
-      const embeddedWallet = wallets.find(w => w.walletClientType === 'privy')
-      const walletAddress = embeddedWallet?.address || ''
       const email = user?.email?.address || null
       const phone = user?.phone?.number || null
 
@@ -88,10 +87,12 @@ export default function ClaimPage() {
     if (claimInProgress.current) return
     setClaiming(true)
     if (!authenticated) {
-      login() // completeClaim fires via useEffect after auth completes
+      login() // completeClaim fires via useEffect after auth completes and wallet loads
     } else {
-      claimInProgress.current = true
-      completeClaim()
+      if (activeWallet?.address) {
+        claimInProgress.current = true
+        completeClaim(activeWallet.address)
+      }
     }
   }
 
@@ -182,8 +183,8 @@ export default function ClaimPage() {
                   onClick={handleClaim}
                   disabled={claiming}
                   style={{ width: '100%', background: 'var(--g1)', color: '#fff', border: 'none', borderRadius: 100, padding: '17px', fontFamily: 'var(--font)', fontSize: 16, fontWeight: 700, cursor: claiming ? 'not-allowed' : 'pointer', opacity: claiming ? .6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 6px 20px rgba(37,92,180,.28)', marginBottom: 12 }}>
-                  <Icon icon={claiming ? 'ph:spinner-bold' : 'ph:hand-grabbing-bold'} />
-                  {claiming ? 'Verifying…' : `Claim $${claim.amount.toFixed(2)}`}
+                  <Icon icon={claiming ? 'ph:spinner-bold' : 'ph:hand-grabbing-bold'} style={claiming ? { animation: 'spin 1s linear infinite' } : {}} />
+                  {claiming && !activeWallet?.address ? 'Preparing secure wallet…' : claiming ? 'Verifying…' : `Claim $${claim.amount.toFixed(2)}`}
                 </button>
                 <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink4)' }}>
                   By claiming you agree to ZaPay's terms. Your wallet is powered by Privy.

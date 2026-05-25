@@ -133,6 +133,7 @@ export default function TransactionsHistoryPage() {
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
             { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
+            { label: 'Feedback', icon: 'ph:chat-teardrop-text-bold', action: () => window.dispatchEvent(new CustomEvent('open-feedback')) },
           ].map(item => {
             const isActive = (item as any).active
             return item.href ? (

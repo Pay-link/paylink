@@ -418,6 +418,7 @@ function DashboardContent() {
             { label: 'Bank settings', icon: 'ph:bank-bold', href: '/bank-setup' },
             { label: 'Settings', icon: 'ph:gear-six-bold', href: '#' },
             { label: 'Zapay support', icon: 'ph:question-bold', action: () => window.dispatchEvent(new CustomEvent('open-chat')) },
+            { label: 'Feedback', icon: 'ph:chat-teardrop-text-bold', action: () => window.dispatchEvent(new CustomEvent('open-feedback')) },
           ].map(item => item.href ? (
             <Link key={item.label} id={item.id} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 500, color: 'var(--ink3)', textDecoration: 'none', marginBottom: 2 }}>
               <Icon icon={item.icon} style={{ fontSize: 16 }} />{item.label}

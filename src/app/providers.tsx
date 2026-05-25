@@ -3,6 +3,7 @@
 import { PrivyProvider } from '@privy-io/react-auth'
 import { TestnetBanner } from '@/components/ui/TestnetBanner'
 import { ChatWidget } from '@/components/ui/ChatWidget'
+import { FeedbackModal } from '@/components/ui/FeedbackModal'
 
 const arcTestnet = {
   id: 5042002,
@@ -41,6 +42,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <TestnetBanner />
       {children}
       <ChatWidget />
+      <FeedbackModal />
     </PrivyProvider>
   )
 }
