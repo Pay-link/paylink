@@ -114,6 +114,8 @@ export async function POST(req: NextRequest) {
         sender_wallet: '',
         recipient_id: recipient?.id || null,
         recipient_wallet: '',
+        recipient_contact: recipient?.display_name || contact || null,
+        recipient_email: contact || null,
         amount: amountNum,
         note: sanitizeText(note, 300),
         tx_hash: txHash || `zapay-internal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
